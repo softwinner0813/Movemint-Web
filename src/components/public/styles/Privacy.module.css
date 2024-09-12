@@ -1,0 +1,28 @@
+/* styles/Privacy.module.css */
+.container {
+   max-width: 800px;
+   margin: 0 auto;
+   padding: 20px;
+   font-family: Arial, sans-serif;
+   line-height: 1.6;
+ }
+ 
+ .title {
+   font-size: 2em;
+   margin-bottom: 10px;
+   text-align: center;
+ }
+ 
+ h2 {
+   margin-top: 20px;
+   color: #333;
+ }
+ 
+ ul {
+   margin-left: 20px;
+ }
+ 
+ p {
+   margin: 10px 0;
+ }
+ 
