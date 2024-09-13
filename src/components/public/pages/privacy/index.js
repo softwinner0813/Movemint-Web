@@ -8,12 +8,13 @@ const PrivacyPolicyPage = () => {
       </h1>
       <p className="mb-4">Last updated: 09/10/2024</p>
       <p className="mb-4">
-        All Star Seating Navigation ("we," "our," or "us") is committed to
-        protecting your privacy. This Privacy Policy explains how we collect,
-        use, disclose, and safeguard your information when you use our app. By
-        using the All Star Seating Navigation app, you agree to the collection
-        and use of information in accordance with this Privacy Policy. If you do
-        not agree with the terms, please do not use our app.
+        All Star Seating Navigation (&quot;we,&quot; &quot;our,&quot; or
+        &quot;us&quot;) is committed to protecting your privacy. This Privacy
+        Policy explains how we collect, use, disclose, and safeguard your
+        information when you use our app. By using the All Star Seating
+        Navigation app, you agree to the collection and use of information in
+        accordance with this Privacy Policy. If you do not agree with the terms,
+        please do not use our app.
       </p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">
@@ -109,7 +110,7 @@ const PrivacyPolicyPage = () => {
         </li>
         <li>
           Location Data: You can control whether the app has access to your
-          location through your device's settings.
+          location through your device&apos;s settings.
         </li>
       </ul>
 
@@ -124,7 +125,7 @@ const PrivacyPolicyPage = () => {
       </p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">
-        7. Children’s Privacy
+        7. Children&apos;s Privacy
       </h2>
       <p className="mb-4">
         Our app is not intended for use by children under the age of 13. We do

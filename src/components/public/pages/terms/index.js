@@ -71,10 +71,11 @@ const TermsAndConditions = () => {
         6. Disclaimer of Warranties
       </h2>
       <p className="mb-4">
-        The app is provided on an "as-is" and "as-available" basis. All Star
-        Seating Navigation makes no representations or warranties of any kind,
-        express or implied, regarding the operation or availability of the app,
-        or the information, content, or materials included in the app.
+        The app is provided on an &quot;as-is&quot; and &quot;as-available&quot;
+        basis. All Star Seating Navigation makes no representations or
+        warranties of any kind, express or implied, regarding the operation or
+        availability of the app, or the information, content, or materials
+        included in the app.
       </p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">
