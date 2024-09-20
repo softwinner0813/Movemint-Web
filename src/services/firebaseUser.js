@@ -14,8 +14,8 @@ export const createFirebaseUser = async () => {
   }
 
   const userData = {
-    firstName: user.displayName.split(' ')[0],
-    lastName: user.displayName.split(' ')[1],
+    firstName: user.displayName ? user.displayName.split(' ')[0] : "John",
+    lastName: user.displayName  ? user.displayName.split(' ')[1] ?? "Doe" : "Doe",
     imageUrl: user.photoURL,
     id: user.uid, // UID from Firebase Authentication
     metadata: { status: 'active' }, // Add any metadata field you need
