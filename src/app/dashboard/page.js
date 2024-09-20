@@ -1,3 +1,5 @@
+"use client"
+
 import DashboardPage from "@/components/dashboard-layout/pages";
 import React from "react";
 

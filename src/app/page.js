@@ -1,3 +1,5 @@
+"use client"
+
 import HomePage from "@/components/public";
 import MoverPage from "@/components/public/components/MoverPage";
 import StepsPage from "@/components/public/components/stepsPage";
