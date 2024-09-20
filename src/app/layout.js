@@ -1,10 +1,12 @@
+"use client"
+
 import "./globals.css";
 import { Poppins, Quicksand } from "next/font/google";
 import { cn } from "@/lib/utils";
 import ProgressBar from "@/components/dashboard-layout/components/progress-bar";
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-
+import { UserProvider } from '@/lib/userContext';
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -29,8 +31,10 @@ export default function RootLayout({ children }) {
           poppins.variable
         )}
       >
-        <ProgressBar />
-        {children}
+        <UserProvider>
+          <ProgressBar />
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

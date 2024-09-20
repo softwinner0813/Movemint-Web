@@ -23,58 +23,81 @@ import { cn } from "@/lib/utils";
 import FileIcon from "@/components/icons/file-icon";
 import ClipIcon from "@/components/icons/clip-icon";
 import Sent from "@/components/icons/sent-icon";
+import { db, auth } from "@/services/firebase"; // Your Firebase config
+import { createRoom } from "@/services/firebaseChat";
+import { addMessageToRoom } from "@/services/firebaseMessage";
+import { useRouter } from "next/navigation";
 
-const ChatMessagePage = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisi vel consectetur facilisis, nisi nunc tincidunt justo, id tincidunt libero augue non nulla. Praesent vestibulum tincidunt tellus, nec luctus sapien convallis ac. Fusce non felis at quam dignissim gravida.",
-      time: "6:30 PM",
-      isUser: false,
-    },
-    {
-      id: 2,
-      text: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour.",
-      time: "6:34 PM",
-      isUser: true,
-    },
-    {
-      id: 3,
-      text: "The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default. Contrary to popular belief, Lorem Ipsum is not simply random text; it has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.",
-      time: "6:38 PM",
-      isUser: false,
-    },
-  ]);
+// Firebase Imports
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+
+const ChatMessagePage = ({ params }) => {
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [roomId, setRoomId] = useState(null); // Track the room ID
   const downLg = useBreakpoint("lg");
+  const effectRan = useRef(false);
+  const router = useRouter();
+  const { id } = params;
 
   // Ref to hold the chat container
   const chatContainerRef = useRef(null);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() === "") return;
+  // Initialize chat room (replace user IDs with real ones from auth context or similar)
+  useEffect(() => {
+    // const currentUser = auth.currentUser
+    const initializeRoom = async () => {
+      const otherUser = { id: "f1nHQXH5ELPFXnPdRcTSQj2yN7J3" }; // Other user ID
+
+      setRoomId(id);
+      // Create a new room or find an existing one
+      // const room = await createRoom([currentUser.uid, otherUser.id]);
+       // Store the room ID
+    };
+    if (effectRan.current === false) {
+      initializeRoom();
+      effectRan.current = true;
+    }
+  }, [id]);
+
+  // Function to send message to Firestore in a specific room
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === "" || !roomId) return;
 
     const newMessageObject = {
-      id: messages.length + 1,
       text: newMessage,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      isUser: true,
+      type: "text",
+      authorId: auth.currentUser.uid,
     };
 
-    setMessages([...messages, newMessageObject]);
-    setNewMessage("");
+    // Add message to the room's messages collection
+    await addMessageToRoom(roomId, newMessageObject);
   };
 
-  // Scroll to the bottom whenever messages change
+  // Fetch messages from Firestore in real-time for a specific room
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-    }
-  }, [messages]);
+    if (!roomId) return;
+
+    const q = query(
+      collection(db, `rooms/${roomId}/messages`),
+      orderBy("createdAt", "asc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMessages(fetchedMessages);
+
+      // Scroll to the bottom when new messages come in
+      chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight });
+    });
+
+    return () => unsubscribe(); // Cleanup listener on unmount
+  }, [roomId]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
@@ -163,14 +186,13 @@ const ChatMessagePage = () => {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${
-                message.isUser ? "justify-end" : "justify-start"
-              } mb-4`}
+              className={`flex ${message.authorId == auth.currentUser.uid ? "justify-end" : "justify-start"
+                } mb-4`}
             >
               <div
-                className={cn("items-end", message.isUser ? "" : "flex gap-5")}
+                className={cn("items-end", message.authorId == auth.currentUser.uid ? "" : "flex gap-5")}
               >
-                {!message.isUser && (
+                {!message.authorId == auth.currentUser.uid && (
                   <div className="flex items-center">
                     <Avatar>
                       <AvatarImage
@@ -186,7 +208,7 @@ const ChatMessagePage = () => {
                 <div
                   className={cn(
                     "p-4 rounded-2xl max-w-2xl",
-                    message.isUser
+                    message.authorId == auth.currentUser.uid
                       ? "rounded-br-none custom-gradient"
                       : "rounded-bl-none border border-white"
                   )}
@@ -194,7 +216,7 @@ const ChatMessagePage = () => {
                   <p
                     className={cn(
                       "text-sm",
-                      message.isUser ? "text-background" : "text-foreground/95"
+                      message.authorId == auth.currentUser.uid ? "text-background" : "text-foreground/95"
                     )}
                   >
                     {message.text}
@@ -203,10 +225,17 @@ const ChatMessagePage = () => {
                     <p
                       className={cn(
                         "text-right text-xs",
-                        message.isUser ? "text-background" : "text-[#757575]"
+                        message.authorId == auth.currentUser.uid ? "text-background" : "text-[#757575]"
                       )}
                     >
-                      {message.time}
+                      {message.createdAt
+                        ? new Date(
+                          message.createdAt.seconds * 1000
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                        : "Sending..."}
                     </p>
 
                     <DropdownMenu className="lg:hidden">
@@ -214,7 +243,7 @@ const ChatMessagePage = () => {
                         <EllipsisVertical
                           className={cn(
                             "h-4",
-                            message.isUser
+                            message.authorId == auth.currentUser.uid
                               ? "text-background"
                               : "text-[#757575]"
                           )}

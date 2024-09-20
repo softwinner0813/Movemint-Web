@@ -1,4 +1,5 @@
 "use client";
+
 import DashboardFooter from "@/components/dashboard-layout/footer";
 import DashboardHeader from "@/components/dashboard-layout/header";
 import Sidebar from "@/components/dashboard-layout/sidebar";
@@ -10,16 +11,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { usePathname } from "next/navigation";
 import CommonModel from "@/components/dashboard-layout/components/common-model";
+import { useRouter } from "next/navigation";
+import { auth } from '@/services/firebase'
+import { useUser } from '@/lib/userContext';
 
 const DashboardLayout = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenLogout, setIsModalOpenLogout] = useState(false);
+  const {userData, setUserData} = useUser();
 
   const downMd = useBreakpoint("md");
   const pathname = usePathname();
+  const router = useRouter();
 
   useLayoutEffect(() => {
     // Set loading to false when the page has fully loaded
@@ -29,14 +36,28 @@ const DashboardLayout = ({ children }) => {
       nProgress.done();
       handleLoad();
     };
+    const unsubscribe = auth.onIdTokenChanged((user) => {
+      if (!user) {
+        // Redirect to login page if no user is logged in
+        setUserData({});
+        localStorage.removeItem('user-data');
+        router.push('/login');
+      } else {
+        setUserData(JSON.parse(localStorage.getItem('user-data')));
+        setIsAuthenticated(true);
+      }
+    });
+
+    // Cleanup the listener on unmount
 
     handleStart();
     handleStop();
 
     return () => {
-      nProgress.done();
+      nProgress.done(),
+        unsubscribe();
     };
-  }, []);
+  }, [router]);
 
   const handleMouseEnter = () => {
     if (downMd) return;
@@ -57,8 +78,10 @@ const DashboardLayout = ({ children }) => {
     setIsModalOpen(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsModalOpenLogout(false);
+    await auth.signOut();
+    // Redirect to login or home page after logout
     router.push("/login");
   };
 
@@ -92,7 +115,7 @@ const DashboardLayout = ({ children }) => {
   }
 
   return (
-    <div className="flex">
+    isAuthenticated && <div className="flex">
       <aside
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -102,8 +125,8 @@ const DashboardLayout = ({ children }) => {
           downMd && isExpanded && openSidebar
             ? "translate-x-0"
             : downMd
-            ? "-translate-x-full"
-            : ""
+              ? "-translate-x-full"
+              : ""
         )}
       >
         <Sidebar
@@ -125,7 +148,9 @@ const DashboardLayout = ({ children }) => {
           downMd && !isExpanded ? "ml-0" : ""
         )}
       >
-        <DashboardHeader handleToggleSidebar={handleToggleSidebar} />
+        <DashboardHeader handleToggleSidebar={handleToggleSidebar}
+          setIsModalOpenLogout={setIsModalOpenLogout}
+          userData={userData} />
         {pathname === "/dashboard" && (
           <Alert variant="danger" onClick={handleAlertClick}>
             {/* <AlertTitle>Heads up!</AlertTitle> */}
@@ -150,7 +175,7 @@ const DashboardLayout = ({ children }) => {
         <CommonModel
           mainHeading="You’ve been logged out"
           subHeading="You’ve been logged out, please sign back in or return home."
-          mainButtonContent="Sign In"
+          mainButtonContent="Sign Out"
           cancelButtonContent="Return To Home"
           setIsModalOpen={setIsModalOpenLogout}
           isDanger={false}

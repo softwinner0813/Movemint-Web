@@ -1,3 +1,5 @@
+"use client"
+
 import BellIcon from "@/components/icons/bell-icon";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -23,6 +25,8 @@ import {
 } from "@/components/ui/popover";
 import useBreakpoint from "@/lib/useBreakpoint";
 import { CircleChevronDown, Menu, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const userMenuOptions = [
   {
@@ -36,8 +40,28 @@ const userMenuOptions = [
   },
 ];
 
-const DashboardHeader = ({ handleToggleSidebar }) => {
+const DashboardHeader = ({ handleToggleSidebar, setIsModalOpenLogout, userData }) => {
+  const [userName, setUserName] = useState("");
+  const [avatar, setAvatar] = useState(null); // Initially null to prevent incorrect rendering
   const downMd = useBreakpoint("md");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (userData) {
+      setUserName(userData.first_name + userData.last_name);
+      setAvatar(userData.avatar || "");
+    }
+  }, [userData]);
+
+  const handleUserMenu = (item) => {
+    if (item.label === "Profile") {
+      router.push("/dashboard/edit-profile");
+    } else if (item.label === "Settings") {
+      router.push("/dashboard/setting");
+    } else {
+      setIsModalOpenLogout(true);
+    }
+  };
 
   return (
     <header className="bg-background w-full px-6 py-4">
@@ -109,14 +133,14 @@ const DashboardHeader = ({ handleToggleSidebar }) => {
               <div className="flex gap-x-4 items-center shrink-0">
                 <Avatar>
                   <AvatarImage
-                    src="https://github.com/shadcn.png"
+                    src={avatar}
                     alt="@shadcn"
                   />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback>M</AvatarFallback>
                 </Avatar>
 
                 <div className="shrink-0 hidden md:block">
-                  <h6 className="text-sm font-bold">Moni Roy</h6>
+                  <h6 className="text-sm font-bold">{userName}</h6>
                   <span className="text-xs">Mover</span>
                 </div>
                 <CircleChevronDown className="shrink-0 hidden md:block" />
@@ -128,6 +152,7 @@ const DashboardHeader = ({ handleToggleSidebar }) => {
                   <DropdownMenuItem
                     className="text-black text-sm font-extrabold"
                     key={item.label}
+                    onClick={() => handleUserMenu(item)}
                   >
                     {item.label}
                   </DropdownMenuItem>

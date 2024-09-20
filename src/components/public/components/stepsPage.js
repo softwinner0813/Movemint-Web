@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import StepCard from "./StepCard";
 import Trip from "./trip";
 import MapIcon from "@/components/icons/map-icon";
@@ -35,6 +37,15 @@ const steps = [
 ];
 
 const StepsPage = () => {
+  // Ensure the component is only rendered on the client side to avoid hydration issues
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null; // Prevent rendering on the server side to avoid hydration issues
+
   return (
     <div
       className="mt-12 p-4 sm:p-0"
@@ -61,7 +72,8 @@ const StepsPage = () => {
             </div>
           </div>
 
-          <div className=" 2xl:block">
+          <div className="2xl:block">
+            {/* Ensure the Trip component handles client-side rendering properly */}
             <Trip />
           </div>
         </div>
