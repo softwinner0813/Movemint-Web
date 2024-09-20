@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { ChevronLeftIcon, ChevronRightIcon, Star } from "lucide-react";
-import { useState } from "react";
-import ChatMessagePage from "./chatMessage";
+import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { auth } from "@/services/firebase";
+import { listenToRoomsForUser } from "@/services/firebaseChat";
+import { useRouter } from "next/navigation";
 
 const messages = [
   {
@@ -99,6 +101,26 @@ const messages = [
 
 const MessagingPage = () => {
   const [starredMessages, setStarredMessages] = useState(messages);
+  const [isLoading, setIsLoading] = useState(0);
+  const [rooms, setRooms] = useState([]);
+  const [userId, setUserId] = useState(auth.currentUser.uid);
+  const router = useRouter();
+
+  
+  useEffect (() => {
+    const unsubscribe = listenToRoomsForUser(userId, (roomsList) => {
+      setRooms(roomsList); // Update state with real-time rooms
+      setStarredMessages(roomsList)
+      console.log(roomsList);
+    });
+
+    // Cleanup: Unsubscribe from the listener when the component unmounts
+    return () => unsubscribe();
+  }, [userId]);
+
+  const handleMessageClick = (id) => {
+    router.push(`/dashboard/messaging/${id}`);
+  }
 
   const handleStarClick = (id) => {
     setStarredMessages((prevMessages) =>
@@ -166,7 +188,8 @@ const MessagingPage = () => {
                   {starredMessages.map((message) => (
                     <TableRow
                       key={message.id}
-                      className="border-b border-gray-600"
+                      className="border-b border-gray-600" 
+                      onClick={() => handleMessageClick(message.id)}
                     >
                       <TableCell>
                         <Checkbox
@@ -231,9 +254,7 @@ const MessagingPage = () => {
             <ChevronRightIcon />
           </button>
         </div>
-      </div>
-
-      <ChatMessagePage />
+      </div>)
     </>
   );
 };

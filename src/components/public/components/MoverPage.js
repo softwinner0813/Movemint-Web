@@ -1,3 +1,6 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import MoverCard from "./moverCard";
 import MoversPattern from "@/components/icons/movers-pattern";
@@ -29,6 +32,14 @@ const movers = [
 ];
 
 const MoverPage = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null; // Prevent rendering on the server side to avoid hydration issues
+
   return (
     <div
       className="min-h-[auto] mt-10 lg:mt-20"
@@ -80,4 +91,3 @@ const MoverPage = () => {
 };
 
 export default MoverPage;
-// "w-full grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 lg:gap-10 gap-5 justify-center place-content-center items-center z-10
