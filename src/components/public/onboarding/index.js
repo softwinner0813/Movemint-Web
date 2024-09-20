@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import Screen from "./components/Screen";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const screens = [
   {
@@ -40,6 +41,7 @@ const screens = [
 
 const OnboardingPage = () => {
   const [api, setApi] = useState();
+  const router = useRouter();
   // const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -59,9 +61,10 @@ const OnboardingPage = () => {
   };
 
   const handlePrevious = () => {
-    if (api) {
-      api.scrollPrev();
-    }
+    router.push("/dashboard");
+    // if (api) {
+    //   api.scrollPrev();
+    // }
   };
 
   return (

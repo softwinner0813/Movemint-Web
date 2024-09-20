@@ -10,7 +10,7 @@ import Logo from "../../../../../public/images/logo/logo.png";
 import { Button } from "@/components/ui/button";
 import GooglePlayIcon from "@/components/icons/goole-play-icon";
 import AppleStoreIcon from "@/components/icons/apple-store-icon";
-import { signinMover } from '@/services/api';
+import { signinMoverWithGoogle, signinMover } from '@/services/api';
 import { useRouter } from "next/navigation";
 import { auth, googleProvider, signInWithPopup, signInWithEmailAndPassword, OAuthProvider } from "@/services/firebase";
 import { useUser } from "@/lib/userContext";
@@ -40,9 +40,11 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // Navigate to the onboarding page after login
-      
+      const signerEmail = userCredential.user.email;
+      const response = await signinMover({ email: signerEmail });
+      localStorage.setItem('user-data', JSON.stringify(response.data));
       await createFirebaseUser();
       router.push('/onboarding');
     } catch (error) {
@@ -55,17 +57,17 @@ const LoginPage = () => {
   const handleGoogleLogin = async () => {
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
-      const email = userCredential.user.email;
-      const first_name = userCredential._tokenResponse.firstName;
-      const last_name = userCredential._tokenResponse.lastName;
+      const signerEmail = userCredential.user.email;
+      const first_name = userCredential._tokenResponse.firstName ?? "";
+      const last_name = userCredential._tokenResponse.lastName ?? "";
       const avatar = userCredential.user.photoURL;
       const phone_number = userCredential.user.phoneNumber ?? "";
       const google_id = userCredential.user.uid;
-      const response = await signinMover({ email, first_name, last_name, avatar, phone_number, google_id });
+      const response = await signinMoverWithGoogle({ email: signerEmail, first_name, last_name, avatar, phone_number, google_id });
       if (response.result) {
         setUserData(response.data);
-        await createFirebaseUser();
         localStorage.setItem('user-data', JSON.stringify(response.data));
+        await createFirebaseUser();
       }
     } catch (error) {
       alert("Google sign-in failed: " + error.message);
