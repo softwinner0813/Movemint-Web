@@ -101,15 +101,15 @@ const messages = [
 
 const MessagingPage = () => {
   const [starredMessages, setStarredMessages] = useState(messages);
-  const [isLoading, setIsLoading] = useState(0);
-  const [rooms, setRooms] = useState([]);
-  const [userId, setUserId] = useState(auth.currentUser.uid);
+  // const [isLoading, setIsLoading] = useState(0);
+  // const [rooms, setRooms] = useState([]);
   const router = useRouter();
+  const userId = auth.currentUser.uid;
 
   
   useEffect (() => {
     const unsubscribe = listenToRoomsForUser(userId, (roomsList) => {
-      setRooms(roomsList); // Update state with real-time rooms
+      // setRooms(roomsList); // Update state with real-time rooms
       setStarredMessages(roomsList)
       console.log(roomsList);
     });

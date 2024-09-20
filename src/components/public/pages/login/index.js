@@ -22,7 +22,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const {userData, setUserData} = useUser();
+  const { setUserData } = useUser();
 
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged((user) => {

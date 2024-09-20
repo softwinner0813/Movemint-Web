@@ -19,7 +19,7 @@ const EditProfileForm = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [countryCode, setCountryCode] = useState("");
+  // const [countryCode, setCountryCode] = useState("");
 
   // Company Details
   const [companyName, setCompanyName] = useState("");
@@ -48,7 +48,7 @@ const EditProfileForm = () => {
       setIsInternationalShipping(uData.mover.is_int_shipping ?? "Yes");
       setBusinessYear(uData.mover.business_year ?? "");
     }
-  });
+  }, [Userdata.length]);
 
   // Handle Image Upload
   async function handleImageUpload(e) {

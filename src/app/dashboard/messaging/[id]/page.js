@@ -24,9 +24,9 @@ import FileIcon from "@/components/icons/file-icon";
 import ClipIcon from "@/components/icons/clip-icon";
 import Sent from "@/components/icons/sent-icon";
 import { db, auth } from "@/services/firebase"; // Your Firebase config
-import { createRoom } from "@/services/firebaseChat";
+// import { createRoom } from "@/services/firebaseChat";
 import { addMessageToRoom } from "@/services/firebaseMessage";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 // Firebase Imports
 import {
@@ -42,7 +42,7 @@ const ChatMessagePage = ({ params }) => {
   const [roomId, setRoomId] = useState(null); // Track the room ID
   const downLg = useBreakpoint("lg");
   const effectRan = useRef(false);
-  const router = useRouter();
+  // const router = useRouter();
   const { id } = params;
 
   // Ref to hold the chat container
@@ -52,7 +52,7 @@ const ChatMessagePage = ({ params }) => {
   useEffect(() => {
     // const currentUser = auth.currentUser
     const initializeRoom = async () => {
-      const otherUser = { id: "f1nHQXH5ELPFXnPdRcTSQj2yN7J3" }; // Other user ID
+      // const otherUser = { id: "f1nHQXH5ELPFXnPdRcTSQj2yN7J3" }; // Other user ID
 
       setRoomId(id);
       // Create a new room or find an existing one
