@@ -13,7 +13,6 @@ export const createFirebaseUser = async () => {
     return;
   }
 
-  console.log(user);
   const userData = {
     firstName: user.displayName.split(' ')[0],
     lastName: user.displayName.split(' ')[1],
