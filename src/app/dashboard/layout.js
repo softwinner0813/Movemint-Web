@@ -9,9 +9,8 @@ import { cn } from "@/lib/utils";
 import nProgress from "nprogress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import CommonModel from "@/components/dashboard-layout/components/common-model";
-import { useRouter } from "next/navigation";
 import { auth } from '@/services/firebase'
 import { useUser } from '@/lib/userContext';
 
