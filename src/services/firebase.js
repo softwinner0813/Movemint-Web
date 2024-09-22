@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, RecaptchaVerifier, createUserWithEmailAndPassword, signInWithPopup, signInWithEmailAndPassword, OAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // Firebase configuration object
 const firebaseConfig = {
@@ -18,9 +19,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-
+const storage = getStorage(app);
 
 // Providers
 const googleProvider = new GoogleAuthProvider();
 
-export { auth, googleProvider, RecaptchaVerifier, createUserWithEmailAndPassword, signInWithPopup, signInWithEmailAndPassword, OAuthProvider, db };
+export { auth, storage, googleProvider, RecaptchaVerifier, createUserWithEmailAndPassword, signInWithPopup, signInWithEmailAndPassword, OAuthProvider, db };

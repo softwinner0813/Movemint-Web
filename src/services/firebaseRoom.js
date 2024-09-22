@@ -1,6 +1,6 @@
 // firebaseChat.js
 import { collection, addDoc, query, getDocs, where, serverTimestamp, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase'; // Firebase initialization
+import { db, auth } from './firebase'; // Firebase initialization
 
 /**
  * Creates a new chat room in Firestore
@@ -77,5 +77,48 @@ export const listenToRoomsForUser = (userId, callback) => {
         return unsubscribe;  // Return the unsubscribe function to stop listening later
     } catch (error) {
         console.error("Error listening to rooms for user:", error);
+    }
+};
+
+const getLastReadMessageId = (room, currentUserId) => {
+    if (room.metadata && room.metadata['lastReadMessageId']) {
+        return room.metadata['lastReadMessageId'][currentUserId] || null;
+    }
+    return null;
+};
+
+// Function to get unread message count for a user
+export const getUnreadMessageCount = async (room) => {
+    const currentUser = auth.currentUser;
+    const roomId = room.id;
+    const lastReadMessageId = getLastReadMessageId(room, currentUser.uid);
+
+    // Check if lastReadMessageId is set
+    if (!lastReadMessageId) {
+        // If no lastReadMessageId is set, treat all messages as unread
+        const allMessagesQuery = await getDocs(collection(db, `rooms/${roomId}/messages`));
+        return allMessagesQuery.size;
+    } else {
+        // Get the document of the last read message
+        const lastReadMessageDoc = await getDoc(doc(db, `rooms/${roomId}/messages`, lastReadMessageId));
+
+        // Check if lastReadMessageDoc exists
+        if (!lastReadMessageDoc.exists()) {
+            console.error('Last read message does not exist.');
+            return 0;
+        }
+
+        const lastReadCreatedAt = lastReadMessageDoc.data().createdAt;
+
+        // Query messages with createdAt greater than lastReadCreatedAt
+        const unreadMessagesQuery = await getDocs(
+            query(
+                collection(db, `rooms/${roomId}/messages`),
+                where('createdAt', '>', lastReadCreatedAt)
+            )
+        );
+
+        // Return the count of unread messages
+        return unreadMessagesQuery.size;
     }
 };

@@ -24,9 +24,12 @@ import FileIcon from "@/components/icons/file-icon";
 import ClipIcon from "@/components/icons/clip-icon";
 import Sent from "@/components/icons/sent-icon";
 import { db, auth } from "@/services/firebase"; // Your Firebase config
-// import { createRoom } from "@/services/firebaseChat";
-import { addMessageToRoom } from "@/services/firebaseMessage";
+import { sendMessage, updateMessage } from "@/services/firebaseMessage";
 // import { useRouter } from "next/navigation";
+import MessageItem from "@/components/dashboard-layout/pages/messaging/messageItem";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "@/services/firebase";
+import mime from 'mime-types';
 
 // Firebase Imports
 import {
@@ -34,41 +37,26 @@ import {
   onSnapshot,
   query,
   orderBy,
+  where,
+  limit,
+  getDocs
 } from "firebase/firestore";
 
 const ChatMessagePage = ({ params }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [roomId, setRoomId] = useState(null); // Track the room ID
   const downLg = useBreakpoint("lg");
-  const effectRan = useRef(false);
   // const router = useRouter();
-  const { id } = params;
+  const roomId = params.id;
 
   // Ref to hold the chat container
   const chatContainerRef = useRef(null);
 
   // Initialize chat room (replace user IDs with real ones from auth context or similar)
-  useEffect(() => {
-    // const currentUser = auth.currentUser
-    const initializeRoom = async () => {
-      // const otherUser = { id: "f1nHQXH5ELPFXnPdRcTSQj2yN7J3" }; // Other user ID
-
-      setRoomId(id);
-      // Create a new room or find an existing one
-      // const room = await createRoom([currentUser.uid, otherUser.id]);
-       // Store the room ID
-    };
-    if (effectRan.current === false) {
-      initializeRoom();
-      effectRan.current = true;
-    }
-  }, [id]);
 
   // Function to send message to Firestore in a specific room
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (type) => {
     if (newMessage.trim() === "" || !roomId) return;
-
     const newMessageObject = {
       text: newMessage,
       type: "text",
@@ -76,7 +64,106 @@ const ChatMessagePage = ({ params }) => {
     };
 
     // Add message to the room's messages collection
-    await addMessageToRoom(roomId, newMessageObject);
+    setNewMessage("");
+    await sendMessage(roomId, newMessageObject);
+  };
+
+  const getMimeType = (filePath) => {
+    const mimeType = mime.lookup(filePath);
+    return mimeType || 'application/octet-stream'; // Default to binary if unknown
+  };
+
+  const handleFileSelect = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const initalMessage = {
+        authorId: auth.currentUser.uid,
+        mimeType: getMimeType(file.filePath),
+        name: file.name,
+        size: file.size,
+        uri: '',
+        type: 'file',
+        metadata: { 'progress': 0.0 },
+      }
+      
+      await sendMessage(roomId, initalMessage);
+      const q = query(
+        collection(db, `rooms/${roomId}/messages`),
+        where('authorId', '==', auth.currentUser.uid),
+        orderBy("createdAt", "desc"),
+        limit(1) // Limit the result to 1 message
+      );
+
+      const messageId = (await getDocs(q)).docs[0].id;
+      uploadFile(file, messageId);
+    }
+  };
+
+  const getImageDimensions = (file) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+  
+      img.onload = () => {
+        resolve({ width: img.width, height: img.height });
+        URL.revokeObjectURL(objectUrl); // Clean up object URL after using
+      };
+  
+      img.onerror = reject;
+  
+      img.src = objectUrl;
+    });
+  };
+
+  // Function to handle image selection
+  const handleImageSelect = async (event) => {
+    const file = event.target.files[0];
+
+    const { width, height } = await getImageDimensions(file);
+    
+    const storageRef = ref(storage, `uploads/${file.name}`);
+    const uploadTask = await uploadBytesResumable(storageRef, file);
+    
+    const downloadURL = await getDownloadURL(uploadTask.ref);
+    const message = {
+      authorId: auth.currentUser.uid,
+      name: file.name,
+      size: file.size,
+      uri: downloadURL,
+      type: 'image',
+      width,
+      height,
+    }
+    await sendMessage(roomId, message);
+  };
+
+  const uploadFile = (file, messageId) => {
+    const storageRef = ref(storage, `uploads/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    // Track upload progress
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // setUploadProgress(progress); // Update progress state
+        const updatedMessage = {
+          metadata: { 'progress': progress },
+        }
+        updateMessage(roomId, messageId, updatedMessage);
+      },
+      (error) => {
+        console.error("Upload failed:", error);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        const updatedMessage = {
+          metadata: {},
+          uri: downloadURL,
+        }
+        updateMessage(roomId, messageId, updatedMessage);
+        // Handle successful upload and get the file URL
+      }
+    );
   };
 
   // Fetch messages from Firestore in real-time for a specific room
@@ -192,17 +279,17 @@ const ChatMessagePage = ({ params }) => {
               <div
                 className={cn("items-end", message.authorId == auth.currentUser.uid ? "" : "flex gap-5")}
               >
-                {!message.authorId == auth.currentUser.uid && (
+                {message.authorId != auth.currentUser.uid && (
                   <div className="flex items-center">
                     <Avatar>
                       <AvatarImage
-                        src={"/images/edit-product.png"}
+                        src={auth.currentUser.photoURL}
                         alt="@shadcn"
                         className="object-cover"
                       />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    <span>{message.name}</span>
+                    {/* <span>{message.name}</span> */}
                   </div>
                 )}
                 <div
@@ -219,7 +306,7 @@ const ChatMessagePage = ({ params }) => {
                       message.authorId == auth.currentUser.uid ? "text-background" : "text-foreground/95"
                     )}
                   >
-                    {message.text}
+                    <MessageItem message={message} />
                   </p>
                   <div className="flex gap-2 items-center justify-end mt-2">
                     <p
@@ -271,8 +358,15 @@ const ChatMessagePage = ({ params }) => {
             placeholder="Enter your message here"
           />
           <div className="flex gap-8 items-center">
-            <ClipIcon />
-            <FileIcon />
+            <label className="cursor-pointer">
+              <ClipIcon />
+              <input type="file" accept="*/*" className="hidden" onChange={handleFileSelect} />
+            </label>
+
+            <label className="cursor-pointer">
+              <FileIcon />
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+            </label>
 
             <Button
               onClick={handleSendMessage}

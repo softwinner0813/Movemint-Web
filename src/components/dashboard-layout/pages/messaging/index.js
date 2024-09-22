@@ -9,8 +9,9 @@ import { ChevronLeftIcon, ChevronRightIcon, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { auth } from "@/services/firebase";
-import { listenToRoomsForUser } from "@/services/firebaseChat";
+import { listenToRoomsForUser } from "@/services/firebaseRoom";
 import { useRouter } from "next/navigation";
+import { getUnreadMessageCount } from "@/services/firebaseRoom";
 
 const messages = [
   {
@@ -102,21 +103,25 @@ const messages = [
 const MessagingPage = () => {
   const [starredMessages, setStarredMessages] = useState(messages);
   // const [isLoading, setIsLoading] = useState(0);
-  // const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const router = useRouter();
   const userId = auth.currentUser.uid;
 
-  
-  useEffect (() => {
-    const unsubscribe = listenToRoomsForUser(userId, (roomsList) => {
+
+  useEffect(() => {
+    const unsubscribe = listenToRoomsForUser(userId, async (roomsList) => {
       // setRooms(roomsList); // Update state with real-time rooms
-      setStarredMessages(roomsList)
+      await roomsList.map(async (room) => {
+        const unreadMessageCount = await getUnreadMessageCount(room, userId);
+        room.unreadMessageCount = unreadMessageCount;
+      })
+      setRooms(roomsList);
       console.log(roomsList);
     });
 
     // Cleanup: Unsubscribe from the listener when the component unmounts
     return () => unsubscribe();
-  }, [userId]);
+  }, [rooms.length]);
 
   const handleMessageClick = (id) => {
     router.push(`/dashboard/messaging/${id}`);
@@ -185,15 +190,15 @@ const MessagingPage = () => {
             <div className="overflow-x-auto">
               <Table className="w-full min-w-[600px]">
                 <TableBody>
-                  {starredMessages.map((message) => (
+                  {rooms.map((room) => (
                     <TableRow
-                      key={message.id}
-                      className="border-b border-gray-600" 
-                      onClick={() => handleMessageClick(message.id)}
+                      key={room.id}
+                      className="border-b border-gray-600"
+                      onClick={() => handleMessageClick(room.id)}
                     >
                       <TableCell>
                         <Checkbox
-                          id={message.id}
+                          id={room.id}
                           iconClassName="text-background"
                           className="data-[state=checked]:bg-foreground rounded-sm h-5 w-5"
                         />
@@ -201,9 +206,9 @@ const MessagingPage = () => {
                       <TableCell>
                         <div
                           className="cursor-pointer mx-2"
-                          onClick={() => handleStarClick(message.id)}
+                          onClick={() => handleStarClick(room.id)}
                         >
-                          {message.starred ? (
+                          {room.starred ? (
                             <Star className="text-yellow-400" />
                           ) : (
                             <Star className="text-gray-400" />
@@ -211,32 +216,43 @@ const MessagingPage = () => {
                         </div>
                       </TableCell>
                       <TableCell className="flex items-center">
-                        <span className="text-white">{message.name}</span>
+                        <span className="text-white">{room.name}</span>
                       </TableCell>
                       <TableCell>
-                        {message.status && (
+                        {room.status && (
                           <span
-                            className={`px-2 py-1 rounded text-white text-xs ${
-                              message.status === "Accepted"
+                            className={`px-2 py-1 rounded text-white text-xs ${room.status === "Accepted"
                                 ? "bg-green-500"
-                                : message.status === "Read"
-                                ? "bg-yellow-500"
-                                : message.status === "New"
-                                ? "bg-purple-500"
-                                : message.status === "Rejected"
-                                ? "bg-red-500"
-                                : "bg-blue-500"
-                            }`}
+                                : room.status === "Read"
+                                  ? "bg-yellow-500"
+                                  : room.status === "New"
+                                    ? "bg-purple-500"
+                                    : room.status === "Rejected"
+                                      ? "bg-red-500"
+                                      : "bg-blue-500"
+                              }`}
                           >
-                            {message.status}
+                            {room.status}
                           </span>
                         )}
                       </TableCell>
                       <TableCell className="text-gray-400">
-                        Lorem ipsum dolor sit amet,
+                        {room.metadata.lastMessageText}
                       </TableCell>
                       <TableCell className="text-gray-400">
-                        {message.time}
+                        {room.metadata.lastMessageTime ? (new Date(
+                          room.metadata.lastMessageTime * 1000
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })) : "Just Now"}
+                      </TableCell>
+                      <TableCell className="text-gray-400">
+                        {parseInt(room.unreadMessageCount) > 0 && (
+                          <span className="px-2 py-1 bg-red-600 text-white text-xs rounded-full">
+                            {room.unreadMessageCount}
+                          </span>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -254,7 +270,7 @@ const MessagingPage = () => {
             <ChevronRightIcon />
           </button>
         </div>
-      </div>)
+      </div>
     </>
   );
 };
