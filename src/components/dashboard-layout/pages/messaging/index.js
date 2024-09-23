@@ -9,9 +9,8 @@ import { ChevronLeftIcon, ChevronRightIcon, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { auth } from "@/services/firebase";
-import { listenToRoomsForUser } from "@/services/firebaseRoom";
+import { listenToRoomsForUser, getUnreadMessageCount } from "@/services/firebaseRoom";
 import { useRouter } from "next/navigation";
-import { getUnreadMessageCount } from "@/services/firebaseRoom";
 
 const messages = [
   {
@@ -101,7 +100,7 @@ const messages = [
 ];
 
 const MessagingPage = () => {
-  const [starredMessages, setStarredMessages] = useState(messages);
+  // const [starredMessages, setStarredMessages] = useState(messages);
   // const [isLoading, setIsLoading] = useState(0);
   const [rooms, setRooms] = useState([]);
   const router = useRouter();

@@ -23,12 +23,11 @@ import { cn } from "@/lib/utils";
 import FileIcon from "@/components/icons/file-icon";
 import ClipIcon from "@/components/icons/clip-icon";
 import Sent from "@/components/icons/sent-icon";
-import { db, auth } from "@/services/firebase"; // Your Firebase config
+import { db, auth, storage } from "@/services/firebase"; // Your Firebase config
 import { sendMessage, updateMessage } from "@/services/firebaseMessage";
 // import { useRouter } from "next/navigation";
 import MessageItem from "@/components/dashboard-layout/pages/messaging/messageItem";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "@/services/firebase";
 import mime from 'mime-types';
 
 // Firebase Imports
@@ -55,7 +54,7 @@ const ChatMessagePage = ({ params }) => {
   // Initialize chat room (replace user IDs with real ones from auth context or similar)
 
   // Function to send message to Firestore in a specific room
-  const handleSendMessage = async (type) => {
+  const handleSendMessage = async () => {
     if (newMessage.trim() === "" || !roomId) return;
     const newMessageObject = {
       text: newMessage,

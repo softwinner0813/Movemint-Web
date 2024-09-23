@@ -1,5 +1,5 @@
 import { MESSAGE_TYPE_TEXT, MESSAGE_TYPE_IMAGE, MESSAGE_TYPE_FILE, MESSAGE_TYPE_INVOICE_CREATED, MESSAGE_TYPE_INVOICE_CANCELLED, MESSAGE_TYPE_INVOICE_PAID, MESSAGE_TYPE_WELCOME } from "@/constants/messages";
-import { WelcomeMessage, ImageMessage, FileMessage, InvoiceMessage, TextMessage, InvoiceMessagePaid, InvoiceMessageCancelled, InvoiceMessageCreated } from "./messages";
+import { WelcomeMessage, ImageMessage, FileMessage, TextMessage, InvoiceMessagePaid, InvoiceMessageCancelled, InvoiceMessageCreated } from "./messages";
 const MessageItem = ({ message }) => {
     const renderMessage = () => {
         if (message.metadata == null || message.metadata.type == null) {

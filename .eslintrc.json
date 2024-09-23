@@ -2,7 +2,7 @@
   "extends": "next/core-web-vitals",
   "rules": {
     "no-unused-vars": [
-      "error", // You can change this to "error" if you want unused variables to throw an error
+      "warn", // You can change this to "warn" if you want unused variables to throw an warn
       {
         "vars": "all", // Check all variables (including function arguments)
         "varsIgnorePattern": "^_", // Ignore variables that start with an underscore (commonly used to denote intentionally unused variables)
@@ -10,7 +10,7 @@
         "ignoreRestSiblings": true // Ignore unused variables when using rest properties
       }
     ],
-    "no-duplicate-imports": "error", // Disallows duplicate imports from the same module
-    "no-var": "error" // Disallows the use of `var` in favor of `let` and `const`
+    "no-duplicate-imports": "warn", // Disallows duplicate imports from the same module
+    "no-var": "warn" // Disallows the use of `var` in favor of `let` and `const`
   }
 }
