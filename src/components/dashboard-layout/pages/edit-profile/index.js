@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { CameraIcon, Minus, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { updateMover } from "@/services/api"; // Import backend service
+import { useUser } from "@/lib/userContext";
 
 const EditProfileForm = () => {
   const [selectedImage, setSelectedImage] = useState(""); // Avatar
@@ -30,23 +31,21 @@ const EditProfileForm = () => {
   const [businessYear, setBusinessYear] = useState("");
   const [bio, setBio] = useState("");
   const [isInternationalShipping, setIsInternationalShipping] = useState("Yes");
-  const [userData, setUserData] = useState([]);
+  const { userData, setUserData } = useUser();
   useEffect(() => {
-    const uData = JSON.parse(localStorage.getItem('user-data'));
     if (userData.length === 0) {
-      setUserData(uData);
-      setFirstName(uData.first_name ?? "");
-      setLastName(uData.last_name ?? "");
-      setEmail(uData.email ?? "");
-      setPhoneNumber(uData.phone_number ?? "");
-      setCompanyName(uData.mover.company_name ?? "");
-      setCompanyHeadquarters(uData.mover.company_headquarters ?? "");
-      setCompanyEmail(uData.mover.company_email ?? "");
-      setCompanyNumber(uData.mover.company_number ?? "");
-      setTaxNumber(uData.mover.tax_number ?? "");
-      setBio(uData.mover.bio ?? "");
-      setIsInternationalShipping(uData.mover.is_int_shipping ?? "Yes");
-      setBusinessYear(uData.mover.business_year ?? "");
+      setFirstName(userData.first_name ?? "");
+      setLastName(userData.last_name ?? "");
+      setEmail(userData.email ?? "");
+      setPhoneNumber(userData.phone_number ?? "");
+      setCompanyName(userData.mover.company_name ?? "");
+      setCompanyHeadquarters(userData.mover.company_headquarters ?? "");
+      setCompanyEmail(userData.mover.company_email ?? "");
+      setCompanyNumber(userData.mover.company_number ?? "");
+      setTaxNumber(userData.mover.tax_number ?? "");
+      setBio(userData.mover.bio ?? "");
+      setIsInternationalShipping(userData.mover.is_int_shipping ?? "Yes");
+      setBusinessYear(userData.mover.business_year ?? "");
     }
   }, [userData.length]);
 
@@ -116,7 +115,6 @@ const EditProfileForm = () => {
     // Call the backend to save the profile
     try {
       const response = await updateMover(userData.id, profileData); // Replace 1 with the actual user ID or identifier
-      localStorage.setItem('user-data', JSON.stringify(response.data));
       setUserData(response.data);
       alert("Profile updated successfully!");
     } catch (error) {

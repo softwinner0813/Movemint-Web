@@ -27,6 +27,7 @@ import useBreakpoint from "@/lib/useBreakpoint";
 import { CircleChevronDown, Menu, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getName } from "@/lib/utils";
 
 const userMenuOptions = [
   {
@@ -48,7 +49,7 @@ const DashboardHeader = ({ handleToggleSidebar, setIsModalOpenLogout, userData }
 
   useEffect(() => {
     if (userData) {
-      setUserName(userData.first_name + userData.last_name);
+      setUserName(getName(userData.first_name, userData.last_name));
       setAvatar(userData.avatar || "");
     }
   }, [userData]);

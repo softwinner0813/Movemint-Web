@@ -1,16 +1,36 @@
+"use client"
+
 import EditProjectDetails from "@/components/dashboard-layout/pages/project-details";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getProjectById } from "@/services/api";
 
 const page = ({ params }) => {
   const { id } = params;
-  console.log("page", id);
+  const [data, setData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const projectData = await getProjectById(id);
+        setData(projectData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
-    <div className="h-full flex flex-col gap-6">
-      <p className="text-3xl font-bold">Project Details</p>
-      <div className="w-full bg-background rounded-lg">
-        <EditProjectDetails id={id} />
-      </div>
-    </div>
+    <>
+      { ! isLoading && <div className="h-full flex flex-col gap-6">
+        <p className="text-3xl font-bold">Project Details</p>
+        <div className="w-full bg-background rounded-lg">
+          <EditProjectDetails data={data} />
+        </div>
+      </div>}
+    </>
   );
 };
 

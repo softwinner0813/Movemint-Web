@@ -7,21 +7,20 @@ import useBreakpoint from "@/lib/useBreakpoint";
 import React, { useLayoutEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import nProgress from "nprogress";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { usePathname, useRouter } from "next/navigation";
 import CommonModel from "@/components/dashboard-layout/components/common-model";
 import { auth } from '@/services/firebase'
 import { useUser } from '@/lib/userContext';
+import LoadingScreen from "@/components/ui/loadingScreen";
 
 const DashboardLayout = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenLogout, setIsModalOpenLogout] = useState(false);
-  const {userData, setUserData} = useUser();
+  const { isAuthenticated, userData } = useUser();
 
   const downMd = useBreakpoint("md");
   const pathname = usePathname();
@@ -36,14 +35,9 @@ const DashboardLayout = ({ children }) => {
       handleLoad();
     };
     const unsubscribe = auth.onIdTokenChanged((user) => {
-      if (!user) {
+      if ( ! isAuthenticated || ! user) {
         // Redirect to login page if no user is logged in
-        setUserData({});
-        localStorage.removeItem('user-data');
         router.push('/login');
-      } else {
-        setUserData(JSON.parse(localStorage.getItem('user-data')));
-        setIsAuthenticated(true);
       }
     });
 
@@ -56,7 +50,7 @@ const DashboardLayout = ({ children }) => {
       nProgress.done(),
         unsubscribe();
     };
-  }, [router]);
+  }, [router, isAuthenticated, userData]);
 
   const handleMouseEnter = () => {
     if (downMd) return;
@@ -94,23 +88,7 @@ const DashboardLayout = ({ children }) => {
   }, [downMd]);
 
   if (isLoading) {
-    return (
-      <div className="flex">
-        <div className="w-full">
-          <Skeleton className="h-16 w-full mb-20 rounded-none" />
-          <div className="px-4 w-full">
-            <div className="grid grid-cols-4 gap-4 w-full">
-              <Skeleton className="h-28 mb-5" />
-              <Skeleton className="h-28 mb-5" />
-              <Skeleton className="h-28 mb-5" />
-              <Skeleton className="h-28 mb-5" />
-            </div>
-            <Skeleton className=" h-40 w-full mb-5" />
-            <Skeleton className=" h-40 w-full mb-5" />
-          </div>
-        </div>
-      </div>
-    );
+    <LoadingScreen />
   }
 
   return (

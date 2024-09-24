@@ -134,26 +134,8 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
   },
 ];
 
-export default function DynamicTable() {
+export default function DynamicTable({ onServicesChange }) {
   const [data, setData] = useState([
-    {
-      id: 1,
-      service: "TRANSPORT",
-      description: "THIS IS A LOREM IPSUM DESCRIPTION.",
-      price: 5000.0,
-      qty: 1,
-      lineTotal: 5000.0,
-      isEditing: false,
-    },
-    {
-      id: 2,
-      service: "PACKING SERVICE",
-      description: "THIS IS A LOREM IPSUM DESCRIPTION.",
-      price: 1200.0,
-      qty: 2,
-      lineTotal: 2400.0,
-      isEditing: true,
-    },
   ]);
 
   const refs = useRef({});
@@ -176,6 +158,7 @@ export default function DynamicTable() {
         : item
     );
     setData(updatedData);
+    onServicesChange(updatedData);
   };
 
   const addNewRow = () => {

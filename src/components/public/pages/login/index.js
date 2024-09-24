@@ -18,15 +18,14 @@ import { createFirebaseUser } from "@/services/firebaseUser";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { setUserData } = useUser();
+  const { userData, setUserData, isAuthenticated, setIsAuthenticated } = useUser();
 
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged((user) => {
-      if (user) {
+      if (user && isAuthenticated) {
         // Redirect to login page if no user is logged in
         router.push('/onboarding');
       } else {
@@ -34,7 +33,7 @@ const LoginPage = () => {
       }
     });
     return () => unsubscribe();
-  }, [router]);
+  }, [router, isAuthenticated, userData]);
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
@@ -44,7 +43,8 @@ const LoginPage = () => {
       // Navigate to the onboarding page after login
       const signerEmail = userCredential.user.email;
       const response = await signinMover({ email: signerEmail });
-      localStorage.setItem('user-data', JSON.stringify(response.data));
+      setUserData(response.data)
+      setIsAuthenticated(true);
       await createFirebaseUser();
       router.push('/onboarding');
     } catch (error) {
@@ -66,8 +66,9 @@ const LoginPage = () => {
       const response = await signinMoverWithGoogle({ email: signerEmail, first_name, last_name, avatar, phone_number, google_id });
       if (response.result) {
         setUserData(response.data);
-        localStorage.setItem('user-data', JSON.stringify(response.data));
+        setIsAuthenticated(true);
         await createFirebaseUser();
+        router.push('/onboarding');
       }
     } catch (error) {
       alert("Google sign-in failed: " + error.message);

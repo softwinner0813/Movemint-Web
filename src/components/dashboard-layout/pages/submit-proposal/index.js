@@ -4,18 +4,112 @@ import DatePicker from "@/components/ui/date-picker";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DynamicTable from "./dynamic-table";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import { submitProposal } from "@/services/api";
+import { getName } from "@/lib/utils";
+import { useUser } from "@/lib/userContext";
 
-const SubmitProposal = ({ id }) => {
-  const [date, setDate] = useState();
+const SubmitProposal = ({ data }) => {
+  const [isAutoFill, setIsAutoFill] = useState(true);
+  const [isAutoCalculation, setIsAutoCalculation] = useState(true);
+  const { userData } = useUser();
+  const [formData, setFormData] = useState({
+    mover_id: userData.id,
+    project_id: "",
+    customer_name: "",
+    customer_address: "",
+    proposal_date: "",
+    proposal_expire_date: "",
+    not_expire: false,
+    company_name: "",
+    company_address: "",
+    company_email: "",
+    company_phone: "",
+    tax: "",
+    message: "",
+    payment_options: {
+      enable_credit_debit: false,
+      enable_ach: false,
+      accept_all_payments: false,
+    },
+    deposit: 0,
+    services: [],
+  });
+
   const pathName = usePathname();
-  console.log("proposal", id);
-
-  // Determine if the current path is for editing a proposal
   const isEditProposal = pathName.includes("edit-proposal");
+  useEffect(() => {
+    console.log(userData);
+    if (data) {
+      setFormData((prevData) => ({
+        ...prevData,
+        project_id: data.id,
+        customer_name: getName(data.first_name, data.last_name),
+        customer_address: data.from,
+        company_name: userData.mover.company_name,
+        company_email: userData.mover.company_email,
+        company_phone: userData.mover.company_number,
+        company_address: userData.mover.location,
+      }));
+    }
+  }, [data]);
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value, role } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleNotExpire = () => {
+    setFormData((prev) => ({
+      ...prev,
+      not_expire: !formData.not_expire,
+    }));
+  }
+
+  const handleAutoFill = () => {
+    setIsAutoFill(!isAutoFill);
+  }
+
+  const handleAutoCalculate = () => {
+    setIsAutoCalculation(!isAutoCalculation);
+  }
+
+  const handlePaymentOptionChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      payment_options: {
+        ...prev.payment_options,
+        [id]: value == 'on',
+      },
+    }));
+  };
+
+  // Handle the dynamic table changes for services
+  const handleServicesChange = (updatedServices) => {
+    setFormData((prev) => ({
+      ...prev,
+      services: updatedServices,
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    try {
+      const response = await submitProposal(formData);
+      console.log("Proposal submitted successfully:", response.data);
+      // Handle success, show a notification or redirect
+    } catch (error) {
+      console.error("Error submitting proposal:", error.response.data.message);
+      // Handle error, show notification to the user
+    }
+  };
 
   return (
     <div className="p-4 md:p-8">
@@ -24,34 +118,49 @@ const SubmitProposal = ({ id }) => {
           <InputWithLabel
             labelClassName="text-lg"
             id="customerName"
+            name="customer_name"
             type="text"
             label="Customer Name"
+            value={formData.customer_name}
+            disabled
           />
           <InputWithLabel
             labelClassName="text-lg"
             id="customerAddress"
+            name="customer_address"
             type="text"
             label="Customer Address"
+            value={formData.customer_address}
+            disabled
           />
         </div>
         <div className="grid md:grid-cols-3 gap-x-7 max-w-4xl">
           <DatePicker
             labelClassName="text-lg"
-            date={date}
-            setDate={setDate}
+            date={formData.proposal_date}
+            setDate={(date) => setFormData((prev) => ({ ...prev, proposal_date: date }))}
             id={"proposalDate"}
             label={"Proposal Date"}
           />
-          <DatePicker
-            labelClassName="text-lg"
-            date={date}
-            setDate={setDate}
-            id={"proposalDate"}
-            label={"Proposal Date"}
-          />
+          <div
+            className={`${ ! formData.not_expire ? "visible opacity-100" : "invisible opacity-0"
+              } transition-opacity duration-300`}>
+            <DatePicker
+              labelClassName="text-lg"
+              date={formData.proposal_expire_date}
+              setDate={(date) => setFormData((prev) => ({ ...prev, proposal_expire_date: date }))}
+              id={"proposalExpireDate"}
+              label={"Proposal Expire Date"}
+            />
+          </div>
           <div className="flex items-center">
             <div className="flex gap-2 items-center md:translate-y-3">
-              <Checkbox id="doesNotExpire" />
+              <Checkbox
+                id="doesNotExpire"
+                name="not_expire"
+                aria-checked={formData.not_expire}
+                onClick={handleNotExpire}
+              />
               <Label htmlFor={"doesNotExpire"} className="text-xs">
                 Does Not Expire
               </Label>
@@ -62,7 +171,7 @@ const SubmitProposal = ({ id }) => {
         <div className="flex flex-col md:flex-row gap-3">
           <h4 className="text-2xl font-bold text-start">Company Information</h4>
           <div className="flex gap-2 items-center">
-            <Checkbox id="autofillInfo" />
+            <Checkbox id="autofillInfo" aria-checked={isAutoFill} defaultChecked={isAutoFill} onClick={handleAutoFill}/>
             <Label htmlFor={"autofillInfo"} className="text-xs">
               Autofill Company Information
             </Label>
@@ -70,63 +179,57 @@ const SubmitProposal = ({ id }) => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-7 max-w-4xl">
-          <InputWithLabel id="companyName" type="text" label="Company Name" />
+          <InputWithLabel
+            id="companyName"
+            name="company_name"
+            type="text"
+            label="Company Name"
+            value={formData.company_name}
+            onChange={handleChange}
+            disabled={isAutoFill}
+          />
           <InputWithLabel
             id="companyAddress"
+            name="company_address"
             type="text"
             label="Company Address"
+            value={formData.company_address}
+            onChange={handleChange}
+            disabled={isAutoFill}
           />
           <InputWithLabel
             id="companyEmail"
+            name="company_email"
             type="email"
             label="Company Email"
+            value={formData.company_email}
+            onChange={handleChange}
+            disabled={isAutoFill}
           />
           <InputWithLabel
             id="companyPhone"
+            name="company_phone"
             type="number"
             label="Company Phone Number"
-          />
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-7 max-w-4xl">
-          <DatePicker
-            labelClassName="text-lg"
-            date={date}
-            setDate={setDate}
-            id={"proposedPackDate"}
-            label={"Proposed Pack Date"}
-          />
-          <DatePicker
-            labelClassName="text-lg"
-            date={date}
-            setDate={setDate}
-            id={"proposedMoveDate"}
-            label={"Proposed Move Date"}
-          />
-          <DatePicker
-            labelClassName="text-lg"
-            date={date}
-            setDate={setDate}
-            id={"deliveryFrom"}
-            label={"Delivery From"}
-          />
-          <DatePicker
-            labelClassName="text-lg"
-            date={date}
-            setDate={setDate}
-            id={"deliveryTo"}
-            label={"Delivery To"}
+            value={formData.company_phone}
+            onChange={handleChange}
+            disabled={isAutoFill}
           />
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-7 max-w-lg">
           <InputWithLabel
             id="taxCalculation"
+            name="tax"
             type="text"
             label="Tax Calculation"
+            value={formData.tax}
+            onChange={handleChange}
+            disabled={isAutoCalculation}
           />
           <div className="flex items-center">
             <div className="flex gap-2 items-center md:translate-y-2">
-              <Checkbox id="autoCalculateTax" />
+            <Checkbox aria-checked={isAutoCalculation} defaultChecked={isAutoCalculation} onClick={handleAutoCalculate}/>
               <Label htmlFor={"autoCalculateTax"} className="text-xs">
                 AUTO CALCULATE TAX
               </Label>
@@ -134,7 +237,8 @@ const SubmitProposal = ({ id }) => {
           </div>
         </div>
 
-        <DynamicTable />
+        {/* Services section (Dynamic Table) */}
+        <DynamicTable onServicesChange={handleServicesChange} />
 
         <div className="grid gap-1.5">
           <Label htmlFor={"personalMessage"} className="text-lg">
@@ -142,27 +246,42 @@ const SubmitProposal = ({ id }) => {
           </Label>
           <Textarea
             id="personalMessage"
+            name="message"
             placeholder="Type your message here."
+            value={formData.message}
+            onChange={handleChange}
           />
         </div>
 
         <h4 className="text-2xl font-bold text-start">Payment Options</h4>
         <div className="flex flex-wrap gap-x-7 gap-y-4 max-w-5xl">
           <div className="flex gap-2 items-center">
-            <Checkbox id="creditAndDebit" />
-            <Label htmlFor={"creditAndDebit"} className="text-xs">
+            <Checkbox
+              id="enable_credit_debit"
+              aria-checked={formData.payment_options.enable_credit_debit}
+              onClick={handlePaymentOptionChange}
+            />
+            <Label htmlFor={"enable_credit_debit"} className="text-xs">
               ENABLE CREDIT AND DEBIT CARD PAYMENTS
             </Label>
           </div>
           <div className="flex gap-2 items-center">
-            <Checkbox id="enableACHPayments" />
-            <Label htmlFor={"enableACHPayments"} className="text-xs">
+            <Checkbox
+              id="enable_ach"
+              aria-checked={formData.payment_options.enable_ach}
+              onClick={handlePaymentOptionChange}
+            />
+            <Label htmlFor={"enable_ach"} className="text-xs">
               ENABLE ACH PAYMENTS
             </Label>
           </div>
           <div className="flex gap-2 items-center">
-            <Checkbox id="acceptAllFormsOfPayments" />
-            <Label htmlFor={"acceptAllFormsOfPayments"} className="text-xs">
+            <Checkbox
+              id="accept_all_payments"
+              aria-checked={formData.payment_options.accept_all_payments}
+              onClick={handlePaymentOptionChange}
+            />
+            <Label htmlFor={"accept_all_payments"} className="text-xs">
               ACCEPT ALL FORMS OF PAYMENTS
             </Label>
           </div>
@@ -171,10 +290,13 @@ const SubmitProposal = ({ id }) => {
         <div className="grid md:grid-cols-12 gap-x-7 items-center">
           <div className="col-span-12 md:col-span-5">
             <InputWithLabel
-              id="taxCalculation"
-              type="text"
+              id="deposit"
+              name="deposit"
+              type="number"
               label="Deposit (Optional)"
               labelClassName="text-lg"
+              value={formData.deposit}
+              onChange={handleChange}
             />
           </div>
           <p className="col-span-12 md:col-span-7 text-xs md:mt-4 md:translate-y-1">
@@ -184,26 +306,13 @@ const SubmitProposal = ({ id }) => {
 
         <div className="flex flex-col md:flex-row items-center justify-end gap-4">
           <Button
-            className="md:w-auto text-background bg-foreground rounded-md space-x-2"
-            style={{
-              backgroundImage: "none",
-            }}
+            className="md:w-auto text-background bg-foreground rounded-md"
+            style={{ backgroundImage: "none" }}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4 2.66667C4 1.19391 5.19391 0 6.66667 0H10.6667C12.1394 0 13.3333 1.19391 13.3333 2.66667V12H12V2.66667C12 1.93029 11.403 1.33333 10.6667 1.33333H6.66667C5.93029 1.33333 5.33333 1.93029 5.33333 2.66667V13.6667C5.33333 14.219 5.78105 14.6667 6.33333 14.6667H8.33333C8.88562 14.6667 9.33333 14.219 9.33333 13.6667V4.66667C9.33333 4.29848 9.03486 4 8.66667 4C8.29848 4 8 4.29848 8 4.66667V12H6.66667V4C6.66667 3.26362 7.26362 2.66667 8 2.66667H9.33333C10.0697 2.66667 10.6667 3.26362 10.6667 4V14C10.6667 15.1046 9.77124 16 8.66667 16H6C4.89543 16 4 15.1046 4 14V2.66667Z"
-                fill="black"
-              />
-            </svg>
             Attach PDF Proposal
           </Button>
-          <Button className="md:w-auto  rounded-md">
+          <Button className="md:w-auto  rounded-md"
+            onClick={handleSubmit}>
             {isEditProposal ? "Edit" : "Submit"} Proposal
           </Button>
         </div>

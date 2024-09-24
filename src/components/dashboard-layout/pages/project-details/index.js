@@ -11,16 +11,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MessageSquareMore } from "lucide-react";
+import { formatDateTime } from "@/lib/chatDate";
 
-const EditProjectDetails = ({ id }) => {
+const EditProjectDetails = ({ data }) => {
   const router = useRouter();
 
   const handleProposalSubmit = () => {
-    router.push(`/dashboard/projects/${id}/submit-proposal`);
+    router.push(`/dashboard/projects/${data.id}/submit-proposal`);
   };
 
   const handleProposalEdit = () => {
-    router.push(`/dashboard/projects/${id}/edit-proposal`);
+    router.push(`/dashboard/projects/${data.id}/edit-proposal`);
   };
 
   const handleMessage = () => {
@@ -51,14 +52,14 @@ const EditProjectDetails = ({ id }) => {
         <div className="flex flex-col md:flex-row justify-between md:items-center mt-2 gap-5">
           <div className="flex gap-3 items-center justify-start cursor-pointer">
             <Image
-              src={EditProductInformation}
+              src={data.avatar ?? EditProductInformation}
               alt="Edit Profile"
               className="w-12 h-12 md:w-16 md:h-16"
             />
             <div className="flex flex-col">
-              <span className="text-sm font-bold">John Doe</span>
+              <span className="text-sm font-bold">{data.name}</span>
               <span className="text-sm font-normal">
-                Location: Los Angeles, California
+                Location: {data.from}
               </span>
             </div>
             <Button
@@ -71,7 +72,7 @@ const EditProjectDetails = ({ id }) => {
           </div>
           <div className="flex flex-col mt-4 md:mt-0">
             <span className="text-lg md:text-2xl font-bold">
-              Requested Date: 02/22/2022
+              Requested Date: {data.move_date}
             </span>
             <span
               className="text-base md:text-lg font-normal"
@@ -90,7 +91,7 @@ const EditProjectDetails = ({ id }) => {
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Origin Information</h3>
             <p className="text-sm font-normal">
-              123 Happy Street Los Angeles, CA 90292 United States
+              {data.from}
             </p>
           </div>
           <div className="flex flex-col gap-3">
@@ -102,7 +103,7 @@ const EditProjectDetails = ({ id }) => {
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Destination</h3>
             <p className="text-sm font-normal">
-              123 Happy Street Los Angeles, CA 90292 United States
+              {data.destination}
             </p>
           </div>
         </div>
@@ -111,17 +112,17 @@ const EditProjectDetails = ({ id }) => {
           <h3 className="text-lg font-bold">Move Details</h3>
           <div className="flex flex-col gap-[6px]">
             <h3 className="text-sm font-bold border-b border-white w-max">
-              Home Details (House)
+              Home Details ({data.residence_type})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[850px]">
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  Bedrooms -<span className="font-bold"> 5 beds</span>{" "}
+                  Bedrooms -<span className="font-bold"> {data.bedrooms} beds</span>{" "}
                 </h3>
               </div>
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  SQFT -<span className="font-bold"> 2,093</span>{" "}
+                  SQFT -<span className="font-bold"> {data.sqft}</span>{" "}
                 </h3>
               </div>
               <div className="flex flex-col gap-3">
@@ -139,7 +140,7 @@ const EditProjectDetails = ({ id }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[850px]">
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  Vehicle Transport -<span className="font-bold"> Yes</span>{" "}
+                  Vehicle Transport -<span className="font-bold"> {data.vehicles}</span>{" "}
                 </h3>
               </div>
               <div className="flex flex-col gap-3">
@@ -168,7 +169,7 @@ const EditProjectDetails = ({ id }) => {
               <div className="col-span-8 flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
                   Length of Storage -
-                  <span className="font-bold"> 02/22/2022 - 02/22/2022</span>{" "}
+                  <span className="font-bold"> {formatDateTime(data.storage_start)} - {formatDateTime(data.storage_end)}</span>{" "}
                 </h3>
               </div>
             </div>
@@ -199,13 +200,7 @@ const EditProjectDetails = ({ id }) => {
             </h3>
             <div className="space-y-3">
               <p className="text-sm font-normal">
-                The point of using Lorem Ipsum is that it has a more-or-less
-                normal distribution of letters, as opposed to using
-                &apos;Content here, content here&apos;, making it look like
-                readable English. Many desktop publishing packages and web page
-                editors now use Lorem Ipsum as their default. Contrary to
-                popular belief, Lorem Ipsum is not simply random text &mdash; it
-                is the model text for your company.
+                {data.note}
               </p>
             </div>
           </div>
