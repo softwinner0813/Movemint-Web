@@ -11,14 +11,20 @@ export default function ProgressBar() {
   const pathname = usePathname();
 
   useEffect(() => {
+    const handleLoad = () => {};
     const handleStart = () => nprogress.start();
-    const handleStop = () => nprogress.done();
+    const handleStop = () => {
+      nprogress.done();
+      handleLoad();
+    };
+
+    // Cleanup the listener on unmount
 
     handleStart();
     handleStop();
 
     return () => {
-      nprogress.done();
+      nprogress.done()
     };
   }, [pathname]);
 

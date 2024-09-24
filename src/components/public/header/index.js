@@ -5,10 +5,14 @@ import Link from "next/link";
 import Logo from "../../../../public/images/logo/logo.png";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/lib/userContext";
+import { useRouter } from "next/navigation";
 
 const PublicHeader = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isAuthenticated, setIsAuthenticated } = useUser();
+  const router = useRouter();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -28,14 +32,18 @@ const PublicHeader = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [isAuthenticated]);
+
+  const handleSignOut = () => {
+    setIsAuthenticated(false);
+    router.push("/login");
+  }
 
   return (
     <>
       <header
-        className={`container transition duration-300 ${
-          isScrolled ? "backdrop-blur-md" : "bg-transparent"
-        }`}
+        className={`container transition duration-300 ${isScrolled ? "backdrop-blur-md" : "bg-transparent"
+          }`}
       >
         <div className="mx-auto flex items-center justify-between py-4 md:py-6 lg:py-6 xl:py-8 gap-4">
           <Link href="/" className=" transition-colors">
@@ -68,26 +76,42 @@ const PublicHeader = () => {
             </Link>
           </nav>
           <div className="hidden lg:flex space-x-4">
-            <Link href="/signup">
-              <Button
-                variant="outline"
-                type="button"
-                size="lg"
-                className="rounded-md"
-              >
-                Sign up
-              </Button>
-            </Link>
-            <Link href="/login">
+            {/* When not authenticated, show both "Sign Up" and "Login" */}
+            {!isAuthenticated ? (
+              <>
+                <Link href="/signup">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    size="lg"
+                    className="rounded-md"
+                  >
+                    Sign up
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button
+                    variant="destructive"
+                    type="button"
+                    className="shadow-[0_4px_4px_0_#00000040] rounded-md"
+                    size="lg"
+                  >
+                    Login
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              // When authenticated, show "Sign Out" button in the position of "Login"
               <Button
                 variant="destructive"
                 type="button"
                 className="shadow-[0_4px_4px_0_#00000040] rounded-md"
                 size="lg"
+                onClick={handleSignOut}
               >
-                Login
+                Sign Out
               </Button>
-            </Link>
+            )}
           </div>
 
           <div className="lg:hidden">
@@ -100,9 +124,8 @@ const PublicHeader = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed z-[9999] top-0 left-0 h-full w-64 bg-black text-white transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out z-50`}
+        className={`fixed z-[9999] top-0 left-0 h-full w-64 bg-black text-white transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 ease-in-out z-50`}
       >
         <div className="p-4 flex items-center justify-between">
           <span className="text-xl font-semibold">Menu</span>

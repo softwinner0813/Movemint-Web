@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { signupMover } from '@/services/api';
 import { auth, createUserWithEmailAndPassword } from "@/services/firebase"; // Adjust the import as per your project structure
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/userContext";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -34,12 +35,12 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const { isAuthenticated, setIsAuthenticated, setUserData } = useUser();
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged((user) => {
-      if (user) {
+      if (user && isAuthenticated) {
         // Redirect to login page if no user is logged in
         router.push('/onboarding');
       } else {
@@ -47,7 +48,7 @@ const Signup = () => {
       }
     });
     return () => unsubscribe();
-  }, [router]);
+  }, [router, isAuthenticated, userData]);
 
 // Handle form input changes
 const handleChange = (e) => {
@@ -119,6 +120,8 @@ const sendDataToBackend = async (user) => {
 
     if (response.data.result) {
       alert("Signup successful! Redirecting...");
+      setUserData(response.data.data);
+      setIsAuthenticated(true);
       router.push("/onboarding");
     } else {
       alert(response.data.message || "Signup failed");

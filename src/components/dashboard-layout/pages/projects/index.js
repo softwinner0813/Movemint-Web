@@ -3,6 +3,10 @@ import CommonDataTable from "@/components/ui/common-data-table";
 import { cn } from "@/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getProjects } from "@/services/api";
+import { chatDate } from '@/lib/chatDate'
+import { getName } from "@/lib/utils";
 
 const payments = [
   {
@@ -89,15 +93,15 @@ const columns = [
     header: "NAME",
   },
   {
-    accessorKey: "originAddress",
+    accessorKey: "from",
     header: "ORIGIN ADDRESS",
   },
   {
-    accessorKey: "datePosted",
+    accessorKey: "date",
     header: "DATE POSTED",
   },
   {
-    accessorKey: "type",
+    accessorKey: "residence_type",
     header: "TYPE",
   },
   {
@@ -112,16 +116,16 @@ const columns = [
             value.includes("accepted")
               ? "bg-success/20 text-success"
               : value.includes("rejected")
-              ? "bg-danger-100/20 text-danger-100"
-              : value.includes("new")
-              ? "bg-purple/20 text-purple"
-              : value.includes("completed")
-              ? "bg-success/20 text-success"
-              : value.includes("sent")
-              ? "bg-orange/20 text-orange"
-              : value.includes("inTransit")
-              ? "bg-purple/20 text-purple"
-              : "bg-danger-100/20 text-danger-100"
+                ? "bg-danger-100/20 text-danger-100"
+                : value.includes("new")
+                  ? "bg-purple/20 text-purple"
+                  : value.includes("completed")
+                    ? "bg-success/20 text-success"
+                    : value.includes("sent")
+                      ? "bg-orange/20 text-orange"
+                      : value.includes("inTransit")
+                        ? "bg-purple/20 text-purple"
+                        : "bg-danger-100/20 text-danger-100"
           )}
         >
           {row.getValue("status")}
@@ -149,6 +153,24 @@ const proposalStatusValue = [
 
 const Project = () => {
   const router = useRouter();
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const projectData = await getProjects();
+        projectData.map((item) => {
+          item.name = getName(item.first_name, item.last_name);
+          item.date = chatDate(item.updated_at);
+        });
+        setData(projectData);
+      } catch (error) {
+        console.error("Error fetching project data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const rowClickHandler = (row) => {
     router.push(`/dashboard/projects/${row.original.id}`);
@@ -158,7 +180,7 @@ const Project = () => {
     <>
       <CommonDataTable
         columns={columns}
-        data={payments}
+        data={data}
         moveTypeValue={moveTypeValue}
         proposalStatusValue={proposalStatusValue}
         rowClickHandler={rowClickHandler}

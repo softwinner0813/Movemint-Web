@@ -100,7 +100,7 @@ const messages = [
 ];
 
 const MessagingPage = () => {
-  // const [starredMessages, setStarredMessages] = useState(messages);
+  const [starredMessages, setStarredMessages] = useState(messages);
   // const [isLoading, setIsLoading] = useState(0);
   const [rooms, setRooms] = useState([]);
   const router = useRouter();
