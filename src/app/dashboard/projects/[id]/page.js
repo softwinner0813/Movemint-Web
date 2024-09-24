@@ -4,7 +4,7 @@ import EditProjectDetails from "@/components/dashboard-layout/pages/project-deta
 import React, { useEffect, useState } from "react";
 import { getProjectById } from "@/services/api";
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const { id } = params;
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -34,4 +34,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;
