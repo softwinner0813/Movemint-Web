@@ -48,7 +48,7 @@ const Signup = () => {
       }
     });
     return () => unsubscribe();
-  }, [router, isAuthenticated, userData]);
+  }, [router, isAuthenticated]);
 
 // Handle form input changes
 const handleChange = (e) => {
