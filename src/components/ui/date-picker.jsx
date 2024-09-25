@@ -8,6 +8,7 @@ import { Calendar } from "./calendar";
 import { cn } from "@/lib/utils";
 
 const DatePicker = ({ id, label, date, setDate, labelClassName }) => {
+  console.log(date);
   return (
     <div className="grid w-full items-center gap-1.5">
       <Label htmlFor={id} className={cn("font-bold", labelClassName)}>

@@ -10,6 +10,7 @@ export const getProjects = async () => {
 
 export const getProjectById = async (id) => {
     const response = await axiosInstance.get(`/project/${id}`);
+    console.log(response);
     if (response.data.result)
         return response.data.data;
     else

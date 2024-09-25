@@ -28,6 +28,7 @@ import { CircleChevronDown, Menu, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getName } from "@/lib/utils";
+import { useUser } from "@/lib/userContext";
 
 const userMenuOptions = [
   {
@@ -41,11 +42,12 @@ const userMenuOptions = [
   },
 ];
 
-const DashboardHeader = ({ handleToggleSidebar, setIsModalOpenLogout, userData }) => {
+const DashboardHeader = ({ handleToggleSidebar, setIsModalOpenLogout }) => {
   const [userName, setUserName] = useState("");
   const [avatar, setAvatar] = useState(null); // Initially null to prevent incorrect rendering
   const downMd = useBreakpoint("md");
   const router = useRouter();
+  const { userData } = useUser();
 
   useEffect(() => {
     if (userData) {

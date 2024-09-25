@@ -115,7 +115,6 @@ const MessagingPage = () => {
         room.unreadMessageCount = unreadMessageCount;
       })
       setRooms(roomsList);
-      console.log(roomsList);
     });
 
     // Cleanup: Unsubscribe from the listener when the component unmounts

@@ -8,7 +8,7 @@ const HomePage = () => {
         <div className="w-[638px] h-[661px] bg-primary blur-[200px] absolute top-[80px] -left-[55%] 4xl:-left-[25%] hidden lg:block"></div>
 
         <div className={` container max-w-[1242px] w-full`}>
-          <h1 className="text-white font-bold my-6 sm:m-0 lg:text-7xl lg:leading-[75px] text-4xl leading-[41px]">
+          <h1 className="text-white font-bold my-6 sm:m-0 lg:text-7xl lg:leading-[75px] text-4xl leading-[41px] text-center">
             Moving People and Making The World A Smaller Place.
           </h1>
           <p className={`mt-[15px] mb-6 text-white font-medium text-[27px]`}>
