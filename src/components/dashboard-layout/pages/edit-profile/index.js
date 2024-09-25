@@ -67,8 +67,8 @@ const EditProfileForm = () => {
     setBio(userData?.mover?.bio || "");
     setIsInternationalShipping(userData?.mover?.is_int_shipping || "Yes");
     setBusinessYear(userData?.mover?.business_year || "");
-    setAvatar(userData.avatar ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : "");
-    setBanner(userData.mover.banner_img ? process.env.NEXT_PUBLIC_BASE_URL + userData.mover.banner_img : "");
+    setAvatar(userData.avatar ? userData.avatar[0] == "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : userData.avatar : "");
+    setBanner(userData.mover.banner_img ? userData.mover.banner_img[0] == "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.mover.banner_img : userData.mover.banner_img : "");
   }, [userData.length]);
 
   // Add a new location

@@ -6,7 +6,7 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ['localhost', 'movemint.io'], // Add the allowed external image domains here
+    domains: ['localhost', 'movemint.io', 'lh3.googleusercontent.com'], // Add the allowed external image domains here
   },
 };
 
