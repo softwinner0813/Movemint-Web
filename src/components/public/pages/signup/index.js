@@ -13,6 +13,7 @@ import { auth, createUserWithEmailAndPassword } from "@/services/firebase"; // A
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -39,6 +40,7 @@ const Signup = () => {
     isIntShipping: "both",
     bio: "",
     password: "",
+    recaptchaToken: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -46,6 +48,10 @@ const Signup = () => {
   const { isAuthenticated, setIsAuthenticated, setUserData } = useUser();
   const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
+  const [verified, setVerified] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -89,11 +95,38 @@ const Signup = () => {
 
       // After Firebase sign-up, send the user data to the backend
       await sendDataToBackend(user);
-    } catch (err) {
+    } catch (error) {
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRecaptcha = async () => {
+    setIsChecking(true);
+
+    if (!executeRecaptcha) {
+      console.log("reCAPTCHA is not available");
+      setIsChecking(false);
+      return;
+    }
+
+    try {
+      // Execute reCAPTCHA and get token
+      const recaptchaToken = await executeRecaptcha("verify_action"); // Use a custom action name
+      console.log("reCAPTCHA Token:", recaptchaToken);
+
+      // You can send the token to your backend for verification here (optional)
+
+      setVerified(true); // Mark the checkbox as verified
+
+      setFormData({ ...formData, recaptchaToken });
+    } catch (error) {
+      console.error("Error executing reCAPTCHA:", error);
+      setVerified(false); // Mark as unverified on error
+    }
+
+    setIsChecking(false); // Stop loading after reCAPTCHA is done
   };
 
   // Send form data and Firebase user ID to the backend
@@ -113,6 +146,7 @@ const Signup = () => {
       businessYear,
       isIntShipping,
       bio,
+      recaptchaToken
     } = formData;
 
     const dataToSend = {
@@ -130,6 +164,7 @@ const Signup = () => {
       business_year: businessYear,
       is_int_shipping: isIntShipping,
       bio,
+      recaptchaToken
     };
 
     try {
@@ -143,8 +178,8 @@ const Signup = () => {
       } else {
         openNotificationWithIcon(NotificationTypes.ERROR, "Error", response.data.message);
       }
-    } catch (err) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", err.message);
+    } catch (error) {
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
     }
   };
 
@@ -379,25 +414,26 @@ const Signup = () => {
           <div className="mb-6 max-w-[430px]">
             <div className="bg-foreground rounded-md text-center flex justify-between">
               <div className="flex items-center space-x-2 p-6 ">
+                {/* Checkbox for triggering reCAPTCHA */}
                 <Checkbox
                   id="verify"
                   iconClassName="h-6 w-6"
                   className="!border-gray h-12 w-12 rounded-lg"
+                  onClick={handleRecaptcha} // Handle reCAPTCHA on click
+                  disabled={isChecking || verified} // Disable checkbox during loading or after verified
+                  checked={verified} // Checkbox is checked when reCAPTCHA is successful
                 />
                 <label
                   htmlFor="verify"
-                  className="!text-black text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className=" !ml-5 !text-black text-lg font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Click to Verify
+                  {isChecking ? "Verifying..." : verified ? "Verified" : "Click to Verify"}
                 </label>
               </div>
+
+              {/* Placeholder image for reCAPTCHA */}
               <div className="p-6 bg-gray-dark">
-                <Image
-                  src={CaptchaImg}
-                  alt="recaptcha"
-                  height={64}
-                  width={64}
-                />
+                <Image src={CaptchaImg} alt="recaptcha" height={64} width={64} />
               </div>
             </div>
           </div>

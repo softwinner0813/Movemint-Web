@@ -7,6 +7,7 @@ import ProgressBar from "@/components/dashboard-layout/components/progress-bar";
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { UserProvider } from '@/lib/userContext';
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -24,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <title>Move Mint</title>
+      <title>Movemint</title>
       <body
         className={cn(
           "min-h-screen font-quicksand antialiased",
@@ -32,11 +33,15 @@ export default function RootLayout({ children }) {
           poppins.variable
         )}
       >
-        <UserProvider>
-          <ProgressBar />
-          {children}
-        </UserProvider>
+        <GoogleReCaptchaProvider
+          reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+        >
+          <UserProvider>
+            <ProgressBar />
+            {children}
+          </UserProvider>
+        </GoogleReCaptchaProvider>
       </body>
-    </html>
+    </html >
   );
 }

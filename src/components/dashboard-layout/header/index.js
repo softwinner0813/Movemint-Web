@@ -52,7 +52,7 @@ const DashboardHeader = ({ handleToggleSidebar, setIsModalOpenLogout }) => {
   useEffect(() => {
     if ( ! userData.isEmpty) {
       setUserName(getName(userData.first_name, userData.last_name));
-      setAvatar(userData.avatar ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : "");
+      setAvatar(userData.avatar ? userData.avatar[0] == "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : userData.avatar : "");
     }
   }, [userData.length]);
 
