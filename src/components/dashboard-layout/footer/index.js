@@ -49,8 +49,8 @@ const contactLinks = [
 ];
 
 const moreLinks = [
-  { href: "#", label: "Terms" },
-  { href: "#", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy Policy" },
   { href: "#", label: "Refund Policy" },
 ];
 
