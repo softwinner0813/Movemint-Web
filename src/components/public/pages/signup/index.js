@@ -5,15 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Image from "next/image";
-import CaptchaImg from "../../../../../public/images/recaptcha-logo.png";
 import { Label } from "@/components/ui/label";
 import { signupMover } from '@/services/api';
 import { auth, createUserWithEmailAndPassword } from "@/services/firebase"; // Adjust the import as per your project structure
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import Recaptcha from "./recaptcha";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -48,10 +46,6 @@ const Signup = () => {
   const { isAuthenticated, setIsAuthenticated, setUserData } = useUser();
   const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
-  const [verified, setVerified] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -80,12 +74,20 @@ const Signup = () => {
     setFormData({ ...formData, [id]: value });
   };
 
+  const onVerify = (token) => {
+    setFormData({ ...formData, recaptchaToken: token });
+  }
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+    if (!formData.recaptchaToken) {
+      openNotificationWithIcon(NotificationTypes.WARNING, "Warning", "Please complete the reCAPTCHA.");
+      setLoading(false);
+      return;
+    }
     try {
       const { email, password } = formData;
 
@@ -100,33 +102,6 @@ const Signup = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRecaptcha = async () => {
-    setIsChecking(true);
-
-    if (!executeRecaptcha) {
-      console.log("reCAPTCHA is not available");
-      setIsChecking(false);
-      return;
-    }
-
-    try {
-      // Execute reCAPTCHA and get token
-      const recaptchaToken = await executeRecaptcha("verify_action"); // Use a custom action name
-      console.log("reCAPTCHA Token:", recaptchaToken);
-
-      // You can send the token to your backend for verification here (optional)
-
-      setVerified(true); // Mark the checkbox as verified
-
-      setFormData({ ...formData, recaptchaToken });
-    } catch (error) {
-      console.error("Error executing reCAPTCHA:", error);
-      setVerified(false); // Mark as unverified on error
-    }
-
-    setIsChecking(false); // Stop loading after reCAPTCHA is done
   };
 
   // Send form data and Firebase user ID to the backend
@@ -259,7 +234,7 @@ const Signup = () => {
             <RadioGroup
               defaultValue="both"
               onValueChange={(value) => setFormData({ ...formData, isIntShipping: value })}
-              className="flex items-center"
+              className="flex items-center mb-5"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="interstate" id="interstate" />
@@ -411,32 +386,7 @@ const Signup = () => {
           <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
             Verification and Security:
           </h2>
-          <div className="mb-6 max-w-[430px]">
-            <div className="bg-foreground rounded-md text-center flex justify-between">
-              <div className="flex items-center space-x-2 p-6 ">
-                {/* Checkbox for triggering reCAPTCHA */}
-                <Checkbox
-                  id="verify"
-                  iconClassName="h-6 w-6"
-                  className="!border-gray h-12 w-12 rounded-lg"
-                  onClick={handleRecaptcha} // Handle reCAPTCHA on click
-                  disabled={isChecking || verified} // Disable checkbox during loading or after verified
-                  checked={verified} // Checkbox is checked when reCAPTCHA is successful
-                />
-                <label
-                  htmlFor="verify"
-                  className=" !ml-5 !text-black text-lg font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {isChecking ? "Verifying..." : verified ? "Verified" : "Click to Verify"}
-                </label>
-              </div>
-
-              {/* Placeholder image for reCAPTCHA */}
-              <div className="p-6 bg-gray-dark">
-                <Image src={CaptchaImg} alt="recaptcha" height={64} width={64} />
-              </div>
-            </div>
-          </div>
+          <Recaptcha onVerify={onVerify} />
 
           <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
             Submission:
