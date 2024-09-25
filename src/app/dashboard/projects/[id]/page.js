@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { getProjectById, getSubmittedProposal } from "@/services/api";
 import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
+import { useRouter } from "next/navigation";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -20,6 +21,7 @@ const Page = ({ params }) => {
   const { userData } = useUser();
   const [submittedProposal, setSubmittedProposal] = useState(null);
   const [api, contextHolder] = notification.useNotification();
+  const router = useRouter();
 
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -31,10 +33,16 @@ const Page = ({ params }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(id);
+        if (isNaN(id)) {
+          router.push("/dashboard/projects");
+          return;
+        }
         const projectData = await getProjectById(id);
+        if (projectData == null) {
+          router.push("/dashboard/projects");
+          return;
+        }
         const proposal = await getSubmittedProposal(id, userData.id);
-        console.log(projectData);
         setData(projectData);
         setSubmittedProposal(proposal);
         setIsLoading(false);

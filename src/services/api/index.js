@@ -1,6 +1,6 @@
 import { signinMover, signupMover, updateMover, signinMoverWithGoogle } from './authApi';
 import { getProjects, getProjectById } from './projectApi';
-import { submitProposal, getSubmittedProposal } from './proposalApi';
+import { submitProposal, getSubmittedProposal, updateProposal } from './proposalApi';
 
 export {
     signinMover,
@@ -10,5 +10,6 @@ export {
     getProjects,
     getProjectById,
     getSubmittedProposal,
-    submitProposal
+    submitProposal,
+    updateProposal
 }
