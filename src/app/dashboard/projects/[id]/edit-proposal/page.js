@@ -1,15 +1,58 @@
+"use client"
+
 import SubmitProposal from "@/components/dashboard-layout/pages/submit-proposal";
+import { getSubmittedProposal } from "@/services/api";
+import { useUser } from "@/lib/userContext";
+import { useState, useEffect } from "react";
+import { notification } from 'antd';
+
+const NotificationTypes = {
+  SUCCESS: "success",
+  INFO: "info",
+  WARNING: "warning",
+  ERROR: "error"
+};
 
 const Page = ({ params }) => {
   const { id } = params;
-  console.log(id, 'sdgsdgsjdl;k');
+  const [isLoading, setIsLoading] = useState(true);
+  const [submittedProposal, setSubmittedProposal] = useState(null);
+  const { userData } = useUser();
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type, title, content) => {
+    api[type]({
+      message: title,
+      description: content,
+      duration: 2,
+    });
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const proposal = (await getSubmittedProposal(id, userData.id)).data;
+        proposal.payment_options = JSON.parse(proposal.payment_options);
+        setSubmittedProposal(proposal);
+        setIsLoading(false);
+      } catch (error) {
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [submittedProposal == null]);
   return (
-    <div className="h-full flex flex-col gap-6">
-      <h1 className="text-3xl font-bold">Edit Proposal</h1>
-      <div className="w-full bg-background rounded-lg">
-        <SubmitProposal id={id}/>
-      </div>
-    </div>
+    <>
+      {contextHolder}
+      {!isLoading && <div className="h-full flex flex-col gap-6">
+        <h1 className="text-3xl font-bold">Edit Proposal</h1>
+        <div className="w-full bg-background rounded-lg">
+          <SubmitProposal data={submittedProposal} />
+        </div>
+      </div>}
+    </>
   );
 };
 export default Page;

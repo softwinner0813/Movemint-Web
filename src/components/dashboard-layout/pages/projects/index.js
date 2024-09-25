@@ -1,193 +1,150 @@
 "use client";
 import CommonDataTable from "@/components/ui/common-data-table";
-import { cn } from "@/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getProjects } from "@/services/api";
 import { chatDate } from '@/lib/chatDate'
 import { getName } from "@/lib/utils";
+import { notification } from 'antd';
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
-const payments = [
-  {
-    id: "1",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "Accepted",
-  },
-  {
-    id: "2",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "New",
-  },
-  {
-    id: "3",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "Rejected",
-  },
-  {
-    id: "4",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "Completed",
-  },
-  {
-    id: "5",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "Rejected",
-  },
-  {
-    id: "6",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "New",
-  },
-  {
-    id: "7",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "Rejected",
-  },
-  {
-    id: "8",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "sent",
-  },
-  {
-    id: "9",
-    name: "Christine Brooks",
-    originAddress: "089 Kutch Green Apt. 448",
-    datePosted: "Feb 22 2022",
-    type: "Home",
-    status: "in Transit",
-  },
-];
+const NotificationTypes = {
+  SUCCESS: "success",
+  INFO: "info",
+  WARNING: "warning",
+  ERROR: "error"
+};
 
 const columns = [
   {
     accessorKey: "id",
-    header: "ID",
+    title: "ID",
+    dataIndex: "id",
+    align: 'center', // Center the text in the ID column
   },
   {
     accessorKey: "name",
-    header: "NAME",
+    title: "NAME",
+    dataIndex: "name",
+    align: 'center', // Center the text in the NAME column
   },
   {
     accessorKey: "from",
-    header: "ORIGIN ADDRESS",
+    title: "ORIGIN ADDRESS",
+    dataIndex: "from",
+    align: 'center', // Center the text in the ORIGIN ADDRESS column
   },
   {
     accessorKey: "date",
-    header: "DATE POSTED",
+    title: "DATE POSTED",
+    dataIndex: "date",
+    align: 'center', // Center the text in the DATE POSTED column
   },
   {
     accessorKey: "residence_type",
-    header: "TYPE",
+    title: "TYPE",
+    dataIndex: "residence_type",
+    align: 'center', // Center the text in the TYPE column
   },
   {
     accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const value = row.getValue("status").toLowerCase();
+    title: "Status",
+    align: 'center',
+    render: (_, record) => {
+      const value = record.status.toLowerCase();
+      console.log(value);
       return (
         <div
-          className={cn(
-            "max-w-36 rounded-sm py-1 px-4 text-center text-background font-semibold",
-            value.includes("accepted")
+          className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
+            (value == "accepted"
               ? "bg-success/20 text-success"
-              : value.includes("rejected")
+              : value == "rejected"
                 ? "bg-danger-100/20 text-danger-100"
-                : value.includes("new")
+                : value == "new"
                   ? "bg-purple/20 text-purple"
-                  : value.includes("completed")
+                  : value == "completed"
                     ? "bg-success/20 text-success"
-                    : value.includes("sent")
+                    : value == "sent"
                       ? "bg-orange/20 text-orange"
-                      : value.includes("inTransit")
+                      : value == "inTransit"
                         ? "bg-purple/20 text-purple"
-                        : "bg-danger-100/20 text-danger-100"
-          )}
+                        : "bg-danger-100/20 text-danger-100")
+          }
         >
-          {row.getValue("status")}
+          {record.status}
         </div>
       );
     },
   },
 ];
 
-const moveTypeValue = [
-  { label: "Home", value: "Home" },
-  { label: "Work", value: "Work" },
-  { label: "Community", value: "Community" },
-  { label: "Other", value: "Other" },
-];
-
-const proposalStatusValue = [
-  { label: "New", value: "New" },
-  { label: "Accepted", value: "Accepted" },
-  { label: "Rejected", value: "Rejected" },
-  { label: "Completed", value: "Completed" },
-  { label: "Sent", value: "Sent" },
-  { label: "In Transit", value: "In Transit" },
-];
-
 const Project = () => {
   const router = useRouter();
   const [data, setData] = useState([]);
+  const [api, contextHolder] = notification.useNotification();
+  const [moveTypes, setMoveTypes] = useState([]);
+  const [proposalStatus, setProposalStatus] = useState([]);
+
+  const openNotificationWithIcon = (type, title, content) => {
+    api[type]({
+      message: title,
+      description: content,
+      duration: 2,
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const projectData = await getProjects();
-        projectData.map((item) => {
+        projectData.forEach((item) => {
           item.name = getName(item.first_name, item.last_name);
           item.date = chatDate(item.updated_at);
         });
+        const types = [
+          ...new Set(projectData.map((item) => item.residence_type)) // Get unique move types
+        ].map((moveType) => ({
+          label: moveType,
+          value: moveType,
+        }));
+
+        const status = [
+          ...new Set(projectData.map((item) => item.status)) // Get unique statuses
+        ].map((status) => ({
+          label: status,
+          value: status,
+        }));
+        setMoveTypes(types);
+        setProposalStatus(status);
+        projectData.map((item) => {
+          item.from = JSON.parse(item.from).streetAddress
+        })
         setData(projectData);
       } catch (error) {
-        console.error("Error fetching project data:", error);
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
       }
     };
 
     fetchData();
-  }, []);
+  }, [data.length]);
 
   const rowClickHandler = (row) => {
-    router.push(`/dashboard/projects/${row.original.id}`);
+    router.push(`/dashboard/projects/${row.id}`);
   };
 
   return (
     <>
+      {contextHolder}
       <CommonDataTable
         columns={columns}
         data={data}
-        moveTypeValue={moveTypeValue}
-        proposalStatusValue={proposalStatusValue}
+        moveTypeValue={moveTypes}
+        proposalStatusValue={proposalStatus}
         rowClickHandler={rowClickHandler}
       />
 
       <div className="flex p-3 justify-center bg-white mb-4 max-w-20 rounded-sm max-h-7 items-center ml-auto">
-        <button className="  text-black rounded">
+        <button className="text-black rounded">
           <ChevronLeftIcon />
         </button>
         <div className="border-l border-gray-300 h-6 mx-2"></div>

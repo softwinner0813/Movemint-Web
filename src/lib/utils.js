@@ -19,3 +19,20 @@ export function getName(firstName, lastName) {
   }
   return name;
 }
+
+export function getMake(vehicles) {
+  const data = JSON.parse(vehicles)[0];
+  return data.make;
+}
+
+export function getModel(vehicles) {
+  const data = JSON.parse(vehicles)[0];
+  return data.model;
+}
+
+export function isVehicle(vehicles) {
+  const data = JSON.parse(vehicles)[0];
+  if (data.make == "")
+    return "No";
+  return "Yes";
+}

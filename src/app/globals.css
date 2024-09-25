@@ -75,6 +75,12 @@
   }
 }
 
+.ant-table-cell-row-hover {
+  background: black !important; 
+}
+body > div.flex > div > main > div > div.ant-table-wrapper.bg-black.text-white.css-dev-only-do-not-override-14qglws > div > div > div > div > div > table > tbody > tr > td {
+  background: black !important;
+}
 @layer components {
   .custom-gradient {
     background-image: linear-gradient(

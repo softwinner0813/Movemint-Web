@@ -126,8 +126,7 @@ const DashboardLayout = ({ children }) => {
         )}
       >
         <DashboardHeader handleToggleSidebar={handleToggleSidebar}
-          setIsModalOpenLogout={setIsModalOpenLogout}
-          userData={userData} />
+          setIsModalOpenLogout={setIsModalOpenLogout} />
         {pathname === "/dashboard" && (
           <Alert variant="danger" onClick={handleAlertClick}>
             {/* <AlertTitle>Heads up!</AlertTitle> */}

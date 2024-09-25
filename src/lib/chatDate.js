@@ -5,7 +5,8 @@ const convertUtcToLocal = (utc) => {
 };
 
 export const formatDateTime = (date, formatStr) => {
-  console.log(date);
+  if ( ! date)
+    return "";
   if (formatStr) {
     return format(date, formatStr);
   }

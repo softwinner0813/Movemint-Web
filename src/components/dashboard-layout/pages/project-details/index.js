@@ -12,8 +12,11 @@ import {
 } from "@/components/ui/select";
 import { MessageSquareMore } from "lucide-react";
 import { formatDateTime } from "@/lib/chatDate";
+import { getName, getMake, getModel, isVehicle } from "@/lib/utils";
+import { useEffect } from "react";
 
-const EditProjectDetails = ({ data }) => {
+
+const EditProjectDetails = ({ data, submittedProposal }) => {
   const router = useRouter();
 
   const handleProposalSubmit = () => {
@@ -27,6 +30,23 @@ const EditProjectDetails = ({ data }) => {
   const handleMessage = () => {
     router.push(`/dashboard/messaging`);
   };
+
+  const LocationInfo = (address) => {
+    const { streetAddress, addressLine2, city, state, zip, country } = JSON.parse(address.address);
+
+    // Map country code to full country name, you can expand this as needed
+    const countryName = country === "US" ? "United States" : country;
+
+    return (
+      <div style={{ textAlign: 'left' }}>
+        <p>{streetAddress}</p>
+        {addressLine2 && <p>{addressLine2}</p>} {/* Render addressLine2 only if it's not null */}
+        <p>{`${city}, ${state} ${zip}`}</p>
+        <p>{countryName}</p>
+      </div>
+    );
+  };
+
 
   return (
     <div className="p-4 md:p-8">
@@ -57,9 +77,9 @@ const EditProjectDetails = ({ data }) => {
               className="w-12 h-12 md:w-16 md:h-16"
             />
             <div className="flex flex-col">
-              <span className="text-sm font-bold">{data.name}</span>
+              <span className="text-sm font-bold">{getName(data.first_name, data.last_name)}</span>
               <span className="text-sm font-normal">
-                Location: {data.from}
+                Location: {(JSON.parse(data.from)).city + ", " + (JSON.parse(data.from)).country}
               </span>
             </div>
             <Button
@@ -91,19 +111,19 @@ const EditProjectDetails = ({ data }) => {
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Origin Information</h3>
             <p className="text-sm font-normal">
-              {data.from}
+              <LocationInfo address={data.from} />
             </p>
           </div>
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Additional Stop Information</h3>
             <p className="text-sm font-normal">
-              123 Happy Street Los Angeles, CA 90292 United States
+              {(JSON.parse(data.extra_stops)).length != 0 && <LocationInfo address={data.extra_stops} />}
             </p>
           </div>
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Destination</h3>
             <p className="text-sm font-normal">
-              {data.destination}
+              <LocationInfo address={data.destination} />
             </p>
           </div>
         </div>
@@ -140,17 +160,17 @@ const EditProjectDetails = ({ data }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[850px]">
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  Vehicle Transport -<span className="font-bold"> {data.vehicles}</span>{" "}
+                  Vehicle Transport -<span className="font-bold"> {isVehicle(data.vehicles)}</span>{" "}
                 </h3>
               </div>
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  Vehicle Make -<span className="font-bold"> Hyundai</span>{" "}
+                  Vehicle Make -<span className="font-bold"> {getMake(data.vehicles)}</span>{" "}
                 </h3>
               </div>
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  Vehicle Model -<span className="font-bold"> Sonata</span>{" "}
+                  Vehicle Model -<span className="font-bold"> {getModel(data.vehicles)}</span>{" "}
                 </h3>
               </div>
             </div>
@@ -163,13 +183,13 @@ const EditProjectDetails = ({ data }) => {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 max-w-[850px]">
               <div className="col-span-4 flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  Storage Needed -<span className="font-bold"> Yes</span>{" "}
+                  Storage Needed -<span className="font-bold"> {data.storage_start == null ? "No" : "Yes"}</span>{" "}
                 </h3>
               </div>
               <div className="col-span-8 flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
                   Length of Storage -
-                  <span className="font-bold"> {formatDateTime(data.storage_start)} - {formatDateTime(data.storage_end)}</span>{" "}
+                  <span className="font-bold"> {formatDateTime(data.storage_start)} {formatDateTime(data.storage_end)}</span>{" "}
                 </h3>
               </div>
             </div>
@@ -182,13 +202,13 @@ const EditProjectDetails = ({ data }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[850px]">
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
-                  Packing Needed -<span className="font-bold"> Yes</span>{" "}
+                  Packing Needed -<span className="font-bold"> {data.packing_service == null ? "No" : "Yes"}</span>{" "}
                 </h3>
               </div>
               <div className="flex flex-col gap-3">
                 <h3 className="text-sm font-normal">
                   Type of Packing -
-                  <span className="font-bold">Full Packing</span>{" "}
+                  <span className="font-bold">{data.packing_service == 0 ? "Full-Packing" : data.packing_service == 1 ? "Part-Packing" : "No Packing"}</span>
                 </h3>
               </div>
             </div>
@@ -208,7 +228,7 @@ const EditProjectDetails = ({ data }) => {
       </div>
       <div className="text-center mt-10">
         <Button
-          className="w-full md:w-56 rounded-md"
+          className={`w-full md:w-56 rounded-md ${submittedProposal.result ? 'invisible' : 'visible'}`}
           onClick={handleProposalSubmit}
         >
           Submit Proposal
@@ -217,14 +237,14 @@ const EditProjectDetails = ({ data }) => {
       <div className="flex justify-center mt-10">
         <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-28 w-full">
           <Button
-            className="w-full md:w-56 rounded-md"
+            className={`w-full md:w-56 rounded-md ${submittedProposal.result ? 'visible' : 'invisible'}`}
             onClick={handleProposalEdit}
           >
             Edit Proposal
           </Button>
           <Button
             variant="danger"
-            className="w-full md:w-56 rounded-md bg-danger-300"
+            className={`w-full md:w-56 rounded-md bg-danger-300 ${submittedProposal.result ? 'visible' : 'invisible'}`}
           >
             Withdraw Proposal
           </Button>
