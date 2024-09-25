@@ -5,6 +5,9 @@ const nextConfig = {
     config.resolve.alias.encoding = false;
     return config;
   },
+  images: {
+    domains: ['localhost', 'movemint.io'], // Add the allowed external image domains here
+  },
 };
 
 export default nextConfig;

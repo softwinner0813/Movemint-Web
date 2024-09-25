@@ -28,7 +28,7 @@ export const UserProvider = ({ children }) => {
     } else {
       setIsLoading(false);
     }
-  });
+  }, []);
 
   if (isLoading)
     return <LoadingScreen />

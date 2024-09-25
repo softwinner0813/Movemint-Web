@@ -50,11 +50,11 @@ const DashboardHeader = ({ handleToggleSidebar, setIsModalOpenLogout }) => {
   const { userData } = useUser();
 
   useEffect(() => {
-    if (userData) {
+    if ( ! userData.isEmpty) {
       setUserName(getName(userData.first_name, userData.last_name));
-      setAvatar(userData.avatar || "");
+      setAvatar(userData.avatar ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : "");
     }
-  }, [userData]);
+  }, [userData.length]);
 
   const handleUserMenu = (item) => {
     if (item.label === "Profile") {
