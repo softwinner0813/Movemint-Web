@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/dataTable";
@@ -7,11 +7,11 @@ import { Plus } from "lucide-react";
 export const columns = (editRow, refs, handleSave, deleteRow) => [
   {
     header: "SERVICE",
-    accessorKey: "service",
+    accessorKey: "service_name",
     cell: ({ row }) =>
       row.original.isEditing ? (
         <Input
-          defaultValue={row.original.service}
+          defaultValue={row.original.service_name}
           ref={(el) =>
             (refs.current[row.original.id] = {
               ...refs.current[row.original.id],
@@ -20,16 +20,16 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
           }
         />
       ) : (
-        row.original.service
+        row.original.service_name
       ),
   },
   {
     header: "DESCRIPTION",
-    accessorKey: "description",
+    accessorKey: "desc",
     cell: ({ row }) =>
       row.original.isEditing ? (
         <Input
-          defaultValue={row.original.description}
+          defaultValue={row.original.desc}
           ref={(el) =>
             (refs.current[row.original.id] = {
               ...refs.current[row.original.id],
@@ -38,7 +38,7 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
           }
         />
       ) : (
-        row.original.description
+        row.original.desc
       ),
   },
   {
@@ -81,12 +81,12 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
   },
   {
     header: "LINE TOTAL",
-    accessorKey: "lineTotal",
+    accessorKey: "line_total",
     cell: ({ row }) =>
       row.original.isEditing ? (
-        <Input defaultValue={row.original.lineTotal.toFixed(2)} disabled />
+        <Input defaultValue={row.original.line_total.toFixed(2)} disabled />
       ) : (
-        `$${row.original.lineTotal.toFixed(2)}`
+        `$${row.original.line_total.toFixed(2)}`
       ),
   },
   {
@@ -134,10 +134,8 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
   },
 ];
 
-export default function DynamicTable({ onServicesChange }) {
-  const [data, setData] = useState([
-  ]);
-
+export default function DynamicTable({ services, onServicesChange }) {
+  const [data, setData] = useState(services);
   const refs = useRef({});
 
   const handleSave = (id) => {
@@ -146,11 +144,11 @@ export default function DynamicTable({ onServicesChange }) {
       item.id === id
         ? {
             ...item,
-            service: rowRef.service.value,
-            description: rowRef.description.value,
+            service_name: rowRef.service.value,
+            desc: rowRef.description.value,
             price: parseFloat(rowRef.price.value || 0),
             qty: parseFloat(rowRef.qty.value || 0),
-            lineTotal:
+            line_total:
               parseFloat(rowRef.price.value || 0) *
               parseFloat(rowRef.qty.value || 0),
             isEditing: false,
@@ -166,11 +164,11 @@ export default function DynamicTable({ onServicesChange }) {
       ...data,
       {
         id: data.length + 1,
-        service: "",
-        description: "",
+        service_name: "",
+        desc: "",
         price: 0,
         qty: 1,
-        lineTotal: 0,
+        line_total: 0,
         isEditing: true,
       },
     ]);

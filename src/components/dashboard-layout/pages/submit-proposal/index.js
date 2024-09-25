@@ -8,10 +8,11 @@ import React, { useState, useEffect } from "react";
 import DynamicTable from "./dynamic-table";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { submitProposal } from "@/services/api";
+import { submitProposal, updateProposal } from "@/services/api";
 import { getName } from "@/lib/utils";
 import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
+import { useRouter } from "next/navigation";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -24,8 +25,9 @@ const SubmitProposal = ({ data }) => {
   const [isAutoFill, setIsAutoFill] = useState(true);
   const [isAutoCalculation, setIsAutoCalculation] = useState(true);
   const { userData } = useUser();
-  const [api, contextHolder] = notification.useNotification();
   const [isLoading, setIsLoading] = useState(true);
+  const [api, contextHolder] = notification.useNotification();
+  const router  = useRouter();
 
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -35,12 +37,17 @@ const SubmitProposal = ({ data }) => {
     });
   };
   const [formData, setFormData] = useState({
+    id: 0,
     mover_id: userData.id,
     project_id: "",
     customer_name: "",
     customer_address: "",
-    proposal_date: "",
-    proposal_expire_date: "",
+    proposal_date: new Date(),
+    proposal_expire_date: new Date(),
+    pack_date: new Date(),
+    move_date: new Date(),
+    delivery_from: new Date(),
+    delivery_to: new Date(),
     not_expire: false,
     company_name: "",
     company_address: "",
@@ -115,7 +122,6 @@ const SubmitProposal = ({ data }) => {
 
   // Handle the dynamic table changes for services
   const handleServicesChange = (updatedServices) => {
-    console.log(updatedServices);
     setFormData((prev) => ({
       ...prev,
       services: updatedServices,
@@ -125,16 +131,15 @@ const SubmitProposal = ({ data }) => {
   // Handle form submission
   const handleSubmit = async () => {
     try {
-      const response = await submitProposal(formData);
-      console.log("submit response", {...response});
+      const response = isEditProposal ? await updateProposal(formData) : await submitProposal(formData);
       if (response.result) {
-        openNotificationWithIcon(NotificationTypes.Success, "Success", "Proposal submitted successfully");
+        openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Proposal submitted successfully");
+        router.push(`/dashboard/projects/${data.project_id}`)
       } else {
-        openNotificationWithIcon(NotificationTypes.Error, "Error", "Proposal submitted error");
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", response.message);
       }
       // Handle success, show a notification or redirect
     } catch (error) {
-      console.log(error);
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
     }
   };
@@ -189,7 +194,7 @@ const SubmitProposal = ({ data }) => {
                   id="doesNotExpire"
                   name="not_expire"
                   aria-checked={formData.not_expire}
-                  default-checked={formData.not_expire}
+                  defaultChecked={formData.not_expire == 1}
                   onClick={handleNotExpire}
                 />
                 <Label htmlFor={"doesNotExpire"} className="text-xs">
@@ -247,36 +252,36 @@ const SubmitProposal = ({ data }) => {
               disabled={isAutoFill}
             />
           </div>
-          {/* <div className="grid md:grid-cols-4 gap-x-7 max-w-6xl">
+          <div className="grid md:grid-cols-4 gap-x-7 max-w-6xl">
             <DatePicker
               labelClassName="text-lg"
               date={formData.pack_date}
               setDate={(date) => setFormData((prev) => ({ ...prev, pack_date: date }))}
               id={"proposalDate"}
-              label={"Proposal Date"}
+              label={"Pack Date"}
             />
             <DatePicker
               labelClassName="text-lg"
               date={formData.move_date}
               setDate={(date) => setFormData((prev) => ({ ...prev, move_date: date }))}
               id={"proposalDate"}
-              label={"Proposal Date"}
+              label={"Move Date"}
             />
             <DatePicker
               labelClassName="text-lg"
               date={formData.delivery_from}
               setDate={(date) => setFormData((prev) => ({ ...prev, delivery_from: date }))}
               id={"proposalDate"}
-              label={"Proposal Date"}
+              label={"Delivery From"}
             />
             <DatePicker
               labelClassName="text-lg"
               date={formData.delivery_to}
               setDate={(date) => setFormData((prev) => ({ ...prev, delivery_to: date }))}
               id={"proposalDate"}
-              label={"Proposal Date"}
+              label={"Delivery To"}
             />
-          </div> */}
+          </div>
           <div className="grid md:grid-cols-2 gap-x-7 max-w-lg">
             <InputWithLabel
               id="taxCalculation"
@@ -298,7 +303,7 @@ const SubmitProposal = ({ data }) => {
           </div>
 
           {/* Services section (Dynamic Table) */}
-          <DynamicTable onServicesChange={handleServicesChange} />
+          <DynamicTable services={formData.services} onServicesChange={handleServicesChange} />
 
           <div className="grid gap-1.5">
             <Label htmlFor={"personalMessage"} className="text-lg">
