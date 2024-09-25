@@ -1,14 +1,15 @@
 import axiosInstance from "./axiosInstance";
 // Export API methods
 export const signupMover = async (data) => {
-    const response = await axiosInstance.post("/auth/signup/mover", data);
-    const token = response.data.data.token;
+    const response = (await axiosInstance.post("/auth/signup/mover", data)).data;
+    console.log("signup-----", response);
+    const token = response.data.token;
 
     // Store the token in localStorage (or sessionStorage)
     if (token) {
       localStorage.setItem("x-auth-token", token);
     }
-    return response.data;
+    return response;
 };
 
 export const updateMover = async (id, data) => {

@@ -62,6 +62,7 @@ const Signup = () => {
         router.push('/onboarding');
       } else {
         setIsAuthenticated(false);
+        setLoading(false);
       }
     });
     return () => unsubscribe();
@@ -89,7 +90,7 @@ const Signup = () => {
       // After Firebase sign-up, send the user data to the backend
       await sendDataToBackend(user);
     } catch (err) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error);
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
     } finally {
       setLoading(false);
     }
@@ -132,19 +133,18 @@ const Signup = () => {
     };
 
     try {
-      const response = signupMover(dataToSend);
+      const response = await signupMover(dataToSend);
 
-      if (response.data.result) {
-        alert("Signup successful! Redirecting...");
-        setUserData(response.data.data);
+      if (response.result) {
+        openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Signup successful! Redirecting...");
+        setUserData(response.data);
         setIsAuthenticated(true);
         router.push("/onboarding");
       } else {
-        alert(response.data.message || "Signup failed");
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", response.data.message);
       }
     } catch (err) {
-      console.error("Backend error:", err);
-      alert("Error sending data to backend");
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", err.message);
     }
   };
 
