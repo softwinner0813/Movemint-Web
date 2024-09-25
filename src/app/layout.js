@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <title>Move Mint</title>
+      <title>Movemint</title>
       <body
         className={cn(
           "min-h-screen font-quicksand antialiased",
