@@ -62,6 +62,7 @@ const Signup = () => {
         router.push('/onboarding');
       } else {
         setIsAuthenticated(false);
+        setLoading(false);
       }
     });
     return () => unsubscribe();
