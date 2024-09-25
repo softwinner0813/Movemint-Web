@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/userContext";
 import { useRouter } from "next/navigation";
+import { auth } from "@/services/firebase";
 
 const PublicHeader = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -36,7 +37,9 @@ const PublicHeader = () => {
 
   const handleSignOut = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem('x-auth-token');
     router.push("/login");
+    auth.signOut();
   }
 
   return (

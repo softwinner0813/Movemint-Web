@@ -8,6 +8,8 @@ import {
 import Screen from "./components/Screen";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { auth } from "@/services/firebase";
+import { useUser } from "@/lib/userContext";
 
 const screens = [
   {
@@ -42,17 +44,26 @@ const screens = [
 const OnboardingPage = () => {
   const [api, setApi] = useState();
   const router = useRouter();
-  // const [current, setCurrent] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated } = useUser();
 
   useEffect(() => {
+    const unsubscribe = auth.onIdTokenChanged((user) => {
+      if (!isAuthenticated || !user) {
+        router.push('/login');
+      } else {
+        setIsLoading(false);
+      }
+    });
+
     if (!api) {
       return;
     }
 
-    // api.on("select", () => {
-    //   setCurrent(api.selectedScrollSnap() + 1);
-    // });
-  }, [api]);
+    return () => {
+      unsubscribe();
+    };
+  }, [api, isLoading]);
 
   const handleNext = () => {
     if (api) {
@@ -62,13 +73,10 @@ const OnboardingPage = () => {
 
   const handlePrevious = () => {
     router.push("/dashboard");
-    // if (api) {
-    //   api.scrollPrev();
-    // }
   };
 
   return (
-    <div className="pt-10 login-bg place-content-center">
+     ! isLoading && <div className="pt-10 login-bg place-content-center">
       <div
         className="relative z-10 mx-auto text-center w-full max-w-[936px] rounded-[33px]"
         style={{

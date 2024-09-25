@@ -6,16 +6,13 @@ import Sidebar from "@/components/dashboard-layout/sidebar";
 import useBreakpoint from "@/lib/useBreakpoint";
 import React, { useLayoutEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import nProgress from "nprogress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { usePathname, useRouter } from "next/navigation";
 import CommonModel from "@/components/dashboard-layout/components/common-model";
 import { auth } from '@/services/firebase'
 import { useUser } from '@/lib/userContext';
-import LoadingScreen from "@/components/ui/loadingScreen";
 
 const DashboardLayout = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true);
   const [openSidebar, setOpenSidebar] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,27 +24,13 @@ const DashboardLayout = ({ children }) => {
   const router = useRouter();
 
   useLayoutEffect(() => {
-    // Set loading to false when the page has fully loaded
-    const handleLoad = () => setIsLoading(false);
-    const handleStart = () => nProgress.start();
-    const handleStop = () => {
-      nProgress.done();
-      handleLoad();
-    };
     const unsubscribe = auth.onIdTokenChanged((user) => {
       if ( ! isAuthenticated || ! user) {
-        // Redirect to login page if no user is logged in
         router.push('/login');
       }
     });
 
-    // Cleanup the listener on unmount
-
-    handleStart();
-    handleStop();
-
     return () => {
-      nProgress.done(),
         unsubscribe();
     };
   }, [router, isAuthenticated, userData]);
@@ -73,9 +56,9 @@ const DashboardLayout = ({ children }) => {
 
   const handleLogout = async () => {
     setIsModalOpenLogout(false);
-    await auth.signOut();
-    // Redirect to login or home page after logout
+    localStorage.removeItem('x-auth-token');
     router.push("/login");
+    await auth.signOut();
   };
 
   const handleCancel = () => {
@@ -86,10 +69,6 @@ const DashboardLayout = ({ children }) => {
     setIsExpanded(downMd);
     setOpenSidebar(false);
   }, [downMd]);
-
-  if (isLoading) {
-    <LoadingScreen />
-  }
 
   return (
     isAuthenticated && <div className="flex">

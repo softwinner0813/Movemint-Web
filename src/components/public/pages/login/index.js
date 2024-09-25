@@ -27,7 +27,7 @@ const NotificationTypes = {
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { userData, setUserData, isAuthenticated, setIsAuthenticated } = useUser();
   const [api, contextHolder] = notification.useNotification();
@@ -43,14 +43,14 @@ const LoginPage = () => {
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged((user) => {
       if (user && isAuthenticated) {
-        // Redirect to login page if no user is logged in
         router.push('/onboarding');
       } else {
         setIsAuthenticated(false);
+        setLoading(false);
       }
     });
     return () => unsubscribe();
-  }, [router, isAuthenticated, userData]);
+  }, [router, userData]);
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
@@ -60,11 +60,12 @@ const LoginPage = () => {
       // Navigate to the onboarding page after login
       const signerEmail = userCredential.user.email;
       const response = await signinMover({ email: signerEmail });
+      router.push('/onboarding');
       setUserData(response.data)
       setIsAuthenticated(true);
       await createFirebaseUser();
-      router.push('/onboarding');
     } catch (error) {
+      console.log(error);
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
     } finally {
       setLoading(false);
@@ -121,11 +122,13 @@ const LoginPage = () => {
   const redirectToGooglePlay = () => {
     window.open(process.env.NEXT_PUBLIC_APP_GOOGLE_PLAY_LINK, "_blank");
   };
-
+  if (isAuthenticated) {
+    return <></>;
+  }
   return (
     <>
       {contextHolder}
-      ! isAuthenticated && <div className="relative z-10 w-full max-w-80 mx-auto space-y-6 text-center pt-8 pb-32">
+      <div className="relative z-10 w-full max-w-80 mx-auto space-y-6 text-center pt-8 pb-32">
         <Image
           src={Logo}
           alt="Movemint Logo"
