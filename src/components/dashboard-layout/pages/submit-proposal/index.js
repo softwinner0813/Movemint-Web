@@ -126,6 +126,7 @@ const SubmitProposal = ({ data }) => {
   const handleSubmit = async () => {
     try {
       const response = await submitProposal(formData);
+      console.log("submit response", {...response});
       if (response.result) {
         openNotificationWithIcon(NotificationTypes.Success, "Success", "Proposal submitted successfully");
       } else {
@@ -133,7 +134,8 @@ const SubmitProposal = ({ data }) => {
       }
       // Handle success, show a notification or redirect
     } catch (error) {
-      // openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
+      console.log(error);
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
     }
   };
 
