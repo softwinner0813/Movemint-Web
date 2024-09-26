@@ -29,6 +29,11 @@ const SubmitProposal = ({ data }) => {
   const [api, contextHolder] = notification.useNotification();
   const router  = useRouter();
 
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD from the ISO string
+  };
+
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
       message: title,
@@ -36,24 +41,25 @@ const SubmitProposal = ({ data }) => {
       duration: 2,
     });
   };
+
   const [formData, setFormData] = useState({
     id: 0,
     mover_id: userData.id,
     project_id: "",
     customer_name: "",
     customer_address: "",
-    proposal_date: new Date(),
-    proposal_expire_date: new Date(),
-    pack_date: new Date(),
-    move_date: new Date(),
-    delivery_from: new Date(),
-    delivery_to: new Date(),
+    proposal_date: formatDate(new Date()),
+    proposal_expire_date: formatDate(new Date()),
+    pack_date: formatDate(new Date()),
+    move_date: formatDate(new Date()),
+    delivery_from: formatDate(new Date()),
+    delivery_to: formatDate(new Date()),
     not_expire: false,
     company_name: "",
     company_address: "",
     company_email: "",
     company_phone: "",
-    tax: "",
+    tax: 0,
     message: "",
     payment_options: {
       enable_credit_debit: false,
@@ -172,8 +178,8 @@ const SubmitProposal = ({ data }) => {
           <div className="grid md:grid-cols-3 gap-x-7 max-w-6xl">
             <DatePicker
               labelClassName="text-lg"
-              date={formData.proposal_date}
-              setDate={(date) => setFormData((prev) => ({ ...prev, proposal_date: date }))}
+              date={formatDate(formData.proposal_date)}
+              setDate={(date) => setFormData((prev) => ({ ...prev, proposal_date: formatDate(date) }))}
               id={"proposalDate"}
               label={"Proposal Date"}
             />
@@ -182,8 +188,8 @@ const SubmitProposal = ({ data }) => {
                 } transition-opacity duration-300`}>
               <DatePicker
                 labelClassName="text-lg"
-                date={formData.proposal_expire_date}
-                setDate={(date) => setFormData((prev) => ({ ...prev, proposal_expire_date: date }))}
+                date={formatDate(formData.proposal_expire_date)}
+                setDate={(date) => setFormData((prev) => ({ ...prev, proposal_expire_date: formatDate(date) }))}
                 id={"proposalExpireDate"}
                 label={"Proposal Expire Date"}
               />
@@ -255,30 +261,30 @@ const SubmitProposal = ({ data }) => {
           <div className="grid md:grid-cols-4 gap-x-7 max-w-6xl">
             <DatePicker
               labelClassName="text-lg"
-              date={formData.pack_date}
-              setDate={(date) => setFormData((prev) => ({ ...prev, pack_date: date }))}
-              id={"proposalDate"}
+              date={formatDate(formData.pack_date)}
+              setDate={(date) => setFormData((prev) => ({ ...prev, pack_date: formatDate(date) }))}
+              id={"packDate"}
               label={"Pack Date"}
             />
             <DatePicker
               labelClassName="text-lg"
-              date={formData.move_date}
-              setDate={(date) => setFormData((prev) => ({ ...prev, move_date: date }))}
-              id={"proposalDate"}
+              date={formatDate(formData.move_date)}
+              setDate={(date) => setFormData((prev) => ({ ...prev, move_date: formatDate(date) }))}
+              id={"moveDate"}
               label={"Move Date"}
             />
             <DatePicker
               labelClassName="text-lg"
-              date={formData.delivery_from}
-              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_from: date }))}
-              id={"proposalDate"}
+              date={formatDate(formData.delivery_from)}
+              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_from: formatDate(date) }))}
+              id={"deliveryFrom"}
               label={"Delivery From"}
             />
             <DatePicker
               labelClassName="text-lg"
-              date={formData.delivery_to}
-              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_to: date }))}
-              id={"proposalDate"}
+              date={formatDate(formData.delivery_to)}
+              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_to: formatDate(date) }))}
+              id={"deliveryTo"}
               label={"Delivery To"}
             />
           </div>
@@ -289,7 +295,7 @@ const SubmitProposal = ({ data }) => {
               type="text"
               label="Tax Calculation"
               value={formData.tax}
-              onChange={handleChange}
+              onChange={(value) => setFormData((prev) => ({ ...prev, tax: parseFloat(value) }))}
               disabled={isAutoCalculation}
             />
             <div className="flex items-center">

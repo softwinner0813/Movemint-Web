@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import EditProductInformation from "../../../../../public/images/edit-product.png";
+import DefaultAvatar from "../../../../../public/images/user.png";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
@@ -13,7 +13,6 @@ import {
 import { MessageSquareMore } from "lucide-react";
 import { formatDateTime } from "@/lib/chatDate";
 import { getName, getMake, getModel, isVehicle } from "@/lib/utils";
-import { useEffect } from "react";
 
 
 const EditProjectDetails = ({ data, submittedProposal }) => {
@@ -72,7 +71,7 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
         <div className="flex flex-col md:flex-row justify-between md:items-center mt-2 gap-5">
           <div className="flex gap-3 items-center justify-start cursor-pointer">
             <Image
-              src={data.avatar ?? EditProductInformation}
+              src={data.avatar ?? DefaultAvatar}
               alt="Edit Profile"
               className="w-12 h-12 md:w-16 md:h-16"
             />
