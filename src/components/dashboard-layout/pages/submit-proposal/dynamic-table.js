@@ -84,7 +84,7 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
     accessorKey: "line_total",
     cell: ({ row }) =>
       row.original.isEditing ? (
-        <Input defaultValue={row.original.line_total.toFixed(2)} disabled />
+        "" // Hide line total when editing
       ) : (
         `$${row.original.line_total.toFixed(2)}`
       ),

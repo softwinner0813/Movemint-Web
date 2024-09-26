@@ -59,14 +59,20 @@ const LoginPage = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // Navigate to the onboarding page after login
       const signerEmail = userCredential.user.email;
-      const response = await signinMover({ email: signerEmail });
+      const response = await signinMover({ email: signerEmail, firebase_uid: userCredential.user.uid });
       router.push('/onboarding');
       setUserData(response.data)
       setIsAuthenticated(true);
       await createFirebaseUser();
     } catch (error) {
-      console.log(error);
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -81,15 +87,27 @@ const LoginPage = () => {
       const avatar = userCredential.user.photoURL;
       const phone_number = userCredential.user.phoneNumber ?? "";
       const google_id = userCredential.user.uid;
-      const response = await signinMoverWithGoogle({ email: signerEmail, first_name, last_name, avatar, phone_number, google_id });
+      const response = await signinMoverWithGoogle({ email: signerEmail, first_name, last_name, avatar, phone_number, google_id, firebase_uid: userCredential.user.uid });
       if (response.result) {
+        if (response.data.mover.company_name) {
+          router.push('/onboarding');
+        } else {
+          router.push('/onboarding/edit-profile');
+        }
         setUserData(response.data);
         setIsAuthenticated(true);
         await createFirebaseUser();
         router.push('/onboarding');
       }
     } catch (error) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     }
   };
 
@@ -111,7 +129,14 @@ const LoginPage = () => {
       console.log("Access Token:", token);
       console.log("ID Token:", idToken);
     } catch (error) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     }
   };
 

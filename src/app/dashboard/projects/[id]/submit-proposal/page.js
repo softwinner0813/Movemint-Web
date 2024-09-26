@@ -33,7 +33,14 @@ const Page = ({ params }) => {
         setData(projectData);
         setIsLoading(false);
       } catch (error) {
-        openNotificationWithIcon(NotificationTypes.ERROR, "Error", error);
+        let errorMessage = "An error occurred"; // Default message
+
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message; // Extract the custom message
+        } else if (error.message) {
+          errorMessage = error.message; // Fallback to general error message
+        }
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
       }
     };
 

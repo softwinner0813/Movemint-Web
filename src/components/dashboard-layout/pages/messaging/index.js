@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { auth } from "@/services/firebase";
 import { listenToRoomsForUser, getUnreadMessageCount } from "@/services/firebaseRoom";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/userContext";
 
 const messages = [
   {
@@ -101,25 +102,29 @@ const messages = [
 
 const MessagingPage = () => {
   const [starredMessages, setStarredMessages] = useState(messages);
-  // const [isLoading, setIsLoading] = useState(0);
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState(null);
   const router = useRouter();
-  const userId = auth.currentUser.uid;
+  const [isLoading, setIsLoading] = useState(true);
+  const { userData } = useUser();
 
 
   useEffect(() => {
-    const unsubscribe = listenToRoomsForUser(userId, async (roomsList) => {
+    const unsubscribe = listenToRoomsForUser(userData.firebase_uid, async (roomsList) => {
       // setRooms(roomsList); // Update state with real-time rooms
-      await roomsList.map(async (room) => {
-        const unreadMessageCount = await getUnreadMessageCount(room, userId);
-        room.unreadMessageCount = unreadMessageCount;
-      })
       setRooms(roomsList);
+      await roomsList.map(async (room) => {
+        const unreadMessageCount = await getUnreadMessageCount(room, auth.currentUser.uid);
+        room.unreadMessageCount = unreadMessageCount;
+        if (unreadMessageCount > 0) {
+          room.status = "Unread";
+        }
+      })
+      setIsLoading(false);
     });
 
     // Cleanup: Unsubscribe from the listener when the component unmounts
     return () => unsubscribe();
-  }, [rooms.length]);
+  }, [rooms == null]);
 
   const handleMessageClick = (id) => {
     router.push(`/dashboard/messaging/${id}`);
@@ -135,7 +140,7 @@ const MessagingPage = () => {
 
   return (
     <>
-      <div>
+      {! isLoading && <div>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-1/4 bg-background rounded-xl p-6 flex flex-col gap-6">
             <Button className="rounded-lg w-full mb-4 lg:mb-0">
@@ -268,7 +273,7 @@ const MessagingPage = () => {
             <ChevronRightIcon />
           </button>
         </div>
-      </div>
+      </div>}
     </>
   );
 };

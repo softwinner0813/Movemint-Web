@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
 import Recaptcha from "./recaptcha";
+import { createFirebaseUser } from "@/services/firebaseUser";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -98,7 +99,14 @@ const Signup = () => {
       // After Firebase sign-up, send the user data to the backend
       await sendDataToBackend(user);
     } catch (error) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -121,7 +129,7 @@ const Signup = () => {
       businessYear,
       isIntShipping,
       bio,
-      recaptchaToken
+      recaptchaToken,
     } = formData;
 
     const dataToSend = {
@@ -139,13 +147,15 @@ const Signup = () => {
       business_year: businessYear,
       is_int_shipping: isIntShipping,
       bio,
-      recaptchaToken
+      recaptchaToken,
+      firebase_uid: user.uid
     };
 
     try {
       const response = await signupMover(dataToSend);
 
       if (response.result) {
+        await createFirebaseUser();
         openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Signup successful! Redirecting...");
         setUserData(response.data);
         setIsAuthenticated(true);
@@ -154,7 +164,14 @@ const Signup = () => {
         openNotificationWithIcon(NotificationTypes.ERROR, "Error", response.data.message);
       }
     } catch (error) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     }
   };
 

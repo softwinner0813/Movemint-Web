@@ -29,11 +29,6 @@ const SubmitProposal = ({ data }) => {
   const [api, contextHolder] = notification.useNotification();
   const router  = useRouter();
 
-  const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
-    return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD from the ISO string
-  };
-
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
       message: title,
@@ -44,16 +39,16 @@ const SubmitProposal = ({ data }) => {
 
   const [formData, setFormData] = useState({
     id: 0,
-    mover_id: userData.id,
+    mover_id: userData.mover.id,
     project_id: "",
     customer_name: "",
     customer_address: "",
-    proposal_date: formatDate(new Date()),
-    proposal_expire_date: formatDate(new Date()),
-    pack_date: formatDate(new Date()),
-    move_date: formatDate(new Date()),
-    delivery_from: formatDate(new Date()),
-    delivery_to: formatDate(new Date()),
+    proposal_date: new Date(),
+    proposal_expire_date: new Date(),
+    pack_date: new Date(),
+    move_date: new Date(),
+    delivery_from: new Date(),
+    delivery_to: new Date(),
     not_expire: false,
     company_name: "",
     company_address: "",
@@ -138,15 +133,18 @@ const SubmitProposal = ({ data }) => {
   const handleSubmit = async () => {
     try {
       const response = isEditProposal ? await updateProposal(formData) : await submitProposal(formData);
-      if (response.result) {
-        openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Proposal submitted successfully");
-        router.push(`/dashboard/projects/${data.project_id}`)
-      } else {
-        openNotificationWithIcon(NotificationTypes.ERROR, "Error", response.message);
-      }
+      openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Proposal submitted successfully");
+      router.push(`/dashboard/projects/${data.project_id}`)
       // Handle success, show a notification or redirect
     } catch (error) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", error.message);
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     }
   };
 
@@ -178,8 +176,8 @@ const SubmitProposal = ({ data }) => {
           <div className="grid md:grid-cols-3 gap-x-7 max-w-6xl">
             <DatePicker
               labelClassName="text-lg"
-              date={formatDate(formData.proposal_date)}
-              setDate={(date) => setFormData((prev) => ({ ...prev, proposal_date: formatDate(date) }))}
+              date={formData.proposal_date}
+              setDate={(date) => setFormData((prev) => ({ ...prev, proposal_date: date }))}
               id={"proposalDate"}
               label={"Proposal Date"}
             />
@@ -188,8 +186,8 @@ const SubmitProposal = ({ data }) => {
                 } transition-opacity duration-300`}>
               <DatePicker
                 labelClassName="text-lg"
-                date={formatDate(formData.proposal_expire_date)}
-                setDate={(date) => setFormData((prev) => ({ ...prev, proposal_expire_date: formatDate(date) }))}
+                date={formData.proposal_expire_date}
+                setDate={(date) => setFormData((prev) => ({ ...prev, proposal_expire_date: date }))}
                 id={"proposalExpireDate"}
                 label={"Proposal Expire Date"}
               />
@@ -261,29 +259,29 @@ const SubmitProposal = ({ data }) => {
           <div className="grid md:grid-cols-4 gap-x-7 max-w-6xl">
             <DatePicker
               labelClassName="text-lg"
-              date={formatDate(formData.pack_date)}
-              setDate={(date) => setFormData((prev) => ({ ...prev, pack_date: formatDate(date) }))}
+              date={formData.pack_date}
+              setDate={(date) => setFormData((prev) => ({ ...prev, pack_date: date }))}
               id={"packDate"}
               label={"Pack Date"}
             />
             <DatePicker
               labelClassName="text-lg"
-              date={formatDate(formData.move_date)}
-              setDate={(date) => setFormData((prev) => ({ ...prev, move_date: formatDate(date) }))}
+              date={formData.move_date}
+              setDate={(date) => setFormData((prev) => ({ ...prev, move_date: date }))}
               id={"moveDate"}
               label={"Move Date"}
             />
             <DatePicker
               labelClassName="text-lg"
-              date={formatDate(formData.delivery_from)}
-              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_from: formatDate(date) }))}
+              date={formData.delivery_from}
+              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_from: date }))}
               id={"deliveryFrom"}
               label={"Delivery From"}
             />
             <DatePicker
               labelClassName="text-lg"
-              date={formatDate(formData.delivery_to)}
-              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_to: formatDate(date) }))}
+              date={formData.delivery_to}
+              setDate={(date) => setFormData((prev) => ({ ...prev, delivery_to: date }))}
               id={"deliveryTo"}
               label={"Delivery To"}
             />
@@ -292,10 +290,10 @@ const SubmitProposal = ({ data }) => {
             <InputWithLabel
               id="taxCalculation"
               name="tax"
-              type="text"
+              type="number"
               label="Tax Calculation"
               value={formData.tax}
-              onChange={(value) => setFormData((prev) => ({ ...prev, tax: parseFloat(value) }))}
+              onChange={handleChange}
               disabled={isAutoCalculation}
             />
             <div className="flex items-center">

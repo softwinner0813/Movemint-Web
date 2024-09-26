@@ -29,6 +29,7 @@ import { sendMessage, updateMessage } from "@/services/firebaseMessage";
 import MessageItem from "@/components/dashboard-layout/pages/messaging/messageItem";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import mime from 'mime-types';
+import { useRouter } from "next/navigation";
 
 // Firebase Imports
 import {
@@ -47,6 +48,7 @@ const ChatMessagePage = ({ params }) => {
   const downLg = useBreakpoint("lg");
   // const router = useRouter();
   const roomId = params.id;
+  const router = useRouter();
 
   // Ref to hold the chat container
   const chatContainerRef = useRef(null);
@@ -185,6 +187,10 @@ const ChatMessagePage = ({ params }) => {
     return () => unsubscribe(); // Cleanup listener on unmount
   }, [roomId]);
 
+  const handleBack = () => {
+    router.push("/dashboard/messaging");
+  }
+
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="w-full lg:w-1/4 bg-background rounded-xl p-6 flex flex-col gap-6">
@@ -215,7 +221,7 @@ const ChatMessagePage = ({ params }) => {
       <div className="relative flex-1 rounded-lg bg-background max-h-[800px] min-h-[800px]">
         <div className="flex items-center justify-between p-4 rounded-t-lg border-b-[1px] border-gray-600 gap-2">
           <div className="flex items-center gap-4">
-            <div className="text-black bg-foreground rounded-md text-base cursor-pointer flex-1">
+            <div onClick={handleBack} className="text-black bg-foreground rounded-md text-base cursor-pointer flex-1">
               <ChevronLeftIcon />
             </div>{" "}
             <h2 className="text-foreground text-sm md:text-xl font-semibold truncate max-w-12 sm:max-w-24 md:max-w-56 lg:max-w-56">

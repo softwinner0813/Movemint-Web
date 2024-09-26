@@ -7,19 +7,20 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { updateMover } from "@/services/api"; // Import backend service
 import { useUser } from "@/lib/userContext";
-import { notification } from 'antd';
+import { notification } from "antd";
+import AutocompleteInputWithLabel from "./autoCompleteInputWithLabel"; // Import the new autocomplete component
 
 const NotificationTypes = {
   SUCCESS: "success",
   INFO: "info",
   WARNING: "warning",
-  ERROR: "error"
+  ERROR: "error",
 };
 
 const EditProfileForm = () => {
   const [locations, setLocations] = useState([]);
   const [locationName, setLocationName] = useState("");
-  const [locationAddress, setLocationAddress] = useState("");
+  const [locationAddress, setLocationAddress] = useState(""); 
 
   // Personal Details
   const [firstName, setFirstName] = useState("");
@@ -67,9 +68,10 @@ const EditProfileForm = () => {
     setBio(userData?.mover?.bio || "");
     setIsInternationalShipping(userData?.mover?.is_int_shipping || "Yes");
     setBusinessYear(userData?.mover?.business_year || "");
-    setAvatar(userData.avatar ? userData.avatar[0] == "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : userData.avatar : "");
-    setBanner(userData.mover.banner_img ? userData.mover.banner_img[0] == "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.mover.banner_img : userData.mover.banner_img : "");
-  }, [userData.length]);
+    setAvatar(userData.avatar ? userData.avatar[0] === "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : userData.avatar : "");
+    setBanner(userData.mover.banner_img ? userData.mover.banner_img[0] === "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.mover.banner_img : userData.mover.banner_img : "");
+    setLocations(JSON.parse(userData.mover.locations) ?? []);
+  }, [userData]);
 
   // Add a new location
   const addLocation = () => {
@@ -86,11 +88,14 @@ const EditProfileForm = () => {
   };
 
   // Remove location by ID
-  const removeLocation = (id) => {
-    setLocations((prevLocations) =>
-      prevLocations.filter((location) => location.id !== id)
-    );
+  const removeLocation = (index) => {
+    setLocations((prevLocations) => {
+      const updatedLocations = [...prevLocations]; // Create a copy of the array
+      updatedLocations.splice(index, 1); // Remove the element at the specified index
+      return updatedLocations;
+    });
   };
+  
 
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
@@ -104,7 +109,6 @@ const EditProfileForm = () => {
 
   const handleBannerUpload = (e) => {
     const file = e.target.files[0];
-    console.log(file);
     if (file) {
       setBannerFile(file);
       const reader = new FileReader();
@@ -117,18 +121,12 @@ const EditProfileForm = () => {
 
   // Save changes handler
   const saveChanges = async () => {
-    // Create a new FormData object to send files and other data
     const formData = new FormData();
-
-    // Append all the profile data to the FormData object
     formData.append("first_name", firstName);
     formData.append("last_name", lastName);
     formData.append("email", email);
     formData.append("phone_number", phoneNumber);
-    formData.append(
-      "locations",
-      JSON.stringify(locations.map((loc) => ({ name: loc.name, address: loc.address })))
-    );
+    formData.append("locations", JSON.stringify(locations.map((loc) => ({ name: loc.name, address: loc.address }))));
     formData.append("company_number", companyNumber);
     formData.append("company_name", companyName);
     formData.append("company_email", companyEmail);
@@ -138,7 +136,6 @@ const EditProfileForm = () => {
     formData.append("is_int_shipping", isInternationalShipping);
     formData.append("bio", bio);
 
-    // Append avatar and banner files to FormData if they are available
     if (avatarFile) {
       formData.append("avatar", avatarFile); // Add avatar file
     }
@@ -147,18 +144,31 @@ const EditProfileForm = () => {
     }
 
     try {
-      // Pass the FormData to the updateMover function
       const response = await updateMover(userData.id, formData);
       setUserData(response.data);
       openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Profile updated successfully!");
     } catch (error) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Error", "Profile update failure!");
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     }
   };
 
   return (
     <>
       {contextHolder}
+
+      {/* Load Google Places API Script */}
+      {/* <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+        strategy="lazyOnload"
+      /> */}
+
       <form className="w-full flex flex-col items-center justify-center gap-8">
         <div className="flex flex-col items-center justify-center gap-2 cursor-pointer">
           <label htmlFor="uploadAvatar" className="flex flex-col items-center">
@@ -221,7 +231,7 @@ const EditProfileForm = () => {
           />
         </div>
 
-
+        {/* Personal Details Section */}
         <div className="w-full flex flex-col gap-4">
           <h4 className="text-2xl font-bold text-start w-full">Personal Details</h4>
           <div className="w-full flex flex-col sm:flex-row gap-6 md:gap-10 items-center justify-center">
@@ -261,6 +271,8 @@ const EditProfileForm = () => {
             </div>
           </div>
         </div>
+
+        {/* Company Details Section */}
         <div className="w-full flex flex-col gap-4">
           <h4 className="text-2xl font-bold text-start w-full">Company Details</h4>
           <div className="w-full flex flex-col sm:flex-row gap-6 md:gap-10 items-center justify-center">
@@ -365,12 +377,14 @@ const EditProfileForm = () => {
             </div>
           </div>
         </div>
+
+        {/* Locations Section */}
         <div className="w-full flex flex-col gap-4">
           <h4 className="text-2xl font-bold text-start w-full">Locations</h4>
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            {locations.map((location) => (
+            {locations.map((location, index) => (
               <div
-                key={location.id}
+                key={index}
                 className="relative border-2 border-white max-w-full sm:max-w-56 p-5 rounded-[10px]"
               >
                 <h4 className="text-lg font-bold">{location.name}</h4>
@@ -379,7 +393,7 @@ const EditProfileForm = () => {
                 </p>
                 <div
                   className="absolute top-[-16px] right-[-16px] w-8 h-8 bg-red-500 rounded-full flex items-center justify-center cursor-pointer"
-                  onClick={() => removeLocation(location.id)}
+                  onClick={() => removeLocation(index)}
                 >
                   <span className="text-black text-xl leading-none">
                     <Minus size={18} />
@@ -389,6 +403,7 @@ const EditProfileForm = () => {
             ))}
           </div>
 
+          {/* Input fields for adding new location */}
           <div className="w-full mt-4 md:pr-10">
             <InputWithLabel
               type="text"
@@ -399,12 +414,11 @@ const EditProfileForm = () => {
             />
           </div>
           <div className="w-full md:pr-10">
-            <InputWithLabel
-              type="text"
+            <AutocompleteInputWithLabel
               label="Location Address"
               className="w-full sm:w-1/2"
               value={locationAddress}
-              onChange={(e) => setLocationAddress(e.target.value)}
+              onChange={setLocationAddress}
             />
           </div>
           <Button
@@ -415,6 +429,8 @@ const EditProfileForm = () => {
             Add Location
           </Button>
         </div>
+
+        {/* Save Changes Button */}
         <Button
           className="w-56 rounded-lg mt-5"
           onClick={saveChanges}
@@ -428,3 +444,4 @@ const EditProfileForm = () => {
 };
 
 export default EditProfileForm;
+

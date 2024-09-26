@@ -24,7 +24,13 @@ const poppins = Poppins({
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+          async
+          defer
+        ></script>
+      </head>
       <title>Movemint</title>
       <body
         className={cn(

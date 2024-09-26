@@ -42,12 +42,19 @@ const Page = ({ params }) => {
           router.push("/dashboard/projects");
           return;
         }
-        const proposal = await getSubmittedProposal(id, userData.id);
+        const proposal = await getSubmittedProposal(id, userData.mover.id);
         setData(projectData);
         setSubmittedProposal(proposal);
         setIsLoading(false);
       } catch (error) {
-        openNotificationWithIcon(NotificationTypes.ERROR, "Error", error);
+        let errorMessage = "An error occurred"; // Default message
+
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message; // Extract the custom message
+        } else if (error.message) {
+          errorMessage = error.message; // Fallback to general error message
+        }
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
         setIsLoading(false);
       }
     };

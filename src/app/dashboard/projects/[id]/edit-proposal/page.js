@@ -31,12 +31,19 @@ const Page = ({ params }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const proposal = (await getSubmittedProposal(id, userData.id)).data;
+        const proposal = (await getSubmittedProposal(id, userData.mover.id)).data;
         proposal.payment_options = JSON.parse(proposal.payment_options);
         setSubmittedProposal(proposal);
         setIsLoading(false);
       } catch (error) {
-        openNotificationWithIcon(NotificationTypes.ERROR, "Error", error);
+        let errorMessage = "An error occurred"; // Default message
+
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message; // Extract the custom message
+        } else if (error.message) {
+          errorMessage = error.message; // Fallback to general error message
+        }
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
         setIsLoading(false);
       }
     };
