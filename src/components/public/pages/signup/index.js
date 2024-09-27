@@ -28,8 +28,6 @@ const Signup = () => {
     email: "",
     countryCode: "",
     phoneNumber: "",
-    officeLocation: "",
-    additionalLocation: "",
     companyNumber: "",
     companyEmail: "",
     companyName: "",
@@ -37,6 +35,7 @@ const Signup = () => {
     taxNumber: "",
     businessYear: "",
     isIntShipping: "both",
+    service_type: 2,
     bio: "",
     password: "",
     recaptchaToken: "",
@@ -107,7 +106,6 @@ const Signup = () => {
         errorMessage = error.message; // Fallback to general error message
       }
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
-    } finally {
       setLoading(false);
     }
   };
@@ -119,8 +117,6 @@ const Signup = () => {
       lastName,
       countryCode,
       phoneNumber,
-      officeLocation,
-      additionalLocation,
       companyNumber,
       companyName,
       companyEmail,
@@ -130,6 +126,7 @@ const Signup = () => {
       isIntShipping,
       bio,
       recaptchaToken,
+      service_type,
     } = formData;
 
     const dataToSend = {
@@ -138,7 +135,6 @@ const Signup = () => {
       email: user.email, // From Firebase Authentication
       country_code: countryCode,
       phone_number: phoneNumber,
-      locations: [officeLocation, additionalLocation], // Converting locations to an array as expected by the backend
       company_number: companyNumber,
       company_name: companyName,
       company_email: companyEmail,
@@ -148,7 +144,8 @@ const Signup = () => {
       is_int_shipping: isIntShipping,
       bio,
       recaptchaToken,
-      firebase_uid: user.uid
+      firebase_uid: user.uid,
+      service_type
     };
 
     try {
@@ -172,6 +169,8 @@ const Signup = () => {
         errorMessage = error.message; // Fallback to general error message
       }
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -247,23 +246,45 @@ const Signup = () => {
             <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
               Company Details:
             </h2>
-
+            <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Service Region
+            </Label>
             <RadioGroup
-              defaultValue="both"
+              defaultValue="Both"
               onValueChange={(value) => setFormData({ ...formData, isIntShipping: value })}
-              className="flex items-center mb-5"
+              className="flex items-center mb-5 mt-3"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="interstate" id="interstate" />
+                <RadioGroupItem value="Interstate" id="interstate" />
                 <Label htmlFor="interstate">Interstate</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="international" id="international" />
+                <RadioGroupItem value="International" id="international" />
                 <Label htmlFor="international">International</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="both" id="both" />
+                <RadioGroupItem value="Both" id="both" />
                 <Label htmlFor="both">Both</Label>
+              </div>
+            </RadioGroup>
+
+            <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Move Type
+            </Label>
+            <RadioGroup
+              defaultValue="0"
+              onValueChange={(value) => setFormData({ ...formData, service_type: value })}
+              className="flex items-center mb-5 mt-3"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="0" id="home" />
+                <Label htmlFor="home">Home</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="auto" />
+                <Label htmlFor="auto">Auto</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="HA" />
+                <Label htmlFor="HA">Home + Auto</Label>
               </div>
             </RadioGroup>
 
@@ -290,21 +311,6 @@ const Signup = () => {
               value={formData.companyNumber}
               onChange={handleChange}
               required
-            />
-            <InputWithLabel
-              id="officeLocation"
-              type="text"
-              label="Office Location"
-              value={formData.officeLocation}
-              onChange={handleChange}
-              required
-            />
-            <InputWithLabel
-              id="additionalLocation"
-              type="text"
-              label="Additional Office Locations"
-              value={formData.additionalLocation}
-              onChange={handleChange}
             />
           </div>
 

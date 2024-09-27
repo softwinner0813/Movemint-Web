@@ -117,7 +117,7 @@ const Project = () => {
         setMoveTypes(types);
         setProposalStatus(status);
         projectData.map((item) => {
-          item.from = JSON.parse(item.from).streetAddress
+          item.from = JSON.parse(item.from).description
         })
         setData(projectData);
       } catch (error) {

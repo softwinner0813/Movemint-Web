@@ -1,6 +1,7 @@
 // firebaseMessages.js
 import { collection, addDoc, setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
+import { setInitialLastReadMessageId } from './firebaseRoom';
 
 /**
  * Adds a message to the messages sub-collection within a specific room
@@ -18,6 +19,7 @@ export const sendMessage = async (roomId, messageData) => {
     // Add the message to the "messages" sub-collection in the specific room
     await addDoc(collection(db, `rooms/${roomId}/messages`), message);
 
+    await setInitialLastReadMessageId(roomId, message);
     console.log('Message added successfully');
   } catch (error) {
     console.error('Error adding message:', error);
@@ -42,3 +44,30 @@ export const updateMessage = async (roomId, messageId, messageData) => {
     throw new Error('Could not update message');
   }
 };
+
+export const sendInvoiceMessage = async (roomId, amount, authorId, invoiceNumber="0000") => {
+  try {
+    const message = {
+      text: "Invoice #" + invoiceNumber + " - $" + amount,
+      type: "text",
+      authorId,
+      metadata: {
+        amount,
+        invoiceNumber,
+        type: "invoice"
+      },
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    // Add the message to the "messages" sub-collection in the specific room
+    await addDoc(collection(db, `rooms/${roomId}/messages`), message);
+    
+    await setInitialLastReadMessageId(roomId, message);
+
+    console.log('Invoice requested successfully');
+  } catch (error) {
+    console.error('Error invoice message:', error);
+    throw new Error('Could not send message');
+  }  
+}

@@ -1,5 +1,5 @@
 // firebaseChat.js
-import { collection, addDoc, query, getDocs, where, serverTimestamp, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, query, getDocs, where, serverTimestamp, onSnapshot, doc, getDoc, setDoc } from 'firebase/firestore';
 import { db, auth } from './firebase'; // Firebase initialization
 
 /**
@@ -80,45 +80,89 @@ export const listenToRoomsForUser = (userId, callback) => {
     }
 };
 
-const getLastReadMessageId = (room, currentUserId) => {
-    if (room.metadata && room.metadata['lastReadMessageId']) {
-        return room.metadata['lastReadMessageId'][currentUserId] || null;
+const getLastReadMessageTime = (room, currentUserId) => {
+    if (room.metadata && room.metadata['lastReadMessageTime']) {
+        return room.metadata['lastReadMessageTime'][currentUserId] || null;
     }
     return null;
 };
+
 
 // Function to get unread message count for a user
 export const getUnreadMessageCount = async (room) => {
     const currentUser = auth.currentUser;
     const roomId = room.id;
-    const lastReadMessageId = getLastReadMessageId(room, currentUser.uid);
+    const lastReadMessageTime = getLastReadMessageTime(room, currentUser.uid);
 
     // Check if lastReadMessageId is set
-    if (!lastReadMessageId) {
+    if (!lastReadMessageTime) {
         // If no lastReadMessageId is set, treat all messages as unread
         const allMessagesQuery = await getDocs(collection(db, `rooms/${roomId}/messages`));
         return allMessagesQuery.size;
     } else {
-        // Get the document of the last read message
-        const lastReadMessageDoc = await getDoc(doc(db, `rooms/${roomId}/messages`, lastReadMessageId));
-
-        // Check if lastReadMessageDoc exists
-        if (!lastReadMessageDoc.exists()) {
-            console.error('Last read message does not exist.');
-            return 0;
-        }
-
-        const lastReadCreatedAt = lastReadMessageDoc.data().createdAt;
-
-        // Query messages with createdAt greater than lastReadCreatedAt
         const unreadMessagesQuery = await getDocs(
             query(
                 collection(db, `rooms/${roomId}/messages`),
-                where('createdAt', '>', lastReadCreatedAt)
+                where('createdAt', '>', lastReadMessageTime)
             )
         );
-
         // Return the count of unread messages
         return unreadMessagesQuery.size;
     }
+};
+
+export const getOtherUserName = async (room) => {
+    const otherUserId = room.userIds.filter((id) => id != auth.currentUser.uid)[0]; // Get the first user ID
+
+    const userDocRef = doc(db, 'users', otherUserId); // Reference to the user document
+    try {
+        const userSnapshot = await getDoc(userDocRef); // Fetch the document (use getDoc, not getDocs)
+        if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            return (userData.firstName ?? "") + " " + (userData.lastName ?? "");
+        } else {
+            console.log("User does not exist");
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+export const setInitialLastReadMessageId = async (roomId, messageData) => {
+
+    let lastMessageText = "";
+
+    if (messageData.hasOwnProperty('type')) {
+        switch (messageData.type) {
+            case 'file':
+                lastMessageText = '📃 File message';
+                break;
+            case 'image':
+                lastMessageText = '📷 Image message';
+                break;
+            default:
+                lastMessageText = messageData.hasOwnProperty('text')
+                    ? messageData.text
+                    : "";
+        }
+    } else {
+        lastMessageText = messageData.hasOwnProperty('text')
+            ? messageData.text
+            : "";
+    }
+
+    // Create metadata object
+    const metadata = {
+        metadata: {
+            lastMessageText: lastMessageText,
+            lastMessageTime: messageData.createdAt,
+            lastReadMessageTime: {
+                [auth.currentUser.uid]: messageData.createdAt,
+            },
+        },
+    };
+
+    // Update Firestore with metadata
+    const roomDocRef = doc(db, 'rooms', roomId);
+    await setDoc(roomDocRef, metadata, { merge: true });
 };

@@ -9,7 +9,7 @@ import { ChevronLeftIcon, ChevronRightIcon, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { auth } from "@/services/firebase";
-import { listenToRoomsForUser, getUnreadMessageCount } from "@/services/firebaseRoom";
+import { listenToRoomsForUser, getUnreadMessageCount, getOtherUserName } from "@/services/firebaseRoom";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/userContext";
 
@@ -103,28 +103,32 @@ const messages = [
 const MessagingPage = () => {
   const [starredMessages, setStarredMessages] = useState(messages);
   const [rooms, setRooms] = useState(null);
+  const [inboxCount, setInboxCount] = useState(0);
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
   const { userData } = useUser();
 
 
   useEffect(() => {
     const unsubscribe = listenToRoomsForUser(userData.firebase_uid, async (roomsList) => {
       // setRooms(roomsList); // Update state with real-time rooms
-      setRooms(roomsList);
-      await roomsList.map(async (room) => {
+      let count = 0;
+      await Promise.all(roomsList.map(async (room) => {
         const unreadMessageCount = await getUnreadMessageCount(room, auth.currentUser.uid);
+        const roomName = await getOtherUserName(room);
         room.unreadMessageCount = unreadMessageCount;
+        room.name = roomName;
+        count += unreadMessageCount;
         if (unreadMessageCount > 0) {
           room.status = "Unread";
         }
-      })
-      setIsLoading(false);
+      }));
+      setInboxCount(count);
+      setRooms(roomsList);
     });
 
     // Cleanup: Unsubscribe from the listener when the component unmounts
     return () => unsubscribe();
-  }, [rooms == null]);
+  }, [!userData.isEmpty]);
 
   const handleMessageClick = (id) => {
     router.push(`/dashboard/messaging/${id}`);
@@ -140,7 +144,7 @@ const MessagingPage = () => {
 
   return (
     <>
-      {! isLoading && <div>
+      <div>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-1/4 bg-background rounded-xl p-6 flex flex-col gap-6">
             <Button className="rounded-lg w-full mb-4 lg:mb-0">
@@ -156,7 +160,7 @@ const MessagingPage = () => {
                       Inbox
                     </span>
                   </div>
-                  <span className="text-blue-500 text-sm font-bold">1253</span>
+                  <span className="text-blue-500 text-sm font-bold">{inboxCount}</span>
                 </li>
 
                 <li className="flex justify-between items-center p-3 rounded-lg my-2">
@@ -193,7 +197,7 @@ const MessagingPage = () => {
             <div className="overflow-x-auto">
               <Table className="w-full min-w-[600px]">
                 <TableBody>
-                  {rooms.map((room) => (
+                  {rooms?.map((room) => (
                     <TableRow
                       key={room.id}
                       className="border-b border-gray-600"
@@ -240,11 +244,11 @@ const MessagingPage = () => {
                         )}
                       </TableCell>
                       <TableCell className="text-gray-400">
-                        {room.metadata.lastMessageText}
+                        {room.metadata?.lastMessageText}
                       </TableCell>
                       <TableCell className="text-gray-400">
-                        {room.metadata.lastMessageTime ? (new Date(
-                          room.metadata.lastMessageTime * 1000
+                        {room.metadata?.lastMessageTime ? (new Date(
+                          room.metadata?.lastMessageTime * 1000
                         ).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -252,7 +256,7 @@ const MessagingPage = () => {
                       </TableCell>
                       <TableCell className="text-gray-400">
                         {parseInt(room.unreadMessageCount) > 0 && (
-                          <span className="px-2 py-1 bg-red-600 text-white text-xs rounded-full">
+                          <span className="custom-gradient px-2 py-1 text-white text-xs rounded-full">
                             {room.unreadMessageCount}
                           </span>
                         )}
@@ -273,7 +277,7 @@ const MessagingPage = () => {
             <ChevronRightIcon />
           </button>
         </div>
-      </div>}
+      </div>
     </>
   );
 };

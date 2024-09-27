@@ -24,7 +24,7 @@ import FileIcon from "@/components/icons/file-icon";
 import ClipIcon from "@/components/icons/clip-icon";
 import Sent from "@/components/icons/sent-icon";
 import { db, auth, storage } from "@/services/firebase"; // Your Firebase config
-import { sendMessage, updateMessage } from "@/services/firebaseMessage";
+import { sendMessage, updateMessage, sendInvoiceMessage } from "@/services/firebaseMessage";
 // import { useRouter } from "next/navigation";
 import MessageItem from "@/components/dashboard-layout/pages/messaging/messageItem";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -41,10 +41,13 @@ import {
   limit,
   getDocs
 } from "firebase/firestore";
+import { setInitialLastReadMessageId } from "@/services/firebaseRoom";
 
 const ChatMessagePage = ({ params }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [invoice, setInvoice] = useState(null);
   const downLg = useBreakpoint("lg");
   // const router = useRouter();
   const roomId = params.id;
@@ -86,7 +89,7 @@ const ChatMessagePage = ({ params }) => {
         type: 'file',
         metadata: { 'progress': 0.0 },
       }
-      
+
       await sendMessage(roomId, initalMessage);
       const q = query(
         collection(db, `rooms/${roomId}/messages`),
@@ -104,14 +107,14 @@ const ChatMessagePage = ({ params }) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const objectUrl = URL.createObjectURL(file);
-  
+
       img.onload = () => {
         resolve({ width: img.width, height: img.height });
         URL.revokeObjectURL(objectUrl); // Clean up object URL after using
       };
-  
+
       img.onerror = reject;
-  
+
       img.src = objectUrl;
     });
   };
@@ -121,10 +124,10 @@ const ChatMessagePage = ({ params }) => {
     const file = event.target.files[0];
 
     const { width, height } = await getImageDimensions(file);
-    
+
     const storageRef = ref(storage, `uploads/${file.name}`);
     const uploadTask = await uploadBytesResumable(storageRef, file);
-    
+
     const downloadURL = await getDownloadURL(uploadTask.ref);
     const message = {
       authorId: auth.currentUser.uid,
@@ -176,10 +179,10 @@ const ChatMessagePage = ({ params }) => {
       orderBy("createdAt", "asc")
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
       const fetchedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setMessages(fetchedMessages);
-
+      setInitialLastReadMessageId(roomId, fetchedMessages[fetchedMessages.length - 1]);
       // Scroll to the bottom when new messages come in
       chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight });
     });
@@ -191,10 +194,59 @@ const ChatMessagePage = ({ params }) => {
     router.push("/dashboard/messaging");
   }
 
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
+  const handleInvoice = () => {
+    openModal();
+  }
+
+  const invoiceConfirm = () => {
+    if (invoice != 0 && invoice != "") {
+      sendInvoiceMessage(roomId, invoice, auth.currentUser.uid);
+    }
+    closeModal(false);
+  }
+
   return (
     <div className="flex flex-col lg:flex-row gap-8">
+      {isOpen && (
+        <div id="invoiceModal" className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-white">Confirm Invoice</h2>
+              <button onClick={closeModal} className="text-gray-400 hover:text-gray-300">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <div className="mt-4">
+              <label htmlFor="invoiceInput" className="block text-sm font-medium text-gray-300">
+                Invoice Number:
+              </label>
+              <input
+                id="invoiceInput"
+                type="number"
+                placeholder="Enter Invoice Number"
+                value={invoice}
+                onChange={(e) => setInvoice(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="mt-6 flex justify-end space-x-4">
+              <button onClick={closeModal} className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md">
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md" onClick={invoiceConfirm}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="w-full lg:w-1/4 bg-background rounded-xl p-6 flex flex-col gap-6">
-        <Button className="rounded-lg w-full mb-4 lg:mb-0">+ Compose</Button>
+        <Button className="rounded-lg w-full mb-4 lg:mb-0" onClick={handleInvoice}>+ Invoice</Button>
         <div>
           <h3 className="text-base font-bold text-foreground">My Email</h3>
           <ul>

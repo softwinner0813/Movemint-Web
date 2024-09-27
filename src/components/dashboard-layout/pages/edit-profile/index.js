@@ -36,7 +36,9 @@ const EditProfileForm = () => {
   const [taxNumber, setTaxNumber] = useState("");
   const [businessYear, setBusinessYear] = useState("");
   const [bio, setBio] = useState("");
-  const [isInternationalShipping, setIsInternationalShipping] = useState("Yes");
+  const [isInternationalShipping, setIsInternationalShipping] = useState("Interstate");
+  const [serviceType, setServiceType] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Avatar and Banner
   const [avatar, setAvatar] = useState("");
@@ -66,11 +68,12 @@ const EditProfileForm = () => {
     setCompanyNumber(userData?.mover?.company_number || "");
     setTaxNumber(userData?.mover?.tax_number || "");
     setBio(userData?.mover?.bio || "");
-    setIsInternationalShipping(userData?.mover?.is_int_shipping || "Yes");
+    setIsInternationalShipping(userData?.mover?.is_int_shipping || "Interstate");
+    setServiceType(userData?.mover?.service_type);
     setBusinessYear(userData?.mover?.business_year || "");
     setAvatar(userData.avatar ? userData.avatar[0] === "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : userData.avatar : "");
-    setBanner(userData.mover.banner_img ? userData.mover.banner_img[0] === "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.mover.banner_img : userData.mover.banner_img : "");
-    setLocations(JSON.parse(userData.mover.locations) ?? []);
+    setBanner(userData.mover?.banner_img ? userData.mover.banner_img[0] === "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.mover.banner_img : userData.mover.banner_img : "");
+    setLocations(JSON.parse(userData?.mover?.locations) ?? []);
   }, [userData]);
 
   // Add a new location
@@ -121,6 +124,7 @@ const EditProfileForm = () => {
 
   // Save changes handler
   const saveChanges = async () => {
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("first_name", firstName);
     formData.append("last_name", lastName);
@@ -135,6 +139,7 @@ const EditProfileForm = () => {
     formData.append("business_year", businessYear);
     formData.append("is_int_shipping", isInternationalShipping);
     formData.append("bio", bio);
+    formData.append("service_type", serviceType);
 
     if (avatarFile) {
       formData.append("avatar", avatarFile); // Add avatar file
@@ -156,6 +161,8 @@ const EditProfileForm = () => {
         errorMessage = error.message; // Fallback to general error message
       }
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -339,29 +346,29 @@ const EditProfileForm = () => {
             />
           </div>
           <div className="flex flex-col space-y-2">
-            <Label className="font-bold">Do you ship internationally?</Label>
+            <Label className="font-bold">Service Region</Label>
             <div className="flex items-center space-x-4">
               <label className="inline-flex items-center">
                 <input
                   type="radio"
                   className="form-radio text-blue-600 h-5 w-5"
                   name="shipping"
-                  value="Yes"
-                  checked={isInternationalShipping === "Yes"}
-                  onChange={() => setIsInternationalShipping("Yes")}
+                  value="Interstate"
+                  checked={isInternationalShipping === "Interstate"}
+                  onChange={() => setIsInternationalShipping("Interstate")}
                 />
-                <span className="ml-2">Yes</span>
+                <span className="ml-2">Interstate</span>
               </label>
               <label className="inline-flex items-center">
                 <input
                   type="radio"
                   className="form-radio text-blue-600 h-5 w-5"
                   name="shipping"
-                  value="No"
-                  checked={isInternationalShipping === "No"}
-                  onChange={() => setIsInternationalShipping("No")}
+                  value="International"
+                  checked={isInternationalShipping === "International"}
+                  onChange={() => setIsInternationalShipping("International")}
                 />
-                <span className="ml-2">No</span>
+                <span className="ml-2">International</span>
               </label>
               <label className="inline-flex items-center">
                 <input
@@ -373,6 +380,41 @@ const EditProfileForm = () => {
                   onChange={() => setIsInternationalShipping("Both")}
                 />
                 <span className="ml-2">Both</span>
+              </label>
+            </div>
+          </div>
+          <div className="flex flex-col space-y-2">
+            <Label className="font-bold">Move Type</Label>
+            <div className="flex items-center space-x-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio text-blue-600 h-5 w-5"
+                  name="home"
+                  checked={ serviceType == 0}
+                  onChange={() => setServiceType(0)}
+                />
+                <span className="ml-2">Home</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio text-blue-600 h-5 w-5"
+                  name="auto"
+                  checked={serviceType == 1}
+                  onChange={() => setServiceType(1)}
+                />
+                <span className="ml-2">Auto</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio text-blue-600 h-5 w-5"
+                  name="HA"
+                  checked={serviceType == 2}
+                  onChange={() => setServiceType(2)}
+                />
+                <span className="ml-2">Home + Auto</span>
               </label>
             </div>
           </div>
@@ -435,8 +477,9 @@ const EditProfileForm = () => {
           className="w-56 rounded-lg mt-5"
           onClick={saveChanges}
           type="button"
+          disabled={isLoading}
         >
-          Save Changes
+          { isLoading ? "Saving..." : "Save Changes" }
         </Button>
       </form>
     </>
