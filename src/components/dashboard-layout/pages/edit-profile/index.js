@@ -20,7 +20,7 @@ const NotificationTypes = {
 const EditProfileForm = () => {
   const [locations, setLocations] = useState([]);
   const [locationName, setLocationName] = useState("");
-  const [locationAddress, setLocationAddress] = useState(""); 
+  const [locationAddress, setLocationAddress] = useState("");
 
   // Personal Details
   const [firstName, setFirstName] = useState("");
@@ -72,7 +72,7 @@ const EditProfileForm = () => {
     setServiceType(userData?.mover?.service_type);
     setBusinessYear(userData?.mover?.business_year || "");
     setAvatar(userData.avatar ? userData.avatar[0] === "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.avatar : userData.avatar : "");
-    setBanner(userData.mover?.banner_img ? userData.mover.banner_img[0] === "/" ? process.env.NEXT_PUBLIC_BASE_URL + userData.mover.banner_img : userData.mover.banner_img : "");
+    setBanner(JSON.parse(userData.mover?.banner_img)?.length > 0 ? `${process.env.NEXT_PUBLIC_BASE_URL}${JSON.parse(userData.mover.banner_img)[0]}` : "");
     setLocations(JSON.parse(userData?.mover?.locations) ?? []);
   }, [userData]);
 
@@ -98,7 +98,7 @@ const EditProfileForm = () => {
       return updatedLocations;
     });
   };
-  
+
 
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0];
@@ -391,7 +391,7 @@ const EditProfileForm = () => {
                   type="radio"
                   className="form-radio text-blue-600 h-5 w-5"
                   name="home"
-                  checked={ serviceType == 0}
+                  checked={serviceType == 0}
                   onChange={() => setServiceType(0)}
                 />
                 <span className="ml-2">Home</span>
@@ -479,7 +479,7 @@ const EditProfileForm = () => {
           type="button"
           disabled={isLoading}
         >
-          { isLoading ? "Saving..." : "Save Changes" }
+          {isLoading ? "Saving..." : "Save Changes"}
         </Button>
       </form>
     </>
