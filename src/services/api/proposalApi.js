@@ -14,3 +14,8 @@ export const getSubmittedProposal = async (project_id, mover_id) => {
     const response = await axiosInstance.post("/proposal/getSubmitted", { project_id, mover_id });
     return response.data;
 }
+
+export const getOrderHistoryByMoverId = async (mover_id) => {
+    const response = await axiosInstance.post("/proposal/getOrderHistoryByMoverId", { mover_id });
+    return response.data;
+}

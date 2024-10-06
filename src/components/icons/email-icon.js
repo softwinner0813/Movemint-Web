@@ -15,15 +15,15 @@ const EmailIcon = () => {
         rx="1.5"
         stroke="#4880FF"
         strokeWidth="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M16.3897 1.94543L10.4668 6.50107C9.60204 7.16634 8.39781 7.16634 7.53302 6.50107L1.61011 1.94543"
         stroke="#4880FF"
         strokeWidth="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

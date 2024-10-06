@@ -7,10 +7,10 @@ const TeamMemberList = ({ memberList }) => {
         return (
           <TeamMemberCard
             key={index}
-            name={member.name}
+            name={member.first_name + " " + member.last_name}
             email={member.email}
-            status={member.status}
-            img={member.img}
+            status={member.job_title}
+            img={member.avatar}
           />
         );
       })}

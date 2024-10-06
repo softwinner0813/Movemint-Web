@@ -72,6 +72,8 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
           <div className="flex gap-3 items-center justify-start cursor-pointer">
             <Image
               src={data.avatar ?? DefaultAvatar}
+              width={96}
+              height={96}
               alt="Edit Profile"
               className="w-12 h-12 md:w-16 md:h-16"
             />
