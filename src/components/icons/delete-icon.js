@@ -14,8 +14,8 @@ const DeleteIcon = () => {
         fill="white"
         stroke="black"
         strokeWidth="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fillRule="evenodd"
@@ -27,8 +27,8 @@ const DeleteIcon = () => {
         d="M7.20029 11.8V7"
         stroke="black"
         strokeWidth="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fillRule="evenodd"
@@ -40,8 +40,8 @@ const DeleteIcon = () => {
         d="M10.8001 11.8V7"
         stroke="black"
         strokeWidth="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fillRule="evenodd"
@@ -53,8 +53,8 @@ const DeleteIcon = () => {
         d="M1.2002 3.4H16.8002"
         stroke="black"
         strokeWidth="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         fillRule="evenodd"
@@ -63,8 +63,8 @@ const DeleteIcon = () => {
         fill="white"
         stroke="black"
         strokeWidth="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

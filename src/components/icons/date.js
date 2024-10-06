@@ -17,7 +17,7 @@ const DateIcon = () => {
         d="M7.89087 3.36328V6.36328M17.8909 3.36328V6.36328"
         stroke="#A9A3B9"
         strokeWidth="2"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
     </svg>
   );

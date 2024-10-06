@@ -78,9 +78,23 @@
 .ant-table-cell-row-hover {
   background: black !important; 
 }
+
 body > div.flex > div > main > div > div.ant-table-wrapper.bg-black.text-white.css-dev-only-do-not-override-14qglws > div > div > div > div > div > table > tbody > tr > td {
   background: black !important;
 }
+
+.ant-rate-star:not(.ant-rate-star-full) svg {
+  color: lightgray !important;  /* Light gray color for empty stars */
+}
+
+.ant-rate-star-full svg {
+  color: #fadb14 !important;  /* Yellow color for filled stars */
+}
+
+.ant-rate-star-half .ant-rate-star-first svg {
+  color: #fadb14 !important;  /* Yellow color for half-filled stars */
+}
+
 @layer components {
   .custom-gradient {
     background-image: linear-gradient(

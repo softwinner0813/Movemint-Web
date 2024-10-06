@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Dropdown, Menu, DatePicker, Button, Checkbox } from "antd";
+import { Table, Dropdown, Menu, DatePicker, Checkbox } from "antd";
 import { ChevronDownIcon } from "lucide-react";
 import ResetIcon from "../icons/reset-icon";
 
@@ -52,16 +52,17 @@ const CommonDataTable = ({
 
   const renderDropdownWithCheckbox = (options, selectedValues, onChange) => {
     return (
-      <Menu>
+      <div style={{ padding: 8 }}>
         <Checkbox.Group
-          style={{ display: 'flex', flexDirection: 'column', padding: 8 }}
+          style={{ display: 'flex', flexDirection: 'column' }}
           options={options}
           value={selectedValues}
           onChange={onChange}
         />
-      </Menu>
+      </div>
     );
   };
+
 
   // Custom classnames for black background and other styling tweaks
   const customTableClass = "bg-black text-white"; // Table body is black, and text is white
@@ -156,6 +157,7 @@ const CommonDataTable = ({
 
       <Table
         columns={columns}
+        rowKey={(record) => record.id}
         dataSource={filteredData}
         rowClassName={customRowClass}
         pagination={false}

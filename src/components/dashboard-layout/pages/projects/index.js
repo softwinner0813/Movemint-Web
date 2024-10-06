@@ -52,7 +52,6 @@ const columns = [
     align: 'center',
     render: (_, record) => {
       const value = record.status.toLowerCase();
-      console.log(value);
       return (
         <div
           className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
