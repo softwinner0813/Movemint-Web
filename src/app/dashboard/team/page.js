@@ -12,7 +12,7 @@ const NotificationTypes = {
   ERROR: "error"
 };
 
-const page = () => {
+const Page = () => {
   const [data, setData] = useState([]);
   const [api, contextHolder] = notification.useNotification();
   const openNotificationWithIcon = (type, title, content) => {
@@ -52,4 +52,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
