@@ -7,6 +7,7 @@ import Image from "next/image";
 import { notification } from "antd";
 import { createTeamMember, deleteTeamMember, updateTeamMember } from "@/services/api";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/userContext";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -15,7 +16,7 @@ const NotificationTypes = {
   ERROR: "error",
 };
 
-const AddNewMemberForm = ({ data, editMode }) => {
+const AddNewMemberForm = ({ editMode }) => {
 
   const [avatar, setAvatar] = useState('');
   const [avatarFile, setAvatarFile] = useState(null);
@@ -29,6 +30,7 @@ const AddNewMemberForm = ({ data, editMode }) => {
 
   const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
+  const { userData } = useUser();
 
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -40,12 +42,13 @@ const AddNewMemberForm = ({ data, editMode }) => {
 
   useEffect(() => {
     if (editMode) {
+      const data = JSON.parse(localStorage.getItem('member-data'));
       setFormData(data);
       if (data.avatar) {
         setAvatar(process.env.NEXT_PUBLIC_BASE_URL + data.avatar);
       }
     }
-  }, [data?.length]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,6 +84,8 @@ const AddNewMemberForm = ({ data, editMode }) => {
         submitData.append("id", formData.id); // Add avatar file
       }
       const response = editMode ? await updateTeamMember(submitData) : await createTeamMember(submitData);
+      console.log(userData);
+      console.log(formData.email);
       openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Team member created successfully");
       router.push(`/dashboard/team`)
       // Handle success, show a notification or redirect

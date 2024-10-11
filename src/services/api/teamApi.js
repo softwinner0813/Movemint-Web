@@ -33,7 +33,7 @@ export const updateTeamMember = async (data) => {
 };
 
 export const deleteTeamMember = async (data) => {
-    const response = await axiosInstance.delete("/team/delete", data);
+    const response = await axiosInstance.post("/team/delete", {id: data});
     if (response.data.result)
         return response.data.data;
     else
