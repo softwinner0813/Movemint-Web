@@ -8,6 +8,7 @@ import { notification } from "antd";
 import { createTeamMember, deleteTeamMember, updateTeamMember } from "@/services/api";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/userContext";
+import CommonModel from "@/components/dashboard-layout/components/common-model";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -27,6 +28,7 @@ const AddNewMemberForm = ({ editMode }) => {
     job_title: '',
     phone_number: '',
   });
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
 
   const [api, contextHolder] = notification.useNotification();
   const router = useRouter();
@@ -82,10 +84,13 @@ const AddNewMemberForm = ({ editMode }) => {
       }
       if (editMode) {
         submitData.append("id", formData.id); // Add avatar file
+      } else {
+        submitData.append("mover_id", userData.mover.id);
       }
       const response = editMode ? await updateTeamMember(submitData) : await createTeamMember(submitData);
-      console.log(userData);
-      console.log(formData.email);
+      const inviteData = btoa((userData.mover.company_name ?? '') + "|" + formData.email);
+      const inviteLink = process.env.NEXT_PUBLIC_SITE_URL + "/new-member-login?data=" + inviteData;
+      console.log(inviteLink);
       openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Team member created successfully");
       router.push(`/dashboard/team`)
       // Handle success, show a notification or redirect
@@ -199,7 +204,7 @@ const AddNewMemberForm = ({ editMode }) => {
                 type="button"
                 variant="ghost"
                 className="w-56 rounded-md bg-[#FF0000]"
-                onClick={handleDelete}
+                onClick={() => setIsOpenDeleteModal(true)}
               >
                 Delete Member
               </Button>
@@ -211,6 +216,19 @@ const AddNewMemberForm = ({ editMode }) => {
           )}
         </div>
       </form>
+      {isOpenDeleteModal && (
+        <CommonModel
+          mainHeading="Delete User"
+          subHeading="Are you sure to delete this user?"
+          mainButtonContent="Ok"
+          cancelButtonContent="Cancel"
+          setIsModalOpen={setIsOpenDeleteModal}
+          isDanger={false}
+          showInputFields={false}
+          onConfirm={handleDelete}
+          onCancel={() => setIsOpenDeleteModal(false)}
+        />
+      )}
     </>
   );
 };

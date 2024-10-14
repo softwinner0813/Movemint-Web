@@ -79,8 +79,16 @@
   background: black !important; 
 }
 
-body > div.flex > div > main > div > div.ant-table-wrapper.bg-black.text-white.css-dev-only-do-not-override-14qglws > div > div > div > div > div > table > tbody > tr > td {
-  background: black !important;
+.ant-empty, .ant-table-placeholder {
+  background-color: black !important; /* Set the background to black */
+}
+
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > td {
+  background: black !important; /* Set background to black */
+}
+
+.ant-empty .ant-empty-description {
+  color: white; /* Optional: change the text color to white for better visibility */
 }
 
 .ant-rate-star:not(.ant-rate-star-full) svg {

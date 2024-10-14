@@ -11,6 +11,17 @@ export const signupMover = async (data) => {
   return response;
 };
 
+export const signupMember = async (data) => {
+  const response = (await axiosInstance.post("/auth/signup/member", data)).data;
+  const token = response.data.token;
+
+  // Store the token in localStorage (or sessionStorage)
+  if (token) {
+    localStorage.setItem("x-auth-token", token);
+  }
+  return response;
+};
+
 export const updateMover = async (id, formData) => {
   try {
     // Pass FormData and set content-type for form data

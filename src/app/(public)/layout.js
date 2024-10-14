@@ -12,7 +12,7 @@ const PublicLayout = ({ children }) => {
     <div className="min-h-screen bg-midnight">
       <div className={`relative ${isSignUpPage ? "" : "bg-login "}`}>
         <PublicHeader />
-        <main className="container min-h-screen">{children}</main>
+        <main className="container">{children}</main>
       </div>
       <PublicFooter />
     </div>
