@@ -88,9 +88,7 @@ const AddNewMemberForm = ({ editMode }) => {
         submitData.append("mover_id", userData.mover.id);
       }
       const response = editMode ? await updateTeamMember(submitData) : await createTeamMember(submitData);
-      const inviteData = btoa((userData.mover.company_name ?? '') + "|" + formData.email);
-      const inviteLink = process.env.NEXT_PUBLIC_SITE_URL + "/new-member-login?data=" + inviteData;
-      console.log(inviteLink);
+
       openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Team member created successfully");
       router.push(`/dashboard/team`)
       // Handle success, show a notification or redirect

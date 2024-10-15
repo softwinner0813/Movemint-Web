@@ -39,7 +39,7 @@ const NewMemberLoginPage = () => {
   };
 
   useEffect(() => {
-    const base64Data = searchParams.get('data');
+    const base64Data = searchParams.get('token');
     if (base64Data) {
       try {
         // Decode the Base64 string
