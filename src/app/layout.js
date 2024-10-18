@@ -8,6 +8,7 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { UserProvider } from "@/lib/userContext";
 import { useEffect } from "react";
+import { initializeOneSignal } from "@/services/OneSignalService";
 // import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 const quicksand = Quicksand({
@@ -24,22 +25,9 @@ const poppins = Poppins({
 
 export default function RootLayout({ children }) {
   useEffect(() => {
-    window.OneSignal = window.OneSignal || [];
-    OneSignal.push(function () {
-      OneSignal.init({
-        appId: "b40b7cc7-13dc-4662-8b48-efa668f9b72a",
-        notifyButton: {
-          enable: true,
-        },
-
-        allowLocalhostAsSecureOrigin: true,
-      });
-    });
-
-    return () => {
-      window.OneSignal = undefined;
-    };
-  }, []); // <-- run this effect once on mount
+    // Initialize OneSignal
+    initializeOneSignal({ isLocal: process.env.NODE_ENV === "development" });
+  }, []);
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -61,6 +49,7 @@ export default function RootLayout({ children }) {
         {/* <GoogleReCaptchaProvider
           reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
         > */}
+
         <UserProvider>
           <ProgressBar />
           {children}

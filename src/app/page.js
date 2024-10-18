@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import HomePage from "@/components/public";
 import MoverPage from "@/components/public/components/MoverPage";
