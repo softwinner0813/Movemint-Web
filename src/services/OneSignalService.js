@@ -15,8 +15,13 @@ export const initializeOneSignal = async ({ isLocal = false }) => {
         // Uncomment the below line to run on localhost. See: https://documentation.onesignal.com/docs/local-testing
         allowLocalhostAsSecureOrigin: isLocal,
       });
+
+      // Show Prompt for Permission
+      OneSignal.Slidedown.promptPush();
+      // return OneSignal;
     } catch (error) {
       console.error("OneSignal initialization failed:", error);
+      // return null;
     }
   }
 };

@@ -24,9 +24,11 @@ const poppins = Poppins({
 });
 
 export default function RootLayout({ children }) {
+  // Initialize OneSignal
   useEffect(() => {
-    // Initialize OneSignal
-    initializeOneSignal({ isLocal: process.env.NODE_ENV === "development" });
+    initializeOneSignal({
+      isLocal: process.env.NODE_ENV === "development",
+    });
   }, []);
 
   return (
