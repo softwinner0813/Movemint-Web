@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
 import "./globals.css";
 import { Poppins, Quicksand } from "next/font/google";
 import { cn } from "@/lib/utils";
 import ProgressBar from "@/components/dashboard-layout/components/progress-bar";
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
-import { UserProvider } from '@/lib/userContext';
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+import { UserProvider } from "@/lib/userContext";
+import { useEffect } from "react";
 // import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 const quicksand = Quicksand({
@@ -22,6 +23,24 @@ const poppins = Poppins({
 });
 
 export default function RootLayout({ children }) {
+  useEffect(() => {
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function () {
+      OneSignal.init({
+        appId: "b40b7cc7-13dc-4662-8b48-efa668f9b72a",
+        notifyButton: {
+          enable: true,
+        },
+
+        allowLocalhostAsSecureOrigin: true,
+      });
+    });
+
+    return () => {
+      window.OneSignal = undefined;
+    };
+  }, []); // <-- run this effect once on mount
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -30,21 +49,6 @@ export default function RootLayout({ children }) {
           async
           defer
         ></script>
-
-      <script src="OneSignalSDKWorker.js"></script>
-      <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-      <script>
-        window.OneSignalDeferred = window.OneSignalDeferred || [];
-        OneSignalDeferred.push(async function(OneSignal) {
-          await OneSignal.init({
-            appId: "65b3e2de-392a-4369-9d9a-c0ac53febfe0",
-            safari_web_id: "web.onesignal.auto.2d9123a5-f6c1-46fe-a6d4-d9acca55dc3d",
-            notifyButton: {
-              enable: true,
-            },
-          });
-        });
-      </script>
       </head>
       <title>Movemint</title>
       <body
@@ -63,6 +67,6 @@ export default function RootLayout({ children }) {
         </UserProvider>
         {/* </GoogleReCaptchaProvider> */}
       </body>
-    </html >
+    </html>
   );
 }
