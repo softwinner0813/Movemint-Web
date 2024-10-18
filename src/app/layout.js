@@ -31,6 +31,7 @@ export default function RootLayout({ children }) {
           defer
         ></script>
 
+      <script src="OneSignalSDKWorker.js"></script>
       <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
       <script>
         window.OneSignalDeferred = window.OneSignalDeferred || [];
