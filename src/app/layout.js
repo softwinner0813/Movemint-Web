@@ -8,7 +8,7 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { UserProvider } from "@/lib/userContext";
 import { useEffect } from "react";
-import { initializeOneSignal } from "../services/OneSignalService";
+import { initializeOneSignal } from "@/services/OneSignalService";
 // import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 const quicksand = Quicksand({
