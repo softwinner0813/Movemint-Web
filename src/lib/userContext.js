@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { checkAuth } from "@/services/api/authApi";
 import LoadingScreen from "@/components/ui/loadingScreen";
 import OneSignal from "react-onesignal";
+import OneSignalService from "@/services/OneSignalService";
 const UserContext = createContext(); // Create the context
 
 export const UserProvider = ({ children }) => {
@@ -20,13 +21,14 @@ export const UserProvider = ({ children }) => {
 
         // OneSignal Login with Firebase UID
         if (response.data?.firebase_uid) {
-          OneSignal.login(response.data.firebase_uid);
+          OneSignalService.login(response.data.firebase_uid);
         }
       } catch (error) {
+        console.error("Error checking authentication:", error);
         setIsAuthenticated(false);
         setUserData({});
         // OneSignal Logout
-        OneSignal.logout();
+        OneSignalService.logout();
       } finally {
         setIsLoading(false);
       }

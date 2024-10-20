@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
@@ -10,18 +10,25 @@ import Logo from "../../../../../public/images/logo/logo.png";
 import { Button } from "@/components/ui/button";
 import GooglePlayIcon from "@/components/icons/goole-play-icon";
 import AppleStoreIcon from "@/components/icons/apple-store-icon";
-import { signinMoverWithGoogle, signinMover } from '@/services/api';
+import { signinMoverWithGoogle, signinMover } from "@/services/api";
 import { useRouter } from "next/navigation";
-import { auth, googleProvider, signInWithPopup, signInWithEmailAndPassword, OAuthProvider } from "@/services/firebase";
+import {
+  auth,
+  googleProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  OAuthProvider,
+} from "@/services/firebase";
 import { useUser } from "@/lib/userContext";
 import { createFirebaseUser } from "@/services/firebaseUser";
-import { notification } from 'antd';
+import { notification } from "antd";
+import OneSignalService from "@/services/OneSignalService";
 
 const NotificationTypes = {
   SUCCESS: "success",
   INFO: "info",
   WARNING: "warning",
-  ERROR: "error"
+  ERROR: "error",
 };
 
 const LoginPage = () => {
@@ -29,7 +36,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { userData, setUserData, isAuthenticated, setIsAuthenticated } = useUser();
+  const { userData, setUserData, isAuthenticated, setIsAuthenticated } =
+    useUser();
   const [api, contextHolder] = notification.useNotification();
 
   const openNotificationWithIcon = (type, title, content) => {
@@ -43,10 +51,13 @@ const LoginPage = () => {
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged((user) => {
       if (user && isAuthenticated) {
-        router.push('/onboarding');
+        router.push("/onboarding");
       } else {
         setIsAuthenticated(false);
         setLoading(false);
+
+        // OneSignal Logout
+        OneSignalService.logout();
       }
     });
     return () => unsubscribe();
@@ -56,18 +67,35 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       // Navigate to the onboarding page after login
       const signerEmail = userCredential.user.email;
-      const response = await signinMover({ email: signerEmail, firebase_uid: userCredential.user.uid });
-      router.push('/onboarding');
-      setUserData(response.data)
+      const response = await signinMover({
+        email: signerEmail,
+        firebase_uid: userCredential.user.uid,
+      });
+      router.push("/onboarding");
+      setUserData(response.data);
       setIsAuthenticated(true);
+
+      // OneSignal Login with Firebase UID
+      if (response.data?.firebase_uid) {
+        OneSignalService.login(response.data.firebase_uid);
+      }
+
       await createFirebaseUser();
     } catch (error) {
       let errorMessage = "An error occurred"; // Default message
 
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         errorMessage = error.response.data.message; // Extract the custom message
       } else if (error.message) {
         errorMessage = error.message; // Fallback to general error message
@@ -87,22 +115,34 @@ const LoginPage = () => {
       const avatar = userCredential.user.photoURL;
       const phone_number = userCredential.user.phoneNumber ?? "";
       const google_id = userCredential.user.uid;
-      const response = await signinMoverWithGoogle({ email: signerEmail, first_name, last_name, avatar, phone_number, google_id, firebase_uid: userCredential.user.uid });
+      const response = await signinMoverWithGoogle({
+        email: signerEmail,
+        first_name,
+        last_name,
+        avatar,
+        phone_number,
+        google_id,
+        firebase_uid: userCredential.user.uid,
+      });
       if (response.result) {
         if (response.data.mover.company_name) {
-          router.push('/onboarding');
+          router.push("/onboarding");
         } else {
-          router.push('/onboarding/edit-profile');
+          router.push("/onboarding/edit-profile");
         }
         setUserData(response.data);
         setIsAuthenticated(true);
         await createFirebaseUser();
-        router.push('/onboarding');
+        router.push("/onboarding");
       }
     } catch (error) {
       let errorMessage = "An error occurred"; // Default message
 
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         errorMessage = error.response.data.message; // Extract the custom message
       } else if (error.message) {
         errorMessage = error.message; // Fallback to general error message
@@ -112,7 +152,6 @@ const LoginPage = () => {
   };
 
   const handleAppleLogin = async () => {
-
     const appleProvider = new OAuthProvider("apple.com");
     appleProvider.addScope("email");
     appleProvider.addScope("name");
@@ -131,7 +170,11 @@ const LoginPage = () => {
     } catch (error) {
       let errorMessage = "An error occurred"; // Default message
 
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         errorMessage = error.response.data.message; // Extract the custom message
       } else if (error.message) {
         errorMessage = error.message; // Fallback to general error message
@@ -165,13 +208,15 @@ const LoginPage = () => {
           Please sign-in as a service provider
         </p>
         <form className="space-y-4" onSubmit={handleEmailLogin}>
-          <Input className="text-black text-sm"
+          <Input
+            className="text-black text-sm"
             type="email"
             placeholder="support@international.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Input className="text-black text-sm"
+          <Input
+            className="text-black text-sm"
             type="password"
             placeholder="********"
             value={password}
@@ -203,7 +248,9 @@ const LoginPage = () => {
             onClick={handleGoogleLogin}
           >
             <GoogleIcon />
-            <span className="text-black/50 font-medium">Continue with Google</span>
+            <span className="text-black/50 font-medium">
+              Continue with Google
+            </span>
           </button>
         </div>
         <div className="text-center text-sm text-foreground mt-4">

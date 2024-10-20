@@ -8,7 +8,8 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { UserProvider } from "@/lib/userContext";
 import { useEffect } from "react";
-import { initializeOneSignal } from "@/services/OneSignalService";
+import OneSignalService from "@/services/OneSignalService";
+
 // import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 const quicksand = Quicksand({
@@ -26,7 +27,7 @@ const poppins = Poppins({
 export default function RootLayout({ children }) {
   // Initialize OneSignal
   useEffect(() => {
-    initializeOneSignal({
+    OneSignalService.initializ({
       isLocal: process.env.NODE_ENV === "development",
     });
   }, []);
