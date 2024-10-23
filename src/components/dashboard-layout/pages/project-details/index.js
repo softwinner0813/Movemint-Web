@@ -13,6 +13,7 @@ import {
 import { MessageSquareMore } from "lucide-react";
 import { formatDateTime } from "@/lib/chatDate";
 import { getName, getMake, getModel, isVehicle } from "@/lib/utils";
+import LoadingScreen from "@/components/ui/loadingScreen";
 
 
 const EditProjectDetails = ({ data, submittedProposal }) => {
@@ -46,26 +47,35 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
     );
   };
 
-
   return (
     <div className="p-4 md:p-8">
       <div className="flex justify-between gap-4 mb-4">
         <h4 className="text-2xl font-bold text-start w-full">
           Client Information
         </h4>
-        <Select>
-          <SelectTrigger className="w-[180px] text-white/70">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={'Scheduled to be picked up'}>Scheduled to be picked up</SelectItem>
-            <SelectItem value={'Picked Up'}>Picked Up</SelectItem>
-            <SelectItem value={'In Transit'}>In Transit</SelectItem>
-            <SelectItem value={'In Holding'}>In Holding</SelectItem>
-            <SelectItem value={'Delivered'}>Delivered</SelectItem>
-            <SelectItem value={'Completed'}>Completed</SelectItem>
-          </SelectContent>
-        </Select>
+        <div
+          className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
+            (data.status.toUpperCase() == "ACCEPTED"
+              ? "bg-success text-success"
+              : data.status.toUpperCase() == "REJECTED"
+                ? "bg-danger text-danger-100"
+                : data.status.toUpperCase() == "NEW"
+                  ? "bg-purple/20 text-purple"
+                  : data.status.toUpperCase() == "COMPLETED"
+                    ? "bg-success/20 text-success"
+                    : data.status.toUpperCase() == "SENT"
+                      ? "bg-orange/20 text-orange"
+                      : data.status.toUpperCase() == "START_SCAN"
+                        ? "bg-purple text-purple"
+                        : data.status.toUpperCase() == "END_SCAN"
+                          ? "bg-green text-blue"
+                          : data.status.toUpperCase() == "POSTED"
+                            ? "bg-blue-500 text-yellow"
+                            : "bg-danger-100/20 text-danger-100")
+          }
+        >
+          {data.status}
+        </div>
       </div>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col md:flex-row justify-between md:items-center mt-2 gap-5">
@@ -95,7 +105,7 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
             <span className="text-lg md:text-2xl font-bold">
               Requested Date: {data.move_date}
             </span>
-            <span
+            {/* <span
               className="text-base md:text-lg font-normal"
               style={{
                 background:
@@ -105,7 +115,7 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
               }}
             >
               View Survey Results
-            </span>
+            </span> */}
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[850px]">
