@@ -56,18 +56,22 @@ const columns = [
         <div
           className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
             (value == "accepted"
-              ? "bg-success/20 text-success"
+              ? "bg-success text-success"
               : value == "rejected"
-                ? "bg-danger-100/20 text-danger-100"
+                ? "bg-danger text-danger-100"
                 : value == "new"
                   ? "bg-purple/20 text-purple"
                   : value == "completed"
                     ? "bg-success/20 text-success"
                     : value == "sent"
                       ? "bg-orange/20 text-orange"
-                      : value == "inTransit"
-                        ? "bg-purple/20 text-purple"
-                        : "bg-danger-100/20 text-danger-100")
+                      : value == "start_scan"
+                        ? "bg-purple text-purple"
+                        : value == "end_scan"
+                          ? "bg-green text-blue"
+                          : value == "posted"
+                            ? "bg-blue-500 text-yellow"
+                            : "bg-danger-100/20 text-danger-100")
           }
         >
           {record.status}
@@ -101,7 +105,7 @@ const Project = () => {
           item.date = chatDate(item.updated_at);
         });
         const types = [
-          ...new Set(projectData.map((item) => item.residence_type)) // Get unique move types
+          ...new Set(projectData.map((item) => item.residence_type ?? "Home")) // Get unique move types
         ].map((moveType) => ({
           label: moveType,
           value: moveType,

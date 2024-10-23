@@ -29,7 +29,6 @@ import { sendMessage, updateMessage, sendInvoiceMessage } from "@/services/fireb
 import MessageItem from "@/components/dashboard-layout/pages/messaging/messageItem";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import mime from 'mime-types';
-import { useRouter } from "next/navigation";
 
 // Firebase Imports
 import {
@@ -43,15 +42,12 @@ import {
 } from "firebase/firestore";
 import { setInitialLastReadMessageId } from "@/services/firebaseRoom";
 
-const ChatMessagePage = ({ params }) => {
+const ChatMessagePage = ({ roomId, name }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [invoice, setInvoice] = useState(null);
   const downLg = useBreakpoint("lg");
-  // const router = useRouter();
-  const roomId = params.id;
-  const router = useRouter();
 
   // Ref to hold the chat container
   const chatContainerRef = useRef(null);
@@ -211,7 +207,7 @@ const ChatMessagePage = ({ params }) => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
-      {isOpen && (
+      {/* {isOpen && (
         <div id="invoiceModal" className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center">
@@ -269,19 +265,19 @@ const ChatMessagePage = ({ params }) => {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
       <div className="relative flex-1 rounded-lg bg-background max-h-[800px] min-h-[800px]">
         <div className="flex items-center justify-between p-4 rounded-t-lg border-b-[1px] border-gray-600 gap-2">
           <div className="flex items-center gap-4">
-            <div onClick={handleBack} className="text-black bg-foreground rounded-md text-base cursor-pointer flex-1">
+            {/* <div onClick={handleBack} className="text-black bg-foreground rounded-md text-base cursor-pointer flex-1">
               <ChevronLeftIcon />
-            </div>{" "}
+            </div>{" "} */}
             <h2 className="text-foreground text-sm md:text-xl font-semibold truncate max-w-12 sm:max-w-24 md:max-w-56 lg:max-w-56">
-              Minerva Barnett
+              {name}
             </h2>
-            <span className="bg-success/30 bg-opacity-20 font-semibold text-success text-xs px-2 py-1 rounded">
+            {/* <span className="bg-success/30 bg-opacity-20 font-semibold text-success text-xs px-2 py-1 rounded">
               Accepted
-            </span>
+            </span> */}
           </div>
           <div className="flex md:space-x-10 items-center">
             {downLg ? (

@@ -4,7 +4,7 @@ const TeamMemberCard = ({ name, email, status, img, onEditTeamMember }) => {
   return (
     <div onClick={onEditTeamMember} className="w-full h-[289px] px-3 bg-background flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-transparent hover:border-primary hover:border-2 hover:cursor-pointer group">
       <Avatar className="w-[110px] h-[110px]">
-        <AvatarImage src={process.env.NEXT_PUBLIC_BASE_URL + img} alt="@shadcn" className="object-cover" />
+        <AvatarImage src={ img ? (process.env.NEXT_PUBLIC_BASE_URL + img) : ''} alt="@shadcn" className="object-cover" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <div className="flex flex-col items-center justify-between gap-2">

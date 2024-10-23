@@ -129,7 +129,8 @@ export const getOtherUserName = async (room) => {
 }
 
 export const setInitialLastReadMessageId = async (roomId, messageData) => {
-
+    if (messageData == null)
+        return;
     let lastMessageText = "";
 
     if (messageData.hasOwnProperty('type')) {

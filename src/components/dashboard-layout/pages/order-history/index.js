@@ -1,86 +1,11 @@
 "use client";
 import CommonDataTable from "@/components/ui/common-data-table";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getOrderHistoryByMoverId, getInvoiceByProposalId } from "@/services/api";
 import { useUser } from "@/lib/userContext";
 import { chatDate } from "@/lib/chatDate";
-
-const columns = [
-  {
-    accessorKey: "id",
-    title: "ID",
-    dataIndex: "id",
-    align: 'center',
-  },
-  {
-    accessorKey: "customer_name",
-    title: "CUSTOMER NAME",
-    dataIndex: "customer_name",
-    align: 'center',
-  },
-  {
-    accessorKey: "customer_address",
-    title: "ORIGIN ADDRESS",
-    dataIndex: "customer_address",
-    align: 'center',
-  },
-  {
-    accessorKey: "date",
-    title: "DATE POSTED",
-    dataIndex: "date",
-    align: 'center',
-  },
-  {
-    accessorKey: "residence_type",
-    title: "TYPE",
-    dataIndex: "residence_type",
-    align: 'center',
-  },
-  {
-    accessorKey: "status",
-    title: "Status",
-    align: 'center',
-    render: (_, record) => {
-      const value = record.status?.toLowerCase();
-      return (
-        <div
-          className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
-            (value === "accepted"
-              ? "bg-success/20 text-success"
-              : value === "rejected"
-                ? "bg-danger-100/20 text-danger-100"
-                : value === "new"
-                  ? "bg-purple/20 text-purple"
-                  : value === "completed"
-                    ? "bg-success/20 text-success"
-                    : value === "sent"
-                      ? "bg-orange/20 text-orange"
-                      : value === "inTransit"
-                        ? "bg-purple/20 text-purple"
-                        : "bg-danger-100/20 text-danger-100")
-          }
-        >
-          {record.status}
-        </div>
-      );
-    },
-  },
-];
-
-const moveTypeValue = [
-  { label: "Home", value: "Home" },
-  { label: "Auto", value: "Auto" },
-  { label: "Home + Auto", value: "Both" },
-];
-
-const proposalStatusValue = [
-  { label: "BIDDED", value: "BIDDED" },
-  { label: "ACCEPTED", value: "ACCEPTED" },
-  { label: "REJECTED", value: "REJECTED" },
-  { label: "COMPLETED", value: "COMPLETED" },
-  { label: "IN TRANSMIT", value: "IN TRANSMIT" },
-];
+import { useRouter } from "next/navigation";
 
 // Modal to show multiple invoices
 // Updated Modal with outside click to dismiss and right-aligned Close button
@@ -162,6 +87,99 @@ const OrderHistory = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedInvoices, setSelectedInvoices] = useState([]);
   const { userData } = useUser();
+  const router = useRouter();
+
+  const columns = [
+    {
+      accessorKey: "id",
+      title: "ID",
+      dataIndex: "id",
+      align: 'center',
+    },
+    {
+      accessorKey: "customer_name",
+      title: "CUSTOMER NAME",
+      dataIndex: "customer_name",
+      align: 'center',
+    },
+    {
+      accessorKey: "customer_address",
+      title: "ORIGIN ADDRESS",
+      dataIndex: "customer_address",
+      align: 'center',
+    },
+    {
+      accessorKey: "date",
+      title: "DATE POSTED",
+      dataIndex: "date",
+      align: 'center',
+    },
+    {
+      accessorKey: "residence_type",
+      title: "TYPE",
+      dataIndex: "residence_type",
+      align: 'center',
+    },
+    {
+      accessorKey: "status",
+      title: "Status",
+      align: 'center',
+      render: (_, record) => {
+        const value = record.status?.toLowerCase();
+        return (
+          <div
+            className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
+              (value == "accepted"
+                ? "bg-success text-success"
+                : value == "rejected"
+                  ? "bg-danger text-danger-100"
+                  : value == "new"
+                    ? "bg-purple/20 text-purple"
+                    : value == "completed"
+                      ? "bg-success/20 text-success"
+                      : value == "sent"
+                        ? "bg-orange/20 text-orange"
+                        : value == "start_scan"
+                          ? "bg-purple text-purple"
+                          : value == "end_scan"
+                            ? "bg-green text-blue"
+                            : value == "posted"
+                              ? "bg-blue-500 text-yellow"
+                              : "bg-danger-100/20 text-danger-100")
+            }
+          >
+            {record.status}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "action",
+      title: "ACTION",
+      align: 'center',
+      render: (record) => {
+        return (
+          <div className="flex justify-center">
+            <EyeIcon onClick={(e) => { e.stopPropagation(); onViewTransaction(record); }} />
+          </div>
+        );
+      }
+    },
+  ];
+
+  const moveTypeValue = [
+    { label: "Home", value: "Home" },
+    { label: "Auto", value: "Auto" },
+    { label: "Home + Auto", value: "Both" },
+  ];
+
+  const proposalStatusValue = [
+    { label: "BIDDED", value: "BIDDED" },
+    { label: "ACCEPTED", value: "ACCEPTED" },
+    { label: "REJECTED", value: "REJECTED" },
+    { label: "COMPLETED", value: "COMPLETED" },
+    { label: "IN TRANSMIT", value: "IN TRANSMIT" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -177,12 +195,16 @@ const OrderHistory = () => {
     fetchData();
   }, [userData.mover.id]);
 
-  const rowClickHandler = async (row) => {
+  const onViewTransaction = async (row) => {
     const response = await getInvoiceByProposalId(row.id);
     if (response) {
       setSelectedInvoices(response); // Store array of invoices
       setModalOpen(true);  // Open the modal
     }
+  };
+
+  const rowClickHandler = (row) => {
+    router.push(`/dashboard/projects/${row.id}`);
   };
 
   return (

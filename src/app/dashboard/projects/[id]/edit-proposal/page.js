@@ -5,6 +5,7 @@ import { getSubmittedProposal } from "@/services/api";
 import { useUser } from "@/lib/userContext";
 import { useState, useEffect } from "react";
 import { notification } from 'antd';
+import LoadingScreen from "@/components/ui/loadingScreen";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -50,15 +51,17 @@ const Page = ({ params }) => {
 
     fetchData();
   }, [submittedProposal == null]);
+  if (isLoading) return <LoadingScreen />;
+
   return (
     <>
       {contextHolder}
-      {!isLoading && <div className="h-full flex flex-col gap-6">
+       <div className="h-full flex flex-col gap-6">
         <h1 className="text-3xl font-bold">Edit Proposal</h1>
         <div className="w-full bg-background rounded-lg">
           <SubmitProposal data={submittedProposal} />
         </div>
-      </div>}
+      </div>
     </>
   );
 };
