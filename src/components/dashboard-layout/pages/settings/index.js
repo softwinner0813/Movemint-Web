@@ -45,77 +45,109 @@ const SettingsPage = () => {
 
   return (
     <div className="p-4 md:p-8">
-      <h4 className="text-lg font-bold text-start w-full mb-4">
-        Contact Preferences
-      </h4>
-      <div className="space-y-2 mb-6">
-        {[
-          "Marketing Emails",
-          "New Messages",
-          "Invoice Paid",
-          "Proposal Accepted",
-          "Proposal Rejected",
-          "Important Account Updates",
-        ].map((label) => (
-          <div key={label} className="flex items-center gap-3">
-            <Switch
-              className="bg-white"
-              checked={switchStates[label]}
-              onCheckedChange={() => handleToggleSwitch(label)}
-            />
-            <span className="text-sm ">
-              {switchStates[label] ? "(ON)" : "(OFF)"}
-            </span>
-            <span className="text-sm font-light">{label}</span>
+      <div className="grid grid-cols-2 gap-8">
+        <div>
+          <h4 className="text-lg font-bold text-start w-full mb-4">
+            Contact Preferences
+          </h4>
+          <div className="space-y-2 mb-6">
+            {[
+              "Marketing Emails",
+              "New Messages",
+              "Invoice Paid",
+              "Proposal Accepted",
+              "Proposal Rejected",
+              "Important Account Updates",
+            ].map((label) => (
+              <div key={label} className="flex items-center gap-3">
+                <Switch
+                  className="bg-white"
+                  checked={switchStates[label]}
+                  onCheckedChange={() => handleToggleSwitch(label)}
+                />
+                <span className="text-sm ">
+                  {switchStates[label] ? "(ON)" : "(OFF)"}
+                </span>
+                <span className="text-sm font-light">{label}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <h4 className="text-lg font-bold text-start w-full mb-4">
-        Service Platform Options
-      </h4>
-      <div className="space-y-2 mb-6">
-        {["Service International Clients", "Auto Transport", "Home Moving"].map(
-          (label) => (
-            <div key={label} className="flex items-center gap-3">
-              <Switch
-                className="bg-white"
-                checked={switchStates[label]}
-                onCheckedChange={() => handleToggleSwitch(label)}
+          <h4 className="text-lg font-bold text-start w-full mb-4">
+            Service Platform Options
+          </h4>
+          <div className="space-y-2 mb-6">
+            {["Service International Clients", "Auto Transport", "Home Moving"].map(
+              (label) => (
+                <div key={label} className="flex items-center gap-3">
+                  <Switch
+                    className="bg-white"
+                    checked={switchStates[label]}
+                    onCheckedChange={() => handleToggleSwitch(label)}
+                  />
+                  <span className="text-sm ">
+                    {switchStates[label] ? "(ON)" : "(OFF)"}
+                  </span>
+                  <span className="text-sm font-light">{label}</span>
+                </div>
+              )
+            )}
+          </div>
+
+          <h4 className="text-lg font-bold text-start w-full mb-4">
+            Google Reviews Connection
+          </h4>
+          <div className="space-y-2 mb-4">
+            <div className="flex flex-col md:flex-row max-w-[452px] items-center gap-4 md:gap-0">
+              <InputWithLabel
+                type="text"
+                label=""
+                className="w-full md:max-w-72 h-14"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
               />
-              <span className="text-sm ">
-                {switchStates[label] ? "(ON)" : "(OFF)"}
-              </span>
-              <span className="text-sm font-light">{label}</span>
+              <div className="flex flex-col gap-3">
+                <Button
+                  className="max-w-full md:max-w-52 rounded-xl font-bold"
+                  onClick={handleSaveChanges}
+                >
+                  Save Changes
+                </Button>
+              </div>
             </div>
-          )
-        )}
-      </div>
-
-      <h4 className="text-lg font-bold text-start w-full mb-4">
-        Google Reviews Connection
-      </h4>
-      <div className="space-y-2 mb-4">
-        <div className="flex flex-col md:flex-row max-w-[452px] items-center gap-4 md:gap-0">
-          <InputWithLabel
-            type="text"
-            label=""
-            className="w-full md:max-w-72 h-14"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-          />
-          <div className="flex flex-col gap-3">
-            <Button
-              className="max-w-full md:max-w-52 rounded-xl font-bold"
-              onClick={handleSaveChanges}
-            >
-              Save Changes
-            </Button>
+            {error && (
+              <span className="text-sm font-bold text-red-500">{error}</span>
+            )}
           </div>
         </div>
-        {error && (
-          <span className="text-sm font-bold text-red-500">{error}</span>
-        )}
+        <div>
+          <h4 className="text-lg font-bold text-start w-full mb-4">
+            Stripe Connect Settings
+          </h4>
+          <div className="space-y-2 mb-6">
+            <div className="flex flex-col gap-3">
+              <span>Stripe Account #28302dh012300932j10</span>
+              <div className="flex flex-col gap-3">
+                <Button className="max-w-52 rounded-xl font-bold">
+                  Visit Stripe Dashboard
+                </Button>
+                <Button variant="danger" className="max-w-52 rounded-xl font-bold">
+                  Disconnect Account
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-2 mb-20">
+            <div className="flex flex-col gap-3">
+              <span>No Stripe Account Connected</span>
+              <div className="flex flex-col gap-3">
+                <Button className="max-w-52 rounded-xl font-bold">
+                  Connect New Account
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <h4 className="text-lg font-bold text-start w-full mb-4">

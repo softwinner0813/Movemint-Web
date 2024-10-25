@@ -279,7 +279,7 @@ const ChatMessagePage = ({ roomId, name }) => {
               Accepted
             </span> */}
           </div>
-          <div className="flex md:space-x-10 items-center">
+          {/* <div className="flex md:space-x-10 items-center">
             {downLg ? (
               <Eye className="text-[#757575]" />
             ) : (
@@ -317,7 +317,7 @@ const ChatMessagePage = ({ roomId, name }) => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
         <div
           className="flex-1 overflow-y-auto max-h-[650px] lg:max-h-[calc(100%_-_140px)] p-4"
@@ -326,13 +326,13 @@ const ChatMessagePage = ({ roomId, name }) => {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.authorId == auth.currentUser.uid ? "justify-end" : "justify-start"
+              className={`flex ${message.type == "system" ? "justify-center" : message.authorId == auth.currentUser.uid ? "justify-end" : "justify-start"
                 } mb-4`}
             >
               <div
                 className={cn("items-end", message.authorId == auth.currentUser.uid ? "" : "flex gap-5")}
               >
-                {message.authorId != auth.currentUser.uid && (
+                {message.type != "system" && message.authorId != auth.currentUser.uid && (
                   <div className="flex items-center">
                     <Avatar>
                       <AvatarImage

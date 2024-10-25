@@ -130,22 +130,22 @@ const OrderHistory = () => {
           <div
             className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
               (value == "accepted"
-                ? "bg-success text-success"
+                ? "bg-success text-white"
                 : value == "rejected"
-                  ? "bg-danger text-danger-100"
+                  ? "bg-danger text-white"
                   : value == "new"
-                    ? "bg-purple/20 text-purple"
+                    ? "bg-purple/20 text-white"
                     : value == "completed"
-                      ? "bg-success/20 text-success"
+                      ? "bg-success/20 text-white"
                       : value == "sent"
-                        ? "bg-orange/20 text-orange"
+                        ? "bg-orange/20 text-white"
                         : value == "start_scan"
-                          ? "bg-purple text-purple"
+                          ? "bg-purple text-white"
                           : value == "end_scan"
-                            ? "bg-green text-blue"
+                            ? "bg-green text-white"
                             : value == "posted"
-                              ? "bg-blue-500 text-yellow"
-                              : "bg-danger-100/20 text-danger-100")
+                              ? "bg-blue-500 text-white"
+                              : "bg-danger-100/20 text-white")
             }
           >
             {record.status}
@@ -204,7 +204,7 @@ const OrderHistory = () => {
   };
 
   const rowClickHandler = (row) => {
-    router.push(`/dashboard/projects/${row.id}`);
+    router.push(`/dashboard/projects/${row.project_id}`);
   };
 
   return (

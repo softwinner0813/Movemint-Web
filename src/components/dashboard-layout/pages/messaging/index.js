@@ -13,8 +13,8 @@ import MessageDetail from "@/components/dashboard-layout/pages/messaging/message
 
 const MessagingPage = () => {
   const [rooms, setRooms] = useState(null);
+  const [filteredRooms, setFilteredRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const router = useRouter();
   const { userData } = useUser();
 
   useEffect(() => {
@@ -29,10 +29,17 @@ const MessagingPage = () => {
         }
       }));
       setRooms(roomsList);
+      setFilteredRooms(roomsList);
     });
 
     return () => unsubscribe();
   }, [!userData.isEmpty]);
+
+  const onSearch = (e) => {
+    const search = e.target.value.toLowerCase();
+    const filtered = rooms.filter((room) => room.name.toLowerCase().includes(search));
+    setFilteredRooms(filtered);
+  }
 
   const handleMessageClick = (room) => {
     // router.push(`/dashboard/messaging/${id}`);
@@ -44,6 +51,7 @@ const MessagingPage = () => {
       <div className="w-full lg:w-1/4 bg-background rounded-xl p-6 flex flex-col gap-6 overflow-auto">
         <div className="flex flex-row justify-between items-center mb-4 gap-4">
           <Input
+            onChange={onSearch}
             className="mb-0 w-full rounded-full bg-midnight"
             placeholder="Search messages"
           />
@@ -51,7 +59,7 @@ const MessagingPage = () => {
         </div>
 
         <div className="flex flex-col gap-2">
-          {rooms?.map((room) => (
+          {filteredRooms?.map((room) => (
             <div
               key={room.id}
               className="flex flex-row p-3 border-b border-gray-600 cursor-pointer hover:bg-gray-900"

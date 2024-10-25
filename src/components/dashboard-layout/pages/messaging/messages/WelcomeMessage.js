@@ -8,8 +8,6 @@ const WelcomeMessage = ({ message }) => {
     const { totalAmount, moveDate, arrivalDate } = message.metadata;
 
     useEffect(() => {
-        console.log(user);
-        console.log(message);
     })
 
     // Check if user is logged in

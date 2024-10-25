@@ -55,23 +55,23 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
         </h4>
         <div
           className={"px-4 py-1 rounded-lg text-center font-semibold w-15 " +
-            (data.status.toUpperCase() == "ACCEPTED"
-              ? "bg-success text-success"
-              : data.status.toUpperCase() == "REJECTED"
-                ? "bg-danger text-danger-100"
-                : data.status.toUpperCase() == "NEW"
-                  ? "bg-purple/20 text-purple"
-                  : data.status.toUpperCase() == "COMPLETED"
-                    ? "bg-success/20 text-success"
-                    : data.status.toUpperCase() == "SENT"
-                      ? "bg-orange/20 text-orange"
-                      : data.status.toUpperCase() == "START_SCAN"
-                        ? "bg-purple text-purple"
-                        : data.status.toUpperCase() == "END_SCAN"
-                          ? "bg-green text-blue"
-                          : data.status.toUpperCase() == "POSTED"
-                            ? "bg-blue-500 text-yellow"
-                            : "bg-danger-100/20 text-danger-100")
+            (data.status.toLowerCase() == "accepted"
+              ? "bg-success text-white"
+              : data.status.toLowerCase() == "rejected"
+                ? "bg-danger text-white"
+                : data.status.toLowerCase() == "new"
+                  ? "bg-purple/20 text-white"
+                  : data.status.toLowerCase() == "completed"
+                    ? "bg-success/20 text-white"
+                    : data.status.toLowerCase() == "sent"
+                      ? "bg-orange/20 text-white"
+                      : data.status.toLowerCase() == "start_scan"
+                        ? "bg-purple text-white"
+                        : data.status.toLowerCase() == "end_scan"
+                          ? "bg-green text-white"
+                          : data.status.toLowerCase() == "posted"
+                            ? "bg-blue-500 text-white"
+                            : "bg-danger-100/20 text-white")
           }
         >
           {data.status}
