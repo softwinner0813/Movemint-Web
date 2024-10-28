@@ -98,7 +98,7 @@ const WithdrawalInterface = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
       openNotificationWithIcon(NotificationTypes.ERROR, "Invalid amount", "Please enter a valid amount greater than 0");
@@ -124,7 +124,7 @@ const WithdrawalInterface = () => {
     setPaymentMethod('ACH');
     setNote('');
     setIsModalOpen(false);
-    
+
     openNotificationWithIcon(NotificationTypes.SUCCESS, "Withdrawal requested", "Your withdrawal request has been submitted successfully");
   };
 
@@ -143,7 +143,7 @@ const WithdrawalInterface = () => {
               + Withdraw Request
             </Button>
           </div>
-          
+
           <Card className="bg-gray-900 text-white border-none mx-auto max-w-md mt-8">
             <CardContent className="pt-6 text-center">
               <div className="text-3xl font-bold mb-2">${totalAmount.toFixed(2)}</div>

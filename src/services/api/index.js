@@ -1,15 +1,16 @@
-import { signinMover, signupMover, updateMover, signinMoverWithGoogle, signupMember } from './authApi';
+import { signinMover, signupMover, updateMover, signinMoverWithGoogle, signupMember, updateUser } from './authApi';
 import { getProjects, getProjectById } from './projectApi';
 import { submitProposal, getSubmittedProposal, updateProposal, getOrderHistoryByMoverId } from './proposalApi';
 import { getReviewsByMoverId } from './reviewApi';
 import { getTeamMember, createTeamMember, updateTeamMember, deleteTeamMember } from './teamApi';
-import { getInvoiceByProposalId } from './InvoiceApi';
+import { getInvoiceByProposalId, createAccountLink, createDashboardLink, createConnectAccount, deleteConnectAccount } from './InvoiceApi';
 
 export {
     signinMover,
     signupMover,
     updateMover,
     signupMember,
+    updateUser,
     signinMoverWithGoogle,
     getProjects,
     getProjectById,
@@ -22,5 +23,9 @@ export {
     updateTeamMember,
     deleteTeamMember,
     getOrderHistoryByMoverId,
-    getInvoiceByProposalId
+    getInvoiceByProposalId,
+    createAccountLink,
+    createDashboardLink,
+    createConnectAccount,
+    deleteConnectAccount
 }

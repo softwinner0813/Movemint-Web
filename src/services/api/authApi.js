@@ -38,6 +38,17 @@ export const updateMover = async (id, formData) => {
   }
 };
 
+export const updateUser = async (data) => {
+  try {
+    // Pass FormData and set content-type for form data
+    const response = await axiosInstance.post(`/auth/updateUser`, {data});
+    return response.data;
+  } catch (error) {
+    console.error("Error updating mover:", error);
+    throw error;
+  }
+};
+
 
 export const signinMoverWithGoogle = async (data) => {
   const response = await axiosInstance.post("/auth/signWithGoogle/mover", data);
