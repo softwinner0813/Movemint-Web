@@ -36,6 +36,7 @@ const SettingsPage = () => {
   const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const { userData, setUserData } = useUser();
   const [api, contextHolder] = notification.useNotification();
   const [isLoading, setIsLoading] = useState(false);
@@ -285,7 +286,7 @@ const SettingsPage = () => {
                   {userData.mover.charges_enabled == 1 && <Button className="max-w-52 rounded-xl font-bold" onClick={onViewStripeDashboard}>
                     Visit Stripe Dashboard
                   </Button>}
-                  {userData.mover.stripe_account_id && <Button variant="danger" className="max-w-52 rounded-xl font-bold" onClick={onDisconnectAccount}>
+                  {userData.mover.stripe_account_id && <Button variant="danger" className="max-w-52 rounded-xl font-bold" onClick={() => setIsOpenDeleteModal(true)}>
                     Disconnect Account
                   </Button>}
                 </div>
@@ -420,6 +421,19 @@ const SettingsPage = () => {
             isDanger={true}
             showInputFields={false}
             onMainButtonClick={handleModalConfirm}
+          />
+        )}
+        {isOpenDeleteModal && (
+          <CommonModel
+            mainHeading="Delete Account"
+            subHeading="Are you sure to delete this account?"
+            mainButtonContent="Ok"
+            cancelButtonContent="Cancel"
+            setIsModalOpen={setIsOpenDeleteModal}
+            isDanger={false}
+            showInputFields={false}
+            onConfirm={onDisconnectAccount}
+            onCancel={() => setIsOpenDeleteModal(false)}
           />
         )}
       </div>
