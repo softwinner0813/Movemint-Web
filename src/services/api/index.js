@@ -4,6 +4,7 @@ import { submitProposal, getSubmittedProposal, updateProposal, getOrderHistoryBy
 import { getReviewsByMoverId } from './reviewApi';
 import { getTeamMember, createTeamMember, updateTeamMember, deleteTeamMember } from './teamApi';
 import { getInvoiceByProposalId, createAccountLink, createDashboardLink, createConnectAccount, deleteConnectAccount } from './InvoiceApi';
+import { sendSupportEmail } from './settingApi';
 
 export {
     signinMover,
@@ -27,5 +28,6 @@ export {
     createAccountLink,
     createDashboardLink,
     createConnectAccount,
-    deleteConnectAccount
+    deleteConnectAccount,
+    sendSupportEmail,
 }

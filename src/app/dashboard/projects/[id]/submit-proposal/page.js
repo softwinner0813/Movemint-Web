@@ -42,6 +42,7 @@ const Page = ({ params }) => {
           errorMessage = error.message; // Fallback to general error message
         }
         openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
+        setIsLoading(false);
       }
     };
 

@@ -42,7 +42,18 @@ const Input = React.forwardRef(
             />
           </div>
         )}
-        <input
+        {type === "textarea" ? (<textarea
+          id={id}
+          className={cn(
+            "flex w-full rounded-lg border border-input bg-transparent  text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 mb-2",
+            className,
+            label ? "pb-2 pt-6 px-10" : "py-2 px-3"
+          )}
+          ref={ref}
+          value={value}
+          defaultValue={defaultValue}
+          {...props}
+        />) : (<input
           type={type}
           id={id}
           className={cn(
@@ -54,7 +65,7 @@ const Input = React.forwardRef(
           value={value}
           defaultValue={defaultValue}
           {...props}
-        />
+        />)}
         {label && (
           <label
             htmlFor={id}

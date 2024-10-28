@@ -37,9 +37,9 @@ const MessagingPage = () => {
 
   const onSearch = (e) => {
     const search = e.target.value.toLowerCase();
-    const filtered = rooms.filter((room) => room.name.toLowerCase().includes(search));
+    const filtered = rooms?.filter((room) => room.name.toLowerCase().includes(search));
     setFilteredRooms(filtered);
-  }
+  } 
 
   const handleMessageClick = (room) => {
     // router.push(`/dashboard/messaging/${id}`);
@@ -53,7 +53,7 @@ const MessagingPage = () => {
           <Input
             onChange={onSearch}
             className="mb-0 w-full rounded-full bg-midnight"
-            placeholder="Search messages"
+            placeholder="Search rooms"
           />
           {/* <TrashIcon className="bg-white p-2 text-white cursor-pointer" /> */}
         </div>

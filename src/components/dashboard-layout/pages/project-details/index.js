@@ -3,21 +3,23 @@ import Image from "next/image";
 import DefaultAvatar from "../../../../../public/images/user.png";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { MessageSquareMore } from "lucide-react";
 import { formatDateTime } from "@/lib/chatDate";
 import { getName, getMake, getModel, isVehicle } from "@/lib/utils";
 import LoadingScreen from "@/components/ui/loadingScreen";
+import { useEffect, useState } from "react";
 
 
 const EditProjectDetails = ({ data, submittedProposal }) => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    console.log('Data parameter has changed:', data);
+    if (data) {
+      setIsLoading(false);
+    }
+  }, [data]);
 
   const handleProposalSubmit = () => {
     router.push(`/dashboard/projects/${data.id}/submit-proposal`);
@@ -47,6 +49,7 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
     );
   };
 
+  if (isLoading) return <LoadingScreen />;
   return (
     <div className="p-4 md:p-8">
       <div className="flex justify-between gap-4 mb-4">

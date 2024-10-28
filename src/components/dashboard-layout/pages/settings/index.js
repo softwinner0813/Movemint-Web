@@ -8,7 +8,7 @@ import Logo from "../../../../../public/images/logo/logo.png";
 import { useEffect, useState } from "react";
 import CommonModel from "../../components/common-model";
 import { useUser } from "@/lib/userContext";
-import { createConnectAccount, createDashboardLink, deleteConnectAccount, updateUser } from "@/services/api";
+import { createConnectAccount, createDashboardLink, deleteConnectAccount, updateUser, sendSupportEmail } from "@/services/api";
 import { notification } from 'antd';
 
 const NotificationTypes = {
@@ -38,6 +38,14 @@ const SettingsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { userData, setUserData } = useUser();
   const [api, contextHolder] = notification.useNotification();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
       message: title,
@@ -68,6 +76,41 @@ const SettingsPage = () => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await sendSupportEmail(formData);
+      openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Contact Support Email Sent Successfully");
+      setFormData({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
+    } catch (error) {
+      let errorMessage = "An error occurred"; // Default message
+
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = error.response.data.message; // Extract the custom message
+      } else if (error.message) {
+        errorMessage = error.message; // Fallback to general error message
+      }
+      openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const handleToggleSwitch = async (label) => {
     try {
       const updatedData = {
@@ -88,7 +131,6 @@ const SettingsPage = () => {
       }
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     }
-
   };
 
   const handleModalConfirm = () => {
@@ -275,16 +317,57 @@ const SettingsPage = () => {
                 contact our support team.
               </p>
             </div>
-            <div className="flex flex-col gap-[14px]">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-[14px]">
               <div className="flex flex-col md:flex-row gap-[14px]">
-                <InputWithLabel type="text" label="First Name" className="" />
-                <InputWithLabel type="text" label="Last Name" className="" />
+                <InputWithLabel
+                  type="text"
+                  label="First Name"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  required
+                />
+                <InputWithLabel
+                  type="text"
+                  label="Last Name"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              <InputWithLabel type="email" label="Email" className="" />
-              <InputWithLabel type="email" label="Phone Number" className="" />
-              <InputWithLabel type="email" label="Message" className="" />
-              <Button className="rounded-xl font-bold">Contact Support</Button>
-            </div>
+              <InputWithLabel
+                type="email"
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <InputWithLabel
+                type="tel"
+                label="Phone Number"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+              />
+              <InputWithLabel
+                type="textarea"
+                label="Message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                required
+              />
+              <Button
+                type="submit"
+                className="rounded-xl font-bold"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Sending...' : 'Contact Support'}
+              </Button>
+            </form>
           </div>
           <div className="relative hidden lg:block">
             <Image

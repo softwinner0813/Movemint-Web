@@ -15,6 +15,7 @@ import { initializeOneSignal } from "@/services/OneSignalService";
 import { createAccountLink, createConnectAccount } from "@/services/api";
 
 import { notification } from 'antd';
+import LoadingScreen from "@/components/ui/loadingScreen";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -27,6 +28,7 @@ const DashboardLayout = ({ children }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpenLogout, setIsModalOpenLogout] = useState(false);
   const { isAuthenticated, userData } = useUser();
   const [api, contextHolder] = notification.useNotification();
@@ -70,7 +72,7 @@ const DashboardLayout = ({ children }) => {
   };
 
   const handleAlertClick = () => {
-    setIsModalOpen(true);
+    onProcessed();
   };
 
   const handleLogout = async () => {
@@ -86,6 +88,7 @@ const DashboardLayout = ({ children }) => {
 
   const onProcessed = async () => {
     try {
+      setIsLoading(true);
       let response;
       if (userData.mover.stripe_account_id) {
         response = await createAccountLink(userData.mover.stripe_account_id);
@@ -94,12 +97,12 @@ const DashboardLayout = ({ children }) => {
       }
       if (response) {
         const accountLink = response.accountLink;
-        window.open(accountLink);
+        window.open(accountLink, "_self");
         // const accountLink = await createAccountLink(response.id);
       }
     } catch (error) {
       let errorMessage = "An error occurred"; // Default message
-
+      setIsLoading(false);
       if (error.response && error.response.data && error.response.data.message) {
         errorMessage = error.response.data.message; // Extract the custom message
       } else if (error.message) {
@@ -113,7 +116,7 @@ const DashboardLayout = ({ children }) => {
     setIsExpanded(downMd);
     setOpenSidebar(false);
   }, [downMd]);
-
+  if (isLoading) return <LoadingScreen />
   return (
     <>
       {contextHolder}
