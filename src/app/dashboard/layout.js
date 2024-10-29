@@ -98,7 +98,7 @@ const DashboardLayout = ({ children }) => {
       if (response) {
         const accountLink = response.accountLink;
         window.open(accountLink, "_self");
-        // const accountLink = await createAccountLink(response.id);
+        setIsLoading(false);
       }
     } catch (error) {
       let errorMessage = "An error occurred"; // Default message
@@ -158,7 +158,7 @@ const DashboardLayout = ({ children }) => {
               handleToggleSidebar={handleToggleSidebar}
               setIsModalOpenLogout={setIsModalOpenLogout}
             />
-            {pathname === "/dashboard" && userData.mover.charges_enabled === 0 && (
+            {(pathname === "/dashboard" || pathname.includes("/projects/")) && userData.mover.charges_enabled === 0 && (
               <Alert variant="danger" onClick={handleAlertClick}>
                 {/* <AlertTitle>Heads up!</AlertTitle> */}
                 <AlertDescription>

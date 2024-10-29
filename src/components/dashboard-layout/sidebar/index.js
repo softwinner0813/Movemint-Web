@@ -63,7 +63,7 @@ const Sidebar = ({ isExpanded, handleToggleSidebar, setIsModalOpenLogout }) => {
 
   const settingItems = useMemo(
     () => [
-      { icon: <BillingIcon />, label: "Billing", href: "/dashboard/billing" },
+      // { icon: <BillingIcon />, label: "Billing", href: "/dashboard/billing" },
       {
         icon: <SettingIcon />,
         label: "Settings & Help",

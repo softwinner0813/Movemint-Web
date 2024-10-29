@@ -8,11 +8,13 @@ import { formatDateTime } from "@/lib/chatDate";
 import { getName, getMake, getModel, isVehicle } from "@/lib/utils";
 import LoadingScreen from "@/components/ui/loadingScreen";
 import { useEffect, useState } from "react";
+import { useUser } from "@/lib/userContext";
 
 
 const EditProjectDetails = ({ data, submittedProposal }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const { userData } = useUser();
 
   useEffect(() => {
     console.log('Data parameter has changed:', data);
@@ -240,28 +242,30 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
           </div>
         </div>
       </div>
-      <div className="text-center mt-10">
-        <Button
-          className={`w-full md:w-56 rounded-md ${submittedProposal.result ? 'invisible' : 'visible'}`}
-          onClick={handleProposalSubmit}
-        >
-          Submit Proposal
-        </Button>
-      </div>
-      <div className="flex justify-center mt-10">
-        <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-28 w-full">
+      <div className={`${userData.charges_enabled ? 'block' : 'hidden'}`}>
+        <div className="text-center mt-10">
           <Button
-            className={`w-full md:w-56 rounded-md ${submittedProposal.result ? 'visible' : 'invisible'}`}
-            onClick={handleProposalEdit}
+            className={`w-full md:w-56 rounded-md ${submittedProposal.result ? 'invisible' : 'visible'}`}
+            onClick={handleProposalSubmit}
           >
-            Edit Proposal
+            Submit Proposal
           </Button>
-          <Button
-            variant="danger"
-            className={`w-full md:w-56 rounded-md bg-danger-300 ${submittedProposal.result ? 'visible' : 'invisible'}`}
-          >
-            Withdraw Proposal
-          </Button>
+        </div>
+        <div className="flex justify-center mt-10">
+          <div className="flex flex-col justify-center gap-4 md:flex-row md:gap-28 w-full">
+            <Button
+              className={`w-full md:w-56 rounded-md ${submittedProposal.result ? 'visible' : 'invisible'}`}
+              onClick={handleProposalEdit}
+            >
+              Edit Proposal
+            </Button>
+            <Button
+              variant="danger"
+              className={`w-full md:w-56 rounded-md bg-danger-300 ${submittedProposal.result ? 'visible' : 'invisible'}`}
+            >
+              Withdraw Proposal
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -359,6 +359,7 @@ const SettingsPage = () => {
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
+                rows={4}
                 required
               />
               <Button
@@ -426,7 +427,7 @@ const SettingsPage = () => {
         {isOpenDeleteModal && (
           <CommonModel
             mainHeading="Delete Account"
-            subHeading="Are you sure to delete this account?"
+            subHeading="Are you sure you want to delete this account? Please note that this action cannot be undone."
             mainButtonContent="Ok"
             cancelButtonContent="Cancel"
             setIsModalOpen={setIsOpenDeleteModal}
