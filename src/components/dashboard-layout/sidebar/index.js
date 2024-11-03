@@ -52,18 +52,18 @@ const Sidebar = ({ isExpanded, handleToggleSidebar, setIsModalOpenLogout }) => {
         label: "Reviews",
         href: "/dashboard/reviews",
       },
-      {
-        icon: <Star size={20} />,
-        label: "Refer Movers",
-        href: "/dashboard/refer-movers",
-      },
+      // {
+      //   icon: <Star size={20} />,
+      //   label: "Refer Movers",
+      //   href: "/dashboard/refer-movers",
+      // },
     ],
     []
   );
 
   const settingItems = useMemo(
     () => [
-      // { icon: <BillingIcon />, label: "Billing", href: "/dashboard/billing" },
+      { icon: <BillingIcon />, label: "Billing", href: "/dashboard/billing" },
       {
         icon: <SettingIcon />,
         label: "Settings & Help",

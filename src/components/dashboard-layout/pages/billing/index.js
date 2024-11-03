@@ -1,45 +1,173 @@
 "use client"
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table } from "antd";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { notification } from "antd";
+import { Table, notification, Modal } from "antd";
+import { useUser } from '@/lib/userContext';
+import { getBillingsByUserId, createPaymentIntent, updateBilling } from "@/services/api";
+import { formatDateTime } from '@/lib/chatDate';
 
 const NotificationTypes = {
   SUCCESS: "success",
   INFO: "info",
   WARNING: "warning",
-  ERROR: "error",
+  ERROR: "error"
+};
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+// Payment Form Component
+const PaymentForm = ({ amount, billingId, onSuccess, onCancel }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!stripe || !elements || !isReady) {
+      return;
+    }
+
+    setProcessing(true);
+    setError(null);
+
+    try {
+      const { error: paymentError, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          payment_method_data: {
+            billing_details: {
+              // You can add billing details here if needed
+            }
+          }
+        },
+        redirect: 'if_required',
+      });
+
+      if (paymentError) {
+        setError(paymentError.message);
+        return;
+      }
+
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        onSuccess();
+      } else {
+        setError('Payment failed. Please try again.');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <PaymentElement
+        options={{
+          layout: 'tabs',
+          theme: 'night',
+        }}
+        onReady={() => setIsReady(true)}
+      />
+      {error && (
+        <div className="text-red-500 text-sm mt-2">
+          {error}
+        </div>
+      )}
+      <div className="flex justify-end space-x-2 mt-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={processing}
+          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={!stripe || !elements || !isReady || processing}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+        >
+          {!isReady ? 'Loading...' : processing ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+        </button>
+      </div>
+    </form>
+  );
 };
 
-const customTableClass = "bg-black text-white"; // Table body is black, and text is whiteer with a dark background
-const customRowClass = "bg-black text-white cursor-pointer border-grey-100"; // Rows with black background and white text
+const customTableClass = "bg-black text-white";
+const customRowClass = "bg-black text-white border-grey-100";
 
-
-const WithdrawalInterface = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [amount, setAmount] = useState('0.00');
-  const [paymentMethod, setPaymentMethod] = useState('ACH');
-  const [note, setNote] = useState('');
-  const [withdrawHistory, setWithdrawHistory] = useState([]);
-  const totalAmount = 15300.00;
-  const availableAmount = 13000.00;
+const Billings = () => {
+  const [paymentHistory, setPaymentHistory] = useState([]);
   const [api, contextHolder] = notification.useNotification();
+  const [processing, setProcessing] = useState({});
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
+  const { userData } = useUser();
+  const [elementKey, setElementKey] = useState(0);
+
+  const handlePayment = async (billingId, amount) => {
+    try {
+      setProcessing(prev => ({ ...prev, [billingId]: true }));
+
+      // Create payment intent using your existing service
+      const response = await createPaymentIntent(billingId, amount * 100, "USD");
+
+      if (!response.result) {
+        throw new Error('Failed to create payment intent');
+      }
+
+      setClientSecret(response.paymentIntent);
+      console.log(billingId);
+      setSelectedPayment({ id: billingId, amount });
+      setElementKey(prev => prev + 1); // Increment key to force Elements remount
+
+    } catch (error) {
+      openNotificationWithIcon(
+        NotificationTypes.ERROR,
+        "Payment Failed",
+        error.message
+      );
+    } finally {
+      setProcessing(prev => ({ ...prev, [billingId]: false }));
+    }
+  };
+
+  const handlePaymentSuccess = async () => {
+    try {
+      await updateBilling(selectedPayment.id, { status: 1 });
+      setPaymentHistory(prev => prev.map(payment => {
+        if (payment.id === selectedPayment.id) {
+          return { ...payment, status: 1 };
+        }
+        return payment;
+      }));
+
+      openNotificationWithIcon(
+        NotificationTypes.SUCCESS,
+        "Success",
+        "Payment processed successfully"
+      );
+    } catch (error) {
+      openNotificationWithIcon(
+        NotificationTypes.ERROR,
+        "Error",
+        "Payment successful but failed to refresh history"
+      );
+    } finally {
+      setSelectedPayment(null);
+      setClientSecret(null);
+      setProcessing({});
+      setElementKey(prev => prev + 1); // Reset Elements after success
+    }
+  };
 
   const columns = [
     {
@@ -48,42 +176,55 @@ const WithdrawalInterface = () => {
       key: 'no',
       width: '60px',
       render: (_, __, index) => index + 1,
-      className: 'bg-gray-900 text-gray-400',
     },
     {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
       render: (amount) => `$${amount.toFixed(2)}`,
-      className: 'bg-gray-900 text-gray-400',
     },
     {
       title: 'Request Date',
       dataIndex: 'requestDate',
       key: 'requestDate',
-      className: 'bg-gray-900 text-gray-400',
     },
     {
-      title: 'Payment Method',
-      dataIndex: 'paymentMethod',
-      key: 'paymentMethod',
-      className: 'bg-gray-900 text-gray-400',
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+      render: (type) => (
+        <div className={`${type === 0 ? "bg-success" : "bg-blue-500"} text-white px-4 py-1 rounded-lg text-center font-semibold w-15`}>
+          {type === 0 ? "Internal" : "External"}
+        </div>
+      ),
     },
     {
       title: 'Note',
       dataIndex: 'note',
       key: 'note',
-      className: 'bg-gray-900 text-gray-400',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      className: 'bg-gray-900 text-gray-400',
-      render: (status) => (
-        <span className="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-500 text-sm">
-          {status}
-        </span>
+      render: (status, record) => (
+        <div className="flex justify-center">
+          {status === 0 ? (
+            <button
+              className="bg-green-500 text-white px-4 py-1 rounded-sm hover:bg-green-950 text-center font-semibold w-15 disabled:opacity-50"
+              onClick={() => handlePayment(record.id, record.amount)}
+              disabled={processing[record.id]}
+            >
+              {processing[record.id] ? 'Processing...' : 'Pay Now'}
+            </button>
+          ) : (status === 1 ? (
+            <div className="bg-blue-500 text-white px-4 py-1 rounded-lg text-center font-semibold w-15">
+              Paid
+            </div>
+          ) : (<div className="bg-red-500 text-white px-4 py-1 rounded-lg text-center font-semibold w-15">
+            Refunded
+          </div>))}
+        </div>
       ),
     },
   ];
@@ -96,147 +237,105 @@ const WithdrawalInterface = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const numAmount = parseFloat(amount);
-    if (isNaN(numAmount) || numAmount <= 0) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Invalid amount", "Please enter a valid amount greater than 0");
-      return;
-    }
-
-    if (numAmount > availableAmount) {
-      openNotificationWithIcon(NotificationTypes.ERROR, "Insufficient funds", "The amount exceeds your available balance");
-      return;
-    }
-
-    const newWithdrawal = {
-      key: Date.now(),
-      amount: numAmount,
-      requestDate: new Date().toLocaleDateString(),
-      paymentMethod,
-      note,
-      status: 'Pending'
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getBillingsByUserId(userData.id);
+        response.forEach(element => {
+          element.requestDate = formatDateTime(element.created_at);
+        });
+        setPaymentHistory(response);
+      } catch (error) {
+        let errorMessage = "An error occurred";
+        if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
+      }
     };
 
-    setWithdrawHistory(prev => [newWithdrawal, ...prev]);
-    setAmount('0.00');
-    setPaymentMethod('ACH');
-    setNote('');
-    setIsModalOpen(false);
-
-    openNotificationWithIcon(NotificationTypes.SUCCESS, "Withdrawal requested", "Your withdrawal request has been submitted successfully");
-  };
+    fetchData();
+  }, []);
 
   return (
     <>
       {contextHolder}
       <div className="min-h-screen bg-gray-950 p-6">
-        {/* Top Section */}
-        <div className="max-w-4xl mx-auto relative mb-6">
-          <div className="absolute right-0 top-0">
-            <Button
-              variant="outline"
-              className="bg-blue-600 hover:bg-blue-700 text-white border-none text-sm px-3 py-1 h-8"
-              onClick={() => setIsModalOpen(true)}
-            >
-              + Withdraw Request
-            </Button>
-          </div>
-
-          <Card className="bg-gray-900 text-white border-none mx-auto max-w-md mt-8">
-            <CardContent className="pt-6 text-center">
-              <div className="text-3xl font-bold mb-2">${totalAmount.toFixed(2)}</div>
-              <div className="text-gray-400">Withdraw Available: ${availableAmount.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Withdrawal Modal */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="bg-gray-900 text-white border-none max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold mb-4">Withdraw Request</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-200">Amount:</label>
-                <Input
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white h-12"
-                  step="0.01"
-                  min="0"
-                  max={availableAmount}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-200">Payment Method:</label>
-                <Select
-                  value={paymentMethod}
-                  onValueChange={setPaymentMethod}
-                >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white h-12">
-                    <SelectValue placeholder="Select payment method" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                    <SelectGroup>
-                      <SelectItem value="ACH">ACH</SelectItem>
-                      <SelectItem value="Wire">Wire Transfer</SelectItem>
-                      <SelectItem value="Check">Check</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-200">Note:</label>
-                <Input
-                  placeholder="Please write note here..."
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white h-12"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12 mt-6"
-              >
-                Submit
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* History Section */}
         <Card className="max-w-4xl mx-auto bg-gray-900 text-white border-none">
           <CardHeader className="pb-2">
-            <CardTitle>Withdraw History</CardTitle>
+            <CardTitle>Payment History</CardTitle>
           </CardHeader>
           <CardContent>
             <Table
               columns={columns}
-              dataSource={withdrawHistory}
+              rowKey="id"
+              dataSource={paymentHistory}
               pagination={false}
               rowClassName={customRowClass}
               className={customTableClass}
               locale={{
                 emptyText: (
                   <div className="text-gray-400 text-center py-8">
-                    No withdrawal history available
+                    No payment history available
                   </div>
                 ),
               }}
             />
           </CardContent>
         </Card>
+
+        {/* Payment Modal */}
+        <Modal
+          open={!!selectedPayment}
+          onCancel={() => {
+            setSelectedPayment(null);
+            setClientSecret(null);
+            setProcessing({});
+            setElementKey(prev => prev + 1); // Reset Elements on cancel
+          }}
+          footer={null}
+          title="Complete Payment"
+          width={500}
+        >
+          {clientSecret ? (
+            <Elements
+              key={elementKey} // Add key prop here
+              stripe={stripePromise}
+              options={{
+                clientSecret,
+                appearance: {
+                  theme: 'night',
+                  variables: {
+                    colorPrimary: '#10B981',
+                    colorBackground: '#111827',
+                    colorText: '#FFFFFF'
+                  }
+                }
+              }}
+            >
+              <PaymentForm
+                amount={selectedPayment?.amount || 0}
+                billingId={selectedPayment?.id}
+                onSuccess={handlePaymentSuccess}
+                onCancel={() => {
+                  setSelectedPayment(null);
+                  setClientSecret(null);
+                  setProcessing({});
+                  setElementKey(prev => prev + 1); // Reset Elements on cancel
+                }}
+              />
+            </Elements>
+          ) : (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+            </div>
+          )}
+        </Modal>
       </div>
     </>
   );
 };
 
-export default WithdrawalInterface;
+export default Billings;
