@@ -8,29 +8,81 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState, useEffect } from "react";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import am5themes_Responsive from "@amcharts/amcharts5/themes/Responsive";
 import am5themesDark from "@amcharts/amcharts5/themes/Dark";
+import { DatePicker } from "antd";
+import moment from "moment";
+import { getTransactionsByDate } from "@/services/api";
+import { useUser } from "@/lib/userContext";
 
-const months = [
-  "january",
-  "february",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+const { RangePicker } = DatePicker;
+
+const filterData = [
+  "Day",
+  "Week",
+  "Month",
+  "Year",
+  "Custom",
 ];
 
 const SalesOverviewChart = () => {
+  const [data, setData] = useState([]);
+  const [filterType, setFilterType] = useState('Year');
+  const [dateRange, setDateRange] = useState([moment().startOf('year'), moment().endOf('year')]);
+  const { userData } = useUser();
+
+  const handleFilterChange = (value) => {
+    setFilterType(value);
+    switch (value) {
+      case 'Day':
+        setDateRange([moment().startOf('day'), moment().endOf('day')]);
+        break;
+      case 'Week':
+        setDateRange([moment().startOf('week'), moment().endOf('week')]);
+        break;
+      case 'Month':
+        setDateRange([moment().startOf('month'), moment().endOf('month')]);
+        break;
+      case 'Year':
+        setDateRange([moment().startOf('year'), moment().endOf('year')]);
+        break;
+      case 'Custom':
+        setDateRange([null, null]);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleDateRangeChange = (dates) => {
+    setDateRange(dates);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let [startDate, endDate] = dateRange;
+      try {
+        const response = await getTransactionsByDate(startDate, endDate, userData.mover.id);
+        if (response.result) {
+          let tempData = response.data;
+          tempData.forEach(temp => {
+            temp.date = (new Date(temp.date)).getTime();
+          });
+          setData(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch data', error);
+      }
+    };
+    if (dateRange != null && dateRange.length == 2 && dateRange[0] != null && dateRange[1] != null) {
+      fetchData();
+    }
+  }, [dateRange]);
+
   useLayoutEffect(() => {
     let root = am5.Root.new("chartdiv");
     const myTheme = am5.Theme.new(root);
@@ -207,26 +259,29 @@ const SalesOverviewChart = () => {
     });
 
     // Set data
-    const data = generateDatas(30);
+    const temp = generateDatas(30);
     series.data.setAll(data);
 
     return () => {
       root.dispose();
     };
-  }, []);
+  }, [data]);
 
   return (
     <Card className="border-none bg-background rounded-[14px]">
       <CardHeader className="flex gap-4 md:flex-row justify-between md:items-center">
         <CardTitle>Sales Overview (YTD)</CardTitle>
-        <Select>
+        {filterType === 'Custom' && (
+          <RangePicker value={dateRange} onChange={handleDateRangeChange} className="border border-gray-700 bg-gray-800 hover:bg-gray-800 focus:bg-gray-800 text-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+        )}
+        <Select value={filterType} onValueChange={handleFilterChange}>
           <SelectTrigger className="w-[180px] text-white/70">
-            <SelectValue placeholder="October" />
+            <SelectValue placeholder="Year" />
           </SelectTrigger>
           <SelectContent>
-            {months.map((month, index) => (
-              <SelectItem key={index} value={month}>
-                {month}
+            {filterData.map((item, index) => (
+              <SelectItem key={index} value={item}>
+                {item}
               </SelectItem>
             ))}
           </SelectContent>

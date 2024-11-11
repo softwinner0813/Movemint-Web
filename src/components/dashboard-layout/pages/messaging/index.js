@@ -39,7 +39,7 @@ const MessagingPage = () => {
     const search = e.target.value.toLowerCase();
     const filtered = rooms?.filter((room) => room.name.toLowerCase().includes(search));
     setFilteredRooms(filtered);
-  } 
+  }
 
   const handleMessageClick = (room) => {
     // router.push(`/dashboard/messaging/${id}`);

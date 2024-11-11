@@ -6,6 +6,7 @@ import { getTeamMember, createTeamMember, updateTeamMember, deleteTeamMember } f
 import { getBillingsByUserId, createPaymentIntent, updateBilling } from './billingApi';
 import { getInvoiceByProposalId, createAccountLink, createDashboardLink, createConnectAccount, deleteConnectAccount } from './InvoiceApi';
 import { sendSupportEmail } from './settingApi';
+import { getTransactionsByDate, getDashboard } from './dashboardApi';
 
 export {
     signinMover,
@@ -33,5 +34,7 @@ export {
     createDashboardLink,
     createConnectAccount,
     deleteConnectAccount,
+    getTransactionsByDate,
+    getDashboard,
     sendSupportEmail,
 }

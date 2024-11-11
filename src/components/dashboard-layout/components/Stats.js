@@ -14,32 +14,25 @@ import OpportunitiesIcon from "@/components/icons/opportunities-icon";
 import GrowIcon from "@/components/icons/grow-icon";
 import LossIcon from "@/components/icons/loss-icon";
 
-const Stats = () => {
+const Stats = ({ data }) => {
   const stats = [
-    // {
-    //   title: "Closing %",
-    //   value: "10.4%",
-    //   icon: <ClosingIcon />,
-    //   change: "8.5% Up from yesterday",
-    //   changeType: "up",
-    // },
     {
       title: "Total Moves Booked",
-      value: "413",
+      value: data?.totalBookedProjects + " Moves",
       icon: <MovesBookedIcon />,
       change: "1.3% Up from past week",
       changeType: "up",
     },
     {
       title: "Total Revenue",
-      value: "$58,450.84",
+      value: "$" + data?.totalTransactionVolume,
       icon: <RevenueIcon />,
       change: "4.3% Down from yesterday",
       changeType: "down",
     },
     {
       title: "Live Opportunities",
-      value: "105",
+      value: data?.activeProjects + " Projects",
       icon: <OpportunitiesIcon />,
       change: "1.8% Up from yesterday",
       changeType: "up",
@@ -69,7 +62,7 @@ const Stats = () => {
               </CardDescription>
             </div>
           </CardHeader>
-          <CardFooter>
+          {/* <CardFooter>
             <p className="flex gap-x-3 items-center">
               {item.changeType === "up" ? <GrowIcon /> : <LossIcon />}{" "}
               <span
@@ -82,7 +75,7 @@ const Stats = () => {
               </span>{" "}
               Up from yesterday
             </p>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       ))}
     </div>
