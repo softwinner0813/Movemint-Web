@@ -35,8 +35,8 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
     router.push(`/dashboard/messaging`);
   };
 
-  const LocationInfo = (address) => {
-    const { streetAddress, addressLine2, city, state, zip, country } = JSON.parse(address.address);
+  const LocationInfo = ({ address }) => {
+    const { streetAddress, addressLine2, city, state, zip, country } = address;
 
     // Map country code to full country name, you can expand this as needed
     const countryName = country === "US" ? "United States" : country;
@@ -126,21 +126,21 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[850px]">
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Origin Information</h3>
-            <p className="text-sm font-normal">
-              <LocationInfo address={data.from} />
-            </p>
+            <div className="text-sm font-normal">
+              <LocationInfo address={JSON.parse(data.from)} />
+            </div>
           </div>
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Additional Stop Information</h3>
-            <p className="text-sm font-normal">
-              {(JSON.parse(data.extra_stops)).length != 0 && <LocationInfo address={data.extra_stops} />}
-            </p>
+            <div className="text-sm font-normal">
+              {(JSON.parse(data.extra_stops)).length != 0 && <LocationInfo address={JSON.parse(data.extra_stops)[0]} />}
+            </div>
           </div>
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-bold">Destination</h3>
-            <p className="text-sm font-normal">
-              <LocationInfo address={data.destination} />
-            </p>
+            <div className="text-sm font-normal">
+              <LocationInfo address={JSON.parse(data.destination)} />
+            </div>
           </div>
         </div>
 
@@ -242,7 +242,7 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
           </div>
         </div>
       </div>
-      <div className={`${userData.charges_enabled ? 'block' : 'hidden'}`}>
+      <div className={`${userData.mover.charges_enabled ? 'block' : 'hidden'}`}>
         <div className="text-center mt-10">
           <Button
             className={`w-full md:w-56 rounded-md ${submittedProposal.result ? 'invisible' : 'visible'}`}
