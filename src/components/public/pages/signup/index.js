@@ -13,6 +13,7 @@ import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
 import Recaptcha from "./recaptcha";
 import { createFirebaseUser } from "@/services/firebaseUser";
+import { deleteUser } from "firebase/auth";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -162,6 +163,7 @@ const Signup = () => {
       }
     } catch (error) {
       let errorMessage = "An error occurred"; // Default message
+      deleteUser(auth.currentUser);
 
       if (error.response && error.response.data && error.response.data.message) {
         errorMessage = error.response.data.message; // Extract the custom message
