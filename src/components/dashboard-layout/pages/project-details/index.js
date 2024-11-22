@@ -9,6 +9,7 @@ import { getName, getMake, getModel, isVehicle } from "@/lib/utils";
 import LoadingScreen from "@/components/ui/loadingScreen";
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/userContext";
+import Link from "next/link";
 
 
 const EditProjectDetails = ({ data, submittedProposal }) => {
@@ -110,7 +111,7 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
             <span className="text-lg md:text-2xl font-bold">
               Requested Date: {data.move_date}
             </span>
-            {/* <span
+            <span
               className="text-base md:text-lg font-normal"
               style={{
                 background:
@@ -119,8 +120,8 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              View Survey Results
-            </span> */}
+              <a href={data.approved_yembo_link}>View Survey Results</a>
+            </span>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[850px]">
