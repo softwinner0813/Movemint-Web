@@ -123,7 +123,7 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              <a href={data.approved_yembo_link}>View Survey Results</a>
+              <a href={data.approved_yembo_link} target="_blank">View Survey Results</a>
             </span>
           </div>
         </div>
