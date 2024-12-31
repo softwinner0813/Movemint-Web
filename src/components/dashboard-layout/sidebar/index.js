@@ -37,11 +37,11 @@ const Sidebar = ({ isExpanded, handleToggleSidebar, setIsModalOpenLogout }) => {
         href: "/dashboard/messaging",
       },
       { icon: <ProjectIcon />, label: "Projects", href: "/dashboard/projects" },
-      {
-        icon: <ProjectIcon />,
-        label: "Upload Contract",
-        href: "/dashboard/upload-contract",
-      },
+      // {
+      //   icon: <ProjectIcon />,
+      //   label: "Upload Contract",
+      //   href: "/dashboard/upload-contract",
+      // },
       {
         icon: <OrderIcon />,
         label: "Order History",

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const UploadContract = () => {
   const router = useRouter()
   const handleClick = () => {
-    router.push('/dashboard/contract-preparation')
+    window.open('/contract-preparation', '_blank', 'noopener,noreferrer');
   };
 
   return (

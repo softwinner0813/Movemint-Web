@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosInstance";
 // Export API methods
-export const getTeamMember = async () => {
-    const response = await axiosInstance.get("/team/get");
+export const getTeamMember = async (moverId) => {
+    const response = await axiosInstance.post("/team/get", {id: moverId});
     if (response.data.result)
         return response.data.data;
     else

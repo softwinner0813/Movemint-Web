@@ -4,6 +4,7 @@ import TeamMemberList from "@/components/dashboard-layout/pages/team-layout/page
 import React, { useEffect, useState } from "react";
 import { getTeamMember } from '@/services/api';
 import { notification } from 'antd';
+import { useUser } from "@/lib/userContext";
 
 const NotificationTypes = {
   SUCCESS: "success",
@@ -15,6 +16,7 @@ const NotificationTypes = {
 const Page = () => {
   const [data, setData] = useState([]);
   const [api, contextHolder] = notification.useNotification();
+  const { userData } = useUser();
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
       message: title,
@@ -26,7 +28,7 @@ const Page = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getTeamMember();
+        const response = await getTeamMember(userData.mover.id);
         setData(response);
       } catch (error) {
         let errorMessage = "An error occurred"; // Default message

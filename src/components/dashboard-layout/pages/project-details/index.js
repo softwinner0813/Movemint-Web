@@ -9,7 +9,6 @@ import { getName, getMake, getModel, isVehicle } from "@/lib/utils";
 import LoadingScreen from "@/components/ui/loadingScreen";
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/userContext";
-import Link from "next/link";
 
 
 const EditProjectDetails = ({ data, submittedProposal }) => {
@@ -23,6 +22,10 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
       setIsLoading(false);
     }
   }, [data]);
+
+  const handleClick = () => {
+    window.open('/contract-preparation', '_blank', 'noopener,noreferrer');
+  };
 
   const handleProposalSubmit = () => {
     router.push(`/dashboard/projects/${data.id}/submit-proposal`);
@@ -265,6 +268,9 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
               className={`w-full md:w-56 rounded-md bg-danger-300 ${submittedProposal.result ? 'visible' : 'invisible'}`}
             >
               Withdraw Proposal
+            </Button>
+            <Button className={`w-full md:w-56 rounded-md  ${submittedProposal.result ? 'visible' : 'invisible'}`} onClick={handleClick}>
+              Create Contract
             </Button>
           </div>
         </div>
