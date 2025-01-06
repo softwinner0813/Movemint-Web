@@ -7,11 +7,8 @@ import { Button } from "@/components/ui/button";
 import { jsPDF } from "jspdf";
 import { Download } from "lucide-react";
 
-
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-
 const PdfPage = forwardRef((props, ref) => {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
   const [numPages, setNumPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageWidth, setPageWidth] = useState(600); // Default width
@@ -595,5 +592,5 @@ const PdfPage = forwardRef((props, ref) => {
     </div>
   );
 })
-
+PdfPage.displayName = "PdfPage";
 export default PdfPage;
