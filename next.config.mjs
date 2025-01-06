@@ -3,6 +3,7 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
+    config.resolve.fallback = { fs: false }; // Disable Node.js features for the browser
     return config;
   },
   images: {
@@ -11,3 +12,5 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+

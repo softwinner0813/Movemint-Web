@@ -1,67 +1,69 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import PdfPage from "./page";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import CommonModel from "../../components/common-model";
+import SignModel from "../../components/sign-model";
 
 const UploadPdfPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isSignModalOpen, setIsSigModalOpen] = useState(false);
+  const [sign, setSign] = useState({});
+  const [uploadedPdf, setUploadedPdf] = useState(true)
+  const childRef = useRef();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
 
+  const handleOpenSignModal = () => {
+    if (uploadedPdf == true) {
+      setIsSigModalOpen(true);
+    } else {
+      alert("Please choose a PDF file.");
+    }
+  }
   const handleOpenUploadModal = () => {
     setIsUploadModalOpen(true);
   };
+  const type_date = () => {
+    setIsUploadModalOpen(false);
+    setIsSigModalOpen(false);
+    setIsModalOpen(false);
+    if (childRef.current) {
+      childRef.current.handleSignDate(); // Call the child function
+    }
+  }
+  const type_name = (signName) => {
+    setIsUploadModalOpen(false);
+    setIsSigModalOpen(false);
+    setIsModalOpen(false);
+    setSign(signName)
+    console.log(signName.activeTab)
+  }
+
   return (
     <>
       <div className="w-full py-[30px] px-[34px] bg-background rounded-lg">
-        <div className="text-white text-2xl font-bold mb-2">
-          Upload PDF Document
-        </div>
-        <div className="relative w-full h-12 bg-white rounded-full overflow-hidden">
-          <div
-            className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-cyan-400"
-            style={{ width: "50%" }}
-          />
-        </div>
-        <div className="mt-6 flex justify-center">
-          <Button
-            className="max-w-[134px] h-[38px] rounded-2xl"
-            onClick={handleOpenUploadModal}
-          >
-            Upload
-          </Button>
-        </div>
       </div>
       <div className="w-full bg-background rounded-lg px-[34px] pt-9 pb-[52px]">
         <div className="text-white text-2xl font-bold mb-2">
           Upload PDF Document
         </div>
         <div className="flex justify-center pt-[38px]">
-          <PdfPage />
+          <PdfPage ref={childRef} sign={sign} />
         </div>
         <div className="space-y-8">
-          <h3 className="text-2xl font-semibold text-center mt-4">
-            Drag & Drop Fields Below:
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-[70px]">
-              Client Signature
+
+          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4"> */}
+          <div className="flex justify-center mt-5">
+            <Button className="max-w-[274px] h-14 rounded-xl text-lg" onClick={handleOpenSignModal}>
+              Signature
             </Button>
-            <Button variant="outline" className="h-[70px]">
-              My Signature
-            </Button>
-            <Button variant="outline" className="h-[70px]">
-              Initials
-            </Button>
-            <Button variant="outline" className="h-[70px]">
+            <Button className="max-w-[274px] h-14 rounded-xl text-lg mx-2" onClick={type_date}>
               Date
             </Button>
-          </div>
-          <div className="flex justify-center">
             <Button
               className="max-w-[274px] h-14 rounded-xl text-lg"
               onClick={handleOpenModal}
@@ -70,7 +72,7 @@ const UploadPdfPage = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </div >
       {isModalOpen && (
         <CommonModel
           mainHeading="Confirm your purchase"
@@ -80,17 +82,32 @@ to proceed."
           mainButtonContent="Purchase"
           setIsModalOpen={setIsModalOpen}
         />
-      )}
-      {isUploadModalOpen && (
-        <CommonModel
-          mainHeading="Oops, sorry we’ve encountered an error"
-          subHeading="Your payment method on file was declined. Please retry the payment method below or click here to update 
+      )
+      }
+      {
+        isUploadModalOpen && (
+          <CommonModel
+            mainHeading="Oops, sorry we’ve encountered an error"
+            subHeading="Your payment method on file was declined. Please retry the payment method below or click here to update 
 your payment method on file."
-          cancelButtonContent="Cancel"
-          mainButtonContent="Retry Payment"
-          setIsModalOpen={setIsUploadModalOpen}
-        />
-      )}
+            cancelButtonContent="Cancel"
+            mainButtonContent="Retry Payment"
+            setIsModalOpen={setIsUploadModalOpen}
+          />
+        )
+      }
+      {
+        isSignModalOpen && (
+          <SignModel
+            mainHeading="Add Your Signature"
+            subHeading="Please sign your name or upload an image of your signature to proceed."
+            cancelButtonContent="Cancel"
+            mainButtonContent="Add Signature"
+            setIsModalClose={setIsSigModalOpen}
+            onConfirm={type_name}
+          />
+        )
+      }
     </>
   );
 };
