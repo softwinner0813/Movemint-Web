@@ -33,6 +33,7 @@
     "embla-carousel-react": "^8.1.8",
     "fabric": "^5.2.4",
     "firebase": "^10.13.2",
+    "jspdf": "^2.5.2",
     "lucide-react": "^0.424.0",
     "mime-types": "^2.1.35",
     "moment": "^2.30.1",

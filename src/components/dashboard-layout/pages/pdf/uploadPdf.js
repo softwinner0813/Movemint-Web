@@ -10,12 +10,9 @@ const UploadPdfPage = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isSignModalOpen, setIsSigModalOpen] = useState(false);
   const [sign, setSign] = useState({});
-  const [uploadedPdf, setUploadedPdf] = useState(true)
+  const [uploadedPdf, setUploadedPdf] = useState(false)
+  const [uploadedSubmit, setUploadedSubmit] = useState(0)
   const childRef = useRef();
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
 
   const handleOpenSignModal = () => {
     if (uploadedPdf == true) {
@@ -24,9 +21,9 @@ const UploadPdfPage = () => {
       alert("Please choose a PDF file.");
     }
   }
-  const handleOpenUploadModal = () => {
-    setIsUploadModalOpen(true);
-  };
+  // const handleOpenUploadModal = () => {
+  //   setIsUploadModalOpen(true);
+  // };
   const type_date = () => {
     setIsUploadModalOpen(false);
     setIsSigModalOpen(false);
@@ -40,19 +37,24 @@ const UploadPdfPage = () => {
     setIsSigModalOpen(false);
     setIsModalOpen(false);
     setSign(signName)
-    console.log(signName.activeTab)
+    console.log(signName)
+  }
+  const submitPdf = () => {
+    setUploadedSubmit(uploadedSubmit + 1)
+  };
+  const uploadFlag = () => {
+    setUploadedPdf(true)
   }
 
   return (
     <>
-      <div className="w-full py-[30px] px-[34px] bg-background rounded-lg">
-      </div>
+
       <div className="w-full bg-background rounded-lg px-[34px] pt-9 pb-[52px]">
         <div className="text-white text-2xl font-bold mb-2">
-          Upload PDF Document
+          {/* Upload PDF Document  */}
         </div>
         <div className="flex justify-center pt-[38px]">
-          <PdfPage ref={childRef} sign={sign} />
+          <PdfPage ref={childRef} sign={sign} submit={uploadedSubmit} uploadFlag={uploadFlag} />
         </div>
         <div className="space-y-8">
 
@@ -66,7 +68,7 @@ const UploadPdfPage = () => {
             </Button>
             <Button
               className="max-w-[274px] h-14 rounded-xl text-lg"
-              onClick={handleOpenModal}
+              onClick={submitPdf}
             >
               Submit Contract
             </Button>
@@ -83,18 +85,6 @@ to proceed."
           setIsModalOpen={setIsModalOpen}
         />
       )
-      }
-      {
-        isUploadModalOpen && (
-          <CommonModel
-            mainHeading="Oops, sorry we’ve encountered an error"
-            subHeading="Your payment method on file was declined. Please retry the payment method below or click here to update 
-your payment method on file."
-            cancelButtonContent="Cancel"
-            mainButtonContent="Retry Payment"
-            setIsModalOpen={setIsUploadModalOpen}
-          />
-        )
       }
       {
         isSignModalOpen && (

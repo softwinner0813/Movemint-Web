@@ -41,7 +41,7 @@ export const updateMover = async (id, formData) => {
 export const updateUser = async (data) => {
   try {
     // Pass FormData and set content-type for form data
-    const response = await axiosInstance.post(`/auth/updateUser`, {data});
+    const response = await axiosInstance.post(`/auth/updateUser`, { data });
     return response.data;
   } catch (error) {
     console.error("Error updating mover:", error);
@@ -73,6 +73,11 @@ export const signinMover = async (data) => {
 }
 
 export const checkAuth = async () => {
-  const response = await axiosInstance.post("/auth/checkAuth");
-  return response.data;
+  try {
+    const response = await axiosInstance.post("/auth/checkAuth");
+    return response.data;
+  }
+  catch (error) {
+    console.log("Error=>", error)
+  }
 }

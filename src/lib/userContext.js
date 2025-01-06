@@ -24,7 +24,7 @@ export const UserProvider = ({ children }) => {
           OneSignalService.login(response.data.firebase_uid);
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
+        console.log("Error checking authentication:", error);
         setIsAuthenticated(false);
         setUserData({});
         // OneSignal Logout

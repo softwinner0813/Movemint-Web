@@ -1,4 +1,3 @@
-"use client";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
@@ -17,15 +16,41 @@ export default function SignModel({
   const fabricCanvasRef = useRef(null);
   const modalRef = useRef(null); // Reference for the modal
   const [name, setName] = useState("");
+  const [imageData, setImageData] = useState(null);
+
+  // Convert canvas to base64 image
+  const getCanvasImage = () => {
+    if (fabricCanvasRef.current) {
+      // Get the base64 image from the canvas
+      return fabricCanvasRef.current.toDataURL();
+    }
+    return null;
+  };
+
   const handleConfirm = () => {
-    // Send the activeTab value and input value to the parent
-    onConfirm({ activeTab, name });
-  }
+    // Send the activeTab value, input value, and canvas data (if applicable) to the parent
+    const canvasData = activeTab === "drawing" ? getCanvasImage() : null;
+    onConfirm({ activeTab, name, canvasData, imageData });
+  };
+
+  // Handle the image file upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageData(reader.result); // Store the base64 image data
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+
   useEffect(() => {
     if (activeTab === "drawing") {
       const canvas = new fabric.Canvas(canvasRef.current, {
         isDrawingMode: true, // Enable drawing mode
-        backgroundColor: "white", // Background color of the canvas
+        // backgroundColor: "white", // Background color of the canvas
         selection: true,     // Allow selection of multiple objects
         selectionColor: "rgba(100, 100, 255, 0.3)", // Color of selection box
         selectionBorderColor: "blue", // Border color of the selection box
@@ -35,6 +60,8 @@ export default function SignModel({
         preserveObjectStacking: false, // Prevent objects from reordering during selection
         stopContextMenu: true, // Prevent right-click context menu on canvas
         renderOnAddRemove: true, // Automatically render canvas after adding/removing objects
+        // transtransparentCorners: false,
+
       });
       fabricCanvasRef.current = canvas;
       // Set canvas size based on the modal size
@@ -48,7 +75,7 @@ export default function SignModel({
       }
 
       // Set drawing properties
-      canvas.freeDrawingBrush.color = "black";
+      canvas.freeDrawingBrush.color = "blue";
       canvas.freeDrawingBrush.width = 5;
     }
   }, [activeTab]);
@@ -108,7 +135,7 @@ export default function SignModel({
                 type="file"
                 accept="image/*"
                 className="border border-muted p-2 rounded-lg w-[150px] sm:w-[274px] border-2 border-foreground"
-
+                onChange={handleImageUpload}
               />
             </div>
           )}

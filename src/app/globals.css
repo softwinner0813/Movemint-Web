@@ -36,11 +36,14 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   ::-webkit-scrollbar {
-    width: 8px; /* Adjust width as needed */
+    width: 8px;
+    /* Adjust width as needed */
     height: 8px;
   }
 
@@ -76,67 +79,68 @@
 }
 
 .ant-table-cell-row-hover {
-  background: black !important; 
+  background: black !important;
 }
 
-.ant-empty, .ant-table-placeholder {
-  background-color: black !important; /* Set the background to black */
+.ant-empty,
+.ant-table-placeholder {
+  background-color: black !important;
+  /* Set the background to black */
 }
 
-.ant-table-wrapper .ant-table-tbody > tr.ant-table-placeholder:hover > td {
-  background: black !important; /* Set background to black */
+.ant-table-wrapper .ant-table-tbody>tr.ant-table-placeholder:hover>td {
+  background: black !important;
+  /* Set background to black */
 }
 
 .ant-empty .ant-empty-description {
-  color: white; /* Optional: change the text color to white for better visibility */
+  color: white;
+  /* Optional: change the text color to white for better visibility */
 }
 
 .ant-rate-star:not(.ant-rate-star-full) svg {
-  color: lightgray !important;  /* Light gray color for empty stars */
+  color: lightgray !important;
+  /* Light gray color for empty stars */
 }
 
 .ant-rate-star-full svg {
-  color: #fadb14 !important;  /* Yellow color for filled stars */
+  color: #fadb14 !important;
+  /* Yellow color for filled stars */
 }
 
 .ant-rate-star-half .ant-rate-star-first svg {
-  color: #fadb14 !important;  /* Yellow color for half-filled stars */
+  color: #fadb14 !important;
+  /* Yellow color for half-filled stars */
 }
 
 @layer components {
   .custom-gradient {
-    background-image: linear-gradient(
-      to right,
-      hsl(var(--primary)),
-      hsl(var(--secondary))
-    );
+    background-image: linear-gradient(to right,
+        hsl(var(--primary)),
+        hsl(var(--secondary)));
     color: var(--foreground);
     transition: transform 0.3s ease-in-out;
   }
 
   .instagram-gradient {
-    background: conic-gradient(
-      from 180deg at 50% 50%,
-      #b8d2f1 0deg,
-      #f289aa 60deg,
-      #c68bf0 106.09deg,
-      #d164da 153.75deg,
-      #c963e8 221.25deg,
-      #bfc2e8 258.75deg,
-      #ffc999 288.75deg,
-      #d0d8c9 315deg,
-      #bad0f1 334.13deg,
-      #ced8cb 358.97deg,
-      rgba(255, 255, 255, 0) 360deg
-    );
+    background: conic-gradient(from 180deg at 50% 50%,
+        #b8d2f1 0deg,
+        #f289aa 60deg,
+        #c68bf0 106.09deg,
+        #d164da 153.75deg,
+        #c963e8 221.25deg,
+        #bfc2e8 258.75deg,
+        #ffc999 288.75deg,
+        #d0d8c9 315deg,
+        #bad0f1 334.13deg,
+        #ced8cb 358.97deg,
+        rgba(255, 255, 255, 0) 360deg);
   }
 
   .text-gradient {
-    background: linear-gradient(
-      103.25deg,
-      hsl(var(--primary)) 28.93%,
-      hsl(var(--secondary)) 98.76%
-    );
+    background: linear-gradient(103.25deg,
+        hsl(var(--primary)) 28.93%,
+        hsl(var(--secondary)) 98.76%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -146,14 +150,13 @@
   .bg-login {
     position: relative;
     z-index: 1;
+
     &::after {
       content: "";
-      background-image: linear-gradient(
-          180deg,
+      background-image: linear-gradient(180deg,
           hsl(var(--primary)) 0%,
           rgba(0, 0, 0, 0) 62.5%,
-          #191a1f 97%
-        ),
+          #191a1f 97%),
         url("/images/login-bg.jpg");
       background-size: cover;
       background-position: center;
@@ -208,4 +211,8 @@
 
 .location {
   color: gray;
+}
+
+.canvas-hide .canvas-container {
+  display: none;
 }
