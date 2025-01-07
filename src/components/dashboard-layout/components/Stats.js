@@ -63,19 +63,19 @@ const Stats = ({ data }) => {
             </div>
           </CardHeader>
           {/* <CardFooter>
-            <p className="flex gap-x-3 items-center">
-              {item.changeType === "up" ? <GrowIcon /> : <LossIcon />}{" "}
-              <span
-                className={cn(
-                  "text-muted-foreground",
-                  item.changeType === "up" ? "text-success" : "text-danger"
-                )}
-              >
-                8.5%
-              </span>{" "}
-              Up from yesterday
-            </p>
-          </CardFooter> */}
+              <p className="flex gap-x-3 items-center">
+                {item.changeType === "up" ? <GrowIcon /> : <LossIcon />}{" "}
+                <span
+                  className={cn(
+                    "text-muted-foreground",
+                    item.changeType === "up" ? "text-success" : "text-danger"
+                  )}
+                >
+                  8.5%
+                </span>{" "}
+                Up from yesterday
+              </p>
+            </CardFooter> */}
         </Card>
       ))}
     </div>
