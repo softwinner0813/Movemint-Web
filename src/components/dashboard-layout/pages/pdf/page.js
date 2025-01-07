@@ -5,7 +5,7 @@ import { forwardRef, useImperativeHandle } from "react";
 // import { circle } from "@amcharts/amcharts5/.internal/core/util/Ease";
 import { Button } from "@/components/ui/button";
 import { jsPDF } from "jspdf";
-import { Download } from "lucide-react";
+import { saveAs } from "file-saver";
 
 const PdfPage = forwardRef((props, ref) => {
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -16,6 +16,8 @@ const PdfPage = forwardRef((props, ref) => {
   const canvasRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const fileInputRef = useRef(null);
+  const jsonInputRef = useRef(null);
+  const [jsonFile, setJsonFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState("0%");
 
   const [pdfFile, setPdfFile] = useState(null);
@@ -68,6 +70,11 @@ const PdfPage = forwardRef((props, ref) => {
   const handleFileImport = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click(); // Programmatically click the file input
+    }
+  }
+  const handleJsonImport = () => {
+    if (jsonInputRef.current) {
+      jsonInputRef.current.click(); // Programmatically click the file input
     }
   }
   useEffect(() => {
@@ -506,7 +513,6 @@ const PdfPage = forwardRef((props, ref) => {
           fabricCanvas.renderAll(); // Re-render the canvas after removal
         }
       };
-
       // Function to clear the canvas (close)
       const closeCanvas = () => {
         fabricCanvas.clear(); // Clears all objects on the canvas
@@ -529,16 +535,51 @@ const PdfPage = forwardRef((props, ref) => {
         }
       });
     }
-
   }
   // Expose the function to the parent via the ref
   useImperativeHandle(ref, () => ({
     handleSignDate,
   }));
 
+  const loadCanvasFromJson = () => {
+    const fabricCanvas = fabricCanvasRef.current;
+    if (fabricCanvas && jsonFile) {
+      fabricCanvas.loadFromJSON(jsonFile, fabricCanvas.renderAll.bind(fabricCanvas));
+    }
+  };
+
+  useEffect(() => {
+    if (jsonFile) {
+      loadCanvasFromJson();
+    }
+  }, [jsonFile]);
+
+  const handleSaveLayout = () => {
+    const fabricCanvas = fabricCanvasRef.current;
+    if (fabricCanvas) {
+      const json = fabricCanvas.toJSON();
+      const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
+      saveAs(blob, "canvas-state.json");
+    }
+  }
+  const handleLoadLayout = () => {
+    const file = event.target.files[0];
+    if (file) {
+      setPdfFile(file);
+      simulateUploadProgress();
+      props.uploadFlag();
+      const fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        setJsonFile(JSON.parse(e.target.result));
+      };
+      fileReader.readAsText(file);
+    }
+  }
+
+
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="text-white text-2xl font-bold mb-2">
+    <div className="flex flex-col items-center gap-4 space-y-8" >
+      <div className="text-white text-2xl font-bold mb-2" >
         Upload PDF Document
       </div>
       <div className="relative w-full h-12 bg-white rounded-full overflow-hidden">
@@ -547,17 +588,33 @@ const PdfPage = forwardRef((props, ref) => {
           style={{ width: uploadProgress }}
         />
       </div>
-      <div className="mt-6 flex justify-center">
+      <div className="flex justify-center mt-5">
         <Button
-          className="max-w-[134px] h-[38px] rounded-2xl"
+          className="max-w-[274px] h-14 rounded-xl text-md"
           onClick={handleFileImport}
+          style={{ width: '120px' }}
         >
           Upload
+        </Button>
+        <Button
+          className="max-w-[274px] h-14 rounded-xl text-md mx-5"
+          onClick={handleSaveLayout}
+          style={{ width: '120px' }}
+        >
+          Save Layout
+        </Button>
+        <Button
+          className="max-w-[274px] h-14 rounded-xl text-md"
+          onClick={handleJsonImport}
+          style={{ width: '120px' }}
+        >
+          Load Layout
         </Button>
       </div>
 
       <div>
         <input type="file" accept="application/pdf" onChange={handlePdfUpload} ref={fileInputRef} hidden />
+        <input type="file" accept="application/json" onChange={handleLoadLayout} ref={jsonInputRef} hidden />
       </div>
 
       <div className={'flex flex-col items-center overflow-auto ' + (pdfFile ? '' : 'canvas-hide')}>
