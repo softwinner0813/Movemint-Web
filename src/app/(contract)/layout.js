@@ -5,7 +5,7 @@ const PublicLayout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-midnight">
-        <main className="container">{children}</main>
+      <main className="px-10 py-5">{children}</main>
     </div>
   );
 };
