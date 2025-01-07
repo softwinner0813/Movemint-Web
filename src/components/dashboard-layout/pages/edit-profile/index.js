@@ -10,12 +10,8 @@ import { useUser } from "@/lib/userContext";
 import { notification } from "antd";
 import AutocompleteInputWithLabel from "./autoCompleteInputWithLabel"; // Import the new autocomplete component
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error",
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const EditProfileForm = () => {
   const [locations, setLocations] = useState([]);

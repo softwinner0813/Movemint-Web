@@ -11,12 +11,8 @@ import { useUser } from "@/lib/userContext";
 import { createConnectAccount, createDashboardLink, deleteConnectAccount, updateUser, sendSupportEmail } from "@/services/api";
 import { notification } from 'antd';
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const settingFields = { "Marketing Emails": "marketing_emails", "New Messages": "new_messages", "Invoice Paid": "invoice_paid", "Proposal Accepted": "proposal_accepted", "Proposal Rejected": "proposal_rejected", "Important Account Updates": "account_updates", "Service International Clients": "service_international_clients", "Auto Transport": "auto_transport", "Home Moving": "home_moving" };
 

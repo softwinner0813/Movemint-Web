@@ -7,6 +7,7 @@ import { getBillingsByUserId, createPaymentIntent, updateBilling } from './billi
 import { getInvoiceByProposalId, createAccountLink, createDashboardLink, createConnectAccount, deleteConnectAccount } from './InvoiceApi';
 import { sendSupportEmail } from './settingApi';
 import { getTransactionsByDate, getDashboard } from './dashboardApi';
+import { getMoverTemplates, deleteTemplate, uploadTemplate } from './contractTemplateApi';
 
 export {
     signinMover,
@@ -37,4 +38,7 @@ export {
     getTransactionsByDate,
     getDashboard,
     sendSupportEmail,
+    getMoverTemplates,
+    deleteTemplate,
+    uploadTemplate,
 }

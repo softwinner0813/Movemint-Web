@@ -12,12 +12,8 @@ import { useUser } from "@/lib/userContext";
 import { createFirebaseUser } from "@/services/firebaseUser";
 import { notification } from 'antd';
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const NewMemberLoginPage = () => {
   const [email, setEmail] = useState("");

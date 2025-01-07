@@ -14,12 +14,8 @@ import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
 import { useRouter } from "next/navigation";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const SubmitProposal = ({ data }) => {
   const [isAutoFill, setIsAutoFill] = useState(true);

@@ -6,12 +6,8 @@ import { getTeamMember } from '@/services/api';
 import { notification } from 'antd';
 import { useUser } from "@/lib/userContext";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const Page = () => {
   const [data, setData] = useState([]);

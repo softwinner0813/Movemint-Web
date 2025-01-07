@@ -8,13 +8,8 @@ import { Table, notification, Modal } from "antd";
 import { useUser } from '@/lib/userContext';
 import { getBillingsByUserId, createPaymentIntent, updateBilling } from "@/services/api";
 import { formatDateTime } from '@/lib/chatDate';
+import { NotificationTypes } from '@/constants/messages';
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 

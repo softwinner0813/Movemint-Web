@@ -15,12 +15,8 @@ import Recaptcha from "./recaptcha";
 import { createFirebaseUser } from "@/services/firebaseUser";
 import { deleteUser } from "firebase/auth";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const Signup = () => {
   const [formData, setFormData] = useState({

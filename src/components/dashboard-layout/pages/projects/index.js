@@ -8,12 +8,8 @@ import { getName } from "@/lib/utils";
 import { notification } from 'antd';
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const columns = [
   {

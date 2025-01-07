@@ -19,13 +19,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { notification } from "antd";
+import { NotificationTypes } from '@/constants/messages';
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error",
-};
 
 const customTableClass = "bg-black text-white"; // Table body is black, and text is whiteer with a dark background
 const customRowClass = "bg-black text-white cursor-pointer border-grey-100"; // Rows with black background and white text

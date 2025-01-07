@@ -9,13 +9,9 @@ import { createTeamMember, deleteTeamMember, updateTeamMember } from "@/services
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/userContext";
 import CommonModel from "@/components/dashboard-layout/components/common-model";
+import { NotificationTypes } from "@/constants/messages";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error",
-};
+
 
 const AddNewMemberForm = ({ editMode }) => {
 

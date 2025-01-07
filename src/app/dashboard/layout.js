@@ -16,13 +16,8 @@ import { createAccountLink, createConnectAccount } from "@/services/api";
 
 import { notification } from 'antd';
 import LoadingScreen from "@/components/ui/loadingScreen";
+import { NotificationTypes } from "@/constants/messages";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
 
 const DashboardLayout = ({ children }) => {
   const [openSidebar, setOpenSidebar] = useState(false);

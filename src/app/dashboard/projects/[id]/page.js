@@ -6,13 +6,7 @@ import { getProjectById, getSubmittedProposal } from "@/services/api";
 import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
 import { useRouter } from "next/navigation";
-
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
 
 const Page = ({ params }) => {
   const { id } = params;

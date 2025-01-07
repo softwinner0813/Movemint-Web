@@ -8,12 +8,8 @@ import { notification } from 'antd';
 import { getDashboard } from "@/services/api";
 import { useUser } from "@/lib/userContext";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const SalesOverviewChart = dynamic(() => import('../components/sales-chart'), { ssr: false });
 

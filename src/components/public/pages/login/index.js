@@ -24,12 +24,8 @@ import { createFirebaseUser } from "@/services/firebaseUser";
 import { notification } from "antd";
 import OneSignalService from "@/services/OneSignalService";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error",
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");

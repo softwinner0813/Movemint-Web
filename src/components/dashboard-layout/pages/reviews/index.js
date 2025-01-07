@@ -6,12 +6,8 @@ import { notification, Table, Rate } from 'antd';
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useUser } from "@/lib/userContext";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
+import { NotificationTypes } from "@/constants/messages";
+
 
 const columns = [
   // {

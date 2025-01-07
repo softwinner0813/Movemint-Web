@@ -5,13 +5,8 @@ import React, { useEffect, useState } from "react";
 import { getProjectById } from "@/services/api";
 import { notification } from 'antd';
 import LoadingScreen from "@/components/ui/loadingScreen";
+import { NotificationTypes } from "@/constants/messages";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
 
 const Page = ({ params }) => {
   const { id } = params;

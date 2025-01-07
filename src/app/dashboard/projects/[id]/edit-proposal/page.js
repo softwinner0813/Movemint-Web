@@ -6,13 +6,8 @@ import { useUser } from "@/lib/userContext";
 import { useState, useEffect } from "react";
 import { notification } from 'antd';
 import LoadingScreen from "@/components/ui/loadingScreen";
+import { NotificationTypes } from "@/constants/messages";
 
-const NotificationTypes = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error"
-};
 
 const Page = ({ params }) => {
   const { id } = params;
