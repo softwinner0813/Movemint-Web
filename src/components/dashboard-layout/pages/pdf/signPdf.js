@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import ContractTemplateList from "./templateList";
 import MainContract from "./mainContract";
 
-const UploadPdfPage = ({ proposalId }) => {
+const SignPdfPage = () => {
   const [template, setTemplate] = useState(null);
 
   const onClickTemplate = (seletedTemplate) => {
@@ -15,15 +15,12 @@ const UploadPdfPage = ({ proposalId }) => {
   return (
     <>
       <div className="w-full h-full rounded-lg grid grid-cols-12">
-        <div className="col-span-3 mr-5">
-          <ContractTemplateList onClickTemplate={onClickTemplate} />
-        </div>
-        <div className="col-span-9">
-          <MainContract template={template} proposalId={proposalId} />
+        <div className="col-span-12">
+          <MainContract template={template} />
         </div>
       </div >
     </>
   );
 };
 
-export default UploadPdfPage;
+export default SignPdfPage;

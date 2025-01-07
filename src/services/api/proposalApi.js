@@ -10,6 +10,11 @@ export const updateProposal = async (formData) => {
     return response.data;
 };
 
+export const updateProposalDocument = async (formData) => {
+    const response = await axiosInstance.post("/proposal/updateProposal", formData);
+    return response.data;
+}
+
 export const getSubmittedProposal = async (project_id, mover_id) => {
     const response = await axiosInstance.post("/proposal/getSubmitted", { project_id, mover_id });
     return response.data;

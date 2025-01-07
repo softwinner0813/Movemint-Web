@@ -3,14 +3,17 @@ import { FaTrashAlt, FaPlus } from "react-icons/fa";
 import AddTemplateModal from "../../components/add-contract-template-modal";
 import { deleteTemplate, getMoverTemplates } from "@/services/api";
 import { NotificationTypes } from "@/constants/messages";
+import { useUser } from "@/lib/userContext";
 import { notification } from "antd";
 
 const ContractTemplateList = ({ onClickTemplate }) => {
     const [api, contextHolder] = notification.useNotification();
 
+    const { userData } = useUser();
+
     const [templateList, setTemplateList] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false); // Add state for showing/hiding the add template modal
-    const moverId = 5; // !!! PLEASE CHANGE THIS !!!! Get the mover ID from the user context`
+    const moverId = userData.mover.id; // !!! PLEASE CHANGE THIS !!!! Get the mover ID from the user context`
 
     const openNotificationWithIcon = (type, title, content) => {
         api[type]({

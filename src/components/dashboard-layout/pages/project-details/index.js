@@ -24,7 +24,8 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
   }, [data]);
 
   const handleClick = () => {
-    window.open('/contract-preparation', '_blank', 'noopener,noreferrer');
+    console.log(submittedProposal);
+    window.open(`/contract-preparation/${submittedProposal.data.id}`, '_blank', 'noopener,noreferrer');
   };
 
   const handleProposalSubmit = () => {

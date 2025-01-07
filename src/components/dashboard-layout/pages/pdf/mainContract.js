@@ -9,7 +9,12 @@ import { pdfjs } from "react-pdf";
 import { saveAs } from "file-saver";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-const MainContract = ({ template }) => {
+import { updateProposalDocument } from '@/services/api';
+import { notification } from 'antd';
+
+import { NotificationTypes } from "@/constants/messages";
+
+const MainContract = ({ template, proposalId }) => {
   // const { resultLink, savedData } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -29,7 +34,15 @@ const MainContract = ({ template }) => {
   const jsonInputRef = useRef();
   const [pdfFile, setPdfFile] = useState(false);
   const [pdfData, setPdfData] = useState(null);
+  const [api, contextHolder] = notification.useNotification();
 
+  const openNotificationWithIcon = (type, title, content) => {
+    api[type]({
+      message: title,
+      description: content,
+      duration: 2,
+    });
+  };
 
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
   const renderPDF = async (pageNumber, pdfDoc) => {
@@ -456,11 +469,34 @@ const MainContract = ({ template }) => {
     setSign(signName)
     console.log(signName)
   }
-  const submitPdf = () => {
+  const submitPdf = async () => {
+    const fabricCanvas = fabricCanvasRef.current;
+    if (fabricCanvas) {
+      const json = fabricCanvas.toJSON();
+      const data = {
+        template: template,
+        pageNumber,
+        data: json,
+      }
+      try {
+        await updateProposalDocument({
+          id: proposalId,
+          data: { work_contract: JSON.stringify(data) }
+        });
+        openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Document saved successfully.");
+      } catch (error) {
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", "An error occurred while updating the document");
+        console.error("An error occurred while updating the document:", error);
+      }
+      // saveAs(blob, "canvas-state.json");
+    } else {
+      openNotificationWithIcon(NotificationTypes.WARNING, "Warning", "Please add signature or date");
+    }
     setUploadedSubmit(uploadedSubmit + 1)
   };
   return (
     <>
+      {contextHolder}
       <div className="w-full bg-background rounded-lg px-[34px] pt-9 pb-[52px]">
         <div className="flex flex-col items-center gap-4 space-y-8" style={{ maxHeight: 700 }}>
           <div className={'flex flex-col items-center overflow-auto ' + (pdfFile ? '' : 'canvas-hide')} >

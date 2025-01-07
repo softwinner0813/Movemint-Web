@@ -1,10 +1,10 @@
-import UploadPdfPage from "@/components/dashboard-layout/pages/pdf/uploadPdf";
+import SignPdfPage from "@/components/dashboard-layout/pages/pdf/signPdf";
 import React from "react";
 
 const page = () => {
   return (
     <>
-      <UploadPdfPage />
+      <SignPdfPage />
     </>
   );
 };
