@@ -57,7 +57,7 @@ const UploadPdfPage = ({ proposalId }) => {
         <div className="col-span-9">
           <MainContract
             template={template}
-            page={pageNumber}
+            pageNum={pageNumber}
             workData={workData}
             proposalId={proposalId} />
         </div>

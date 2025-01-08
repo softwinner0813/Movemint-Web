@@ -16,7 +16,7 @@ import { FaDownload } from "react-icons/fa";
 import jsPDF from "jspdf";
 import { PDFDocument, rgb } from 'pdf-lib';
 
-const MainContract = ({ template, page, workData, proposalId }) => {
+const MainContract = ({ template, pageNum, workData, proposalId }) => {
   // const { resultLink, savedData } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -29,7 +29,7 @@ const MainContract = ({ template, page, workData, proposalId }) => {
   const canvasRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const [numPages, setNumPages] = useState(1); // New state for total pages
-  const [pageNumber, setPageNumber] = useState(page); // New state for current page
+  const [pageNumber, setPageNumber] = useState(pageNum); // New state for current page
   const [pageWidth, setPageWidth] = useState(600); // Default width
   const [aspectRatio, setAspectRatio] = useState(1);
   const [canvasReady, setCanvasReady] = useState(false);
@@ -80,19 +80,19 @@ const MainContract = ({ template, page, workData, proposalId }) => {
         const imgDataUrl = tempCanvas.toDataURL("image/png", 3.0); // Set quality to 1.0 for max quality
 
         // Load the image into fabric.js canvas
-        fabric.Image.fromURL(imgDataUrl, (fabricImage) => {
-          fabricCanvas.setBackgroundImage(
-            fabricImage,
-            fabricCanvas.renderAll.bind(fabricCanvas),
-            {
-              scaleX: fabricCanvas.width / fabricImage.width,
-              scaleY: fabricCanvas.height / fabricImage.height,
-            }
-          );
-        });
+        // fabric.Image.fromURL(imgDataUrl, (fabricImage) => {
+        //   fabricCanvas.setBackgroundImage(
+        //     fabricImage,
+        //     fabricCanvas.renderAll.bind(fabricCanvas),
+        //     {
+        //       scaleX: fabricCanvas.width / fabricImage.width,
+        //       scaleY: fabricCanvas.height / fabricImage.height,
+        //     }
+        //   );
+        // });
 
         // Restore fabric objects from workData
-        if (workData && workData.objects) {
+        if (workData && workData.objects && pageNumber == pageNum) {
           fabricCanvas.loadFromJSON(workData, () => {
             fabricCanvas.renderAll();
           });
@@ -333,13 +333,17 @@ const MainContract = ({ template, page, workData, proposalId }) => {
       backgroundColor: "transparent",
     });
 
+    // Set background color to transparent
+    fabricCanvas.setBackgroundColor(null, fabricCanvas.renderAll.bind(fabricCanvas));
+    
     fabricCanvas.setDimensions({
       width: pageWidth,
       height: pageWidth / aspectRatio,
     });
 
     fabricCanvasRef.current = fabricCanvas;
-
+    
+    
     return () => {
       if (fabricCanvasRef.current) {
         fabricCanvasRef.current.dispose();

@@ -1,10 +1,12 @@
 import SignPdfPage from "@/components/dashboard-layout/pages/pdf/signPdf";
 import React from "react";
 
-const page = () => {
+const page = ({ params }) => {
+  const { id } = params;
+
   return (
     <>
-      <SignPdfPage />
+      <SignPdfPage proposalId={id} />
     </>
   );
 };
