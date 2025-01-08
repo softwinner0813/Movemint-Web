@@ -24,3 +24,8 @@ export const getOrderHistoryByMoverId = async (mover_id) => {
     const response = await axiosInstance.post("/proposal/getOrderHistoryByMoverId", { mover_id });
     return response.data;
 }
+
+export const getProposalByID = async (proposal_id) => {
+    const response = await axiosInstance.post("/proposal/getProposalByID", { proposal_id });
+    return response.data;
+}

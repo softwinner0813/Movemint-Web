@@ -11,10 +11,12 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { updateProposalDocument } from '@/services/api';
 import { notification } from 'antd';
-
 import { NotificationTypes } from "@/constants/messages";
+import { FaDownload } from "react-icons/fa";
+import jsPDF from "jspdf";
+import { PDFDocument, rgb } from 'pdf-lib';
 
-const MainContract = ({ template, proposalId }) => {
+const MainContract = ({ template, page, workData, proposalId }) => {
   // const { resultLink, savedData } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -27,7 +29,7 @@ const MainContract = ({ template, proposalId }) => {
   const canvasRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const [numPages, setNumPages] = useState(1); // New state for total pages
-  const [pageNumber, setPageNumber] = useState(1); // New state for current page
+  const [pageNumber, setPageNumber] = useState(page); // New state for current page
   const [pageWidth, setPageWidth] = useState(600); // Default width
   const [aspectRatio, setAspectRatio] = useState(1);
   const [canvasReady, setCanvasReady] = useState(false);
@@ -88,6 +90,13 @@ const MainContract = ({ template, proposalId }) => {
             }
           );
         });
+
+        // Restore fabric objects from workData
+        if (workData && workData.objects) {
+          fabricCanvas.loadFromJSON(workData, () => {
+            fabricCanvas.renderAll();
+          });
+        }
       }
       setUploadedPdf(true);
       setPdfFile(true);
@@ -314,13 +323,14 @@ const MainContract = ({ template, proposalId }) => {
   }, [sign.imageData]);
   useEffect(() => {
     updatePageWidth();
-    window.addEventListener("resize", updatePageWidth);
-    return () => window.removeEventListener("resize", updatePageWidth);
+    // window.addEventListener("resize", updatePageWidth);
+    // return () => window.removeEventListener("resize", updatePageWidth);
   }, [updatePageWidth]);
   useEffect(() => {
     const canvas = canvasRef.current;
     const fabricCanvas = new fabric.Canvas(canvas, {
-      isDrawingMode: false, // Disable drawing mode
+      isDrawingMode: false, // Disable drawing mode,
+      backgroundColor: "transparent",
     });
 
     fabricCanvas.setDimensions({
@@ -494,6 +504,65 @@ const MainContract = ({ template, proposalId }) => {
     }
     setUploadedSubmit(uploadedSubmit + 1)
   };
+  const downloadPDF = async () => {
+    try {
+      // Step 1: Fetch the original PDF
+      const pdfUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${template.link}`;
+      const pdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer());
+
+      // Step 2: Load the PDF using PDF-lib
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      // Validate the page number
+      if (pageNumber < 1 || pageNumber > pdfDoc.getPageCount()) {
+        throw new Error('Invalid page number');
+      }
+
+      // Get the specified page
+      const page = pdfDoc.getPage(pageNumber - 1); // PDF-lib uses zero-based indexing
+
+      // Step 3: Render Fabric.js canvas to an image
+      const fabricCanvas = fabricCanvasRef.current;
+      const canvasDataUrl = fabricCanvas.toDataURL(); // Convert canvas to data URL (base64 image)
+
+      // Embed the image in the PDF
+      const imageBytes = await fetch(canvasDataUrl).then((res) => res.arrayBuffer());
+      const pdfImage = await pdfDoc.embedPng(imageBytes); // Use embedJpg for JPG images
+
+      // Get image dimensions
+      const { width, height } = pdfImage.scale(1); // Original dimensions
+
+      // Step 4: Draw the image on the PDF page
+      page.drawImage(pdfImage, {
+        x: 0, // Adjust X position as needed
+        y: 0, // Adjust Y position as needed
+        width: width, // Scale image if needed
+        height: height,
+      });
+
+      // Step 5: Save the modified PDF
+      const modifiedPdfBytes = await pdfDoc.save();
+
+      // Step 6: Create a download link
+      const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+
+      // Trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'modified.pdf';
+      link.click();
+
+      // Clean up
+      URL.revokeObjectURL(url);
+
+      console.log("PDF created and downloaded successfully!");
+      return 'PDF created and downloaded successfully!';
+    } catch (error) {
+      console.error('Error creating PDF:', error);
+      return 'Error creating PDF';
+    }
+  }
   return (
     <>
       {contextHolder}
@@ -529,22 +598,35 @@ const MainContract = ({ template, proposalId }) => {
               Next
             </button>
           </div>
+
+          <button
+            className="absolute top-4 right-12 rounded-full bg-primary px-3 py-3 text-white"
+            onClick={downloadPDF}
+          >
+            <FaDownload />
+          </button>
         </div>
 
         <div className="space-y-8">          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4"> */}
           <div className="flex justify-center mt-5">
-            <Button className="max-w-[274px] h-14 rounded-xl text-lg" onClick={handleOpenSignModal}>
+            <Button className="max-w-[274px] rounded-xl text-lg mx-2" onClick={handleOpenSignModal}>
               Signature
             </Button>
-            <Button className="max-w-[274px] h-14 rounded-xl text-lg mx-2" onClick={type_date}>
+            <Button className="max-w-[274px] rounded-xl text-lg mx-2" onClick={type_date}>
               Date
             </Button>
             <Button
-              className="max-w-[274px] h-14 rounded-xl text-lg"
+              className="max-w-[274px] rounded-xl text-lg mx-2"
               onClick={submitPdf}
             >
-              Submit Contract
+              Save
             </Button>
+            {/* <Button
+              className="max-w-[274px] rounded-xl text-lg mx-2"
+              onClick={downloadPDF}
+            >
+              Download
+            </Button> */}
           </div>
         </div >
       </div>

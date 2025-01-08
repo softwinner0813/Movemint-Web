@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import ContractTemplateList from "./templateList";
-import MainContract from "./mainContract";
+import MainContract from "./mainContract1";
 
 const SignPdfPage = () => {
   const [template, setTemplate] = useState(null);
