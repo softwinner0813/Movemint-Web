@@ -11,14 +11,13 @@ const UploadPdfPage = ({ proposalId }) => {
   const [template, setTemplate] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [workData, setWorkData] = useState(null);
-
   useEffect(() => {
     // Fetch proposal data using proposalId
     const fetchProposalData = async () => {
       try {
         const response = await getProposalByID(proposalId);
         // Do something with the proposal data
-        console.log("------- 👌👌👌 Proposal Data: 👌👌👌 -------", response);
+        // console.log("------- 👌👌👌 Proposal Data: 👌👌👌 -------", response);
         if (response.result) {
           const data = response.data;
           const workspace = data.work_contract;

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTrashAlt, FaPlus } from "react-icons/fa";
 import AddTemplateModal from "../../components/add-contract-template-modal";
+import CommonModel from "../../components/common-model";
 import { deleteTemplate, getMoverTemplates } from "@/services/api";
 import { NotificationTypes } from "@/constants/messages";
 import { useUser } from "@/lib/userContext";
@@ -13,6 +14,8 @@ const ContractTemplateList = ({ onClickTemplate }) => {
 
     const [templateList, setTemplateList] = useState([]);
     const [showAddModal, setShowAddModal] = useState(false); // Add state for showing/hiding the add template modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(null);
     const moverId = userData.mover.id; // !!! PLEASE CHANGE THIS !!!! Get the mover ID from the user context`
 
     const openNotificationWithIcon = (type, title, content) => {
@@ -79,6 +82,10 @@ const ContractTemplateList = ({ onClickTemplate }) => {
             setTemplateList([]); // Set the template list to an empty array if there's an error
         }
     };
+    const onDeleteTemplate = () => {
+        handleDeleteTemplate(deleteIndex);
+        setIsModalOpen(false)
+    }
 
     return (
         <div
@@ -109,7 +116,8 @@ const ContractTemplateList = ({ onClickTemplate }) => {
                         >
                             <div className="text-white font-medium">{template.name}</div>
                             <button
-                                onClick={() => handleDeleteTemplate(index)}
+                                // onClick={() => handleDeleteTemplate(index)}
+                                onClick={() => { setIsModalOpen(true); setDeleteIndex(index) }}
                                 className="text-red-600 hover:text-red-800"
                             >
                                 <FaTrashAlt className="h-5 w-5" />
@@ -126,6 +134,16 @@ const ContractTemplateList = ({ onClickTemplate }) => {
                         setShowAddModal(false);
                         await getTemplates();
                     }}
+                />
+            )}
+            {isModalOpen && (
+                <CommonModel
+                    setIsModalOpen={setIsModalOpen}
+                    mainHeading="Warning!"
+                    subHeading="Are you sure you want to delete the selected template?"
+                    mainButtonContent="Delete"
+                    cancelButtonContent="Cancel"
+                    onConfirm={onDeleteTemplate}
                 />
             )}
         </div>

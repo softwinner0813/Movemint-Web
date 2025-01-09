@@ -14,7 +14,7 @@ import { notification } from 'antd';
 import { NotificationTypes } from "@/constants/messages";
 import { FaDownload } from "react-icons/fa";
 // import jsPDF from "jspdf";
-import { PDFDocument, rgb } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 
 const MainContract = ({ template, pageNum, workData, proposalId }) => {
   // const { resultLink, savedData } = props;
@@ -35,8 +35,12 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
   const [canvasReady, setCanvasReady] = useState(false);
   const jsonInputRef = useRef();
   const [pdfFile, setPdfFile] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [pdfData, setPdfData] = useState(null);
+  const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
+  const [templateUrl, setTemplateUrl] = useState("");
   const [api, contextHolder] = notification.useNotification();
+  var initial = true;
 
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -77,7 +81,7 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       const fabricCanvas = fabricCanvasRef.current;
       if (fabricCanvas) {
         // Convert the temporary canvas to a high-quality image (PNG) 
-        const imgDataUrl = tempCanvas.toDataURL("image/png", 3.0); // Set quality to 1.0 for max quality 
+        const imgDataUrl = tempCanvas.toDataURL("image/png", 1.0); // Set quality to 1.0 for max quality 
 
         // Load the image into fabric.js canvas 
         fabric.Image.fromURL(imgDataUrl, (fabricImage) => {
@@ -92,10 +96,15 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
         });
 
         // Restore fabric objects from workData 
-        if (workData && workData.objects) {
+        if (workData && workData.objects && pageNumber == pageNum) {
           fabricCanvas.loadFromJSON(workData, () => {
             fabricCanvas.renderAll();
           });
+        } else {
+          // Initialize the fabric canvas when workData is null
+          fabricCanvas.clear(); // Clears the canvas, ensuring it's empty
+          // Optionally set up some initial state for the canvas if needed
+          fabricCanvas.renderAll();
         }
       }
       setUploadedPdf(true);
@@ -355,8 +364,20 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
     if (template?.link) {
       const url = `${process.env.NEXT_PUBLIC_BASE_URL}${template.link}`;
       loadPdf(url);
+      if (initial == true) {
+        setPageNumber(pageNum)
+        initial = false
+      } else {
+        setPageNumber(1);
+      }
     }
-  }, [template, pageNumber]);
+  }, [template]);
+  useEffect(() => {
+    if (template?.link) {
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}${template.link}`;
+      loadPdf(url);
+    }
+  }, [pageNumber]);
   const loadPdf = async (url) => {
     try {
       NProgress.start(); // Start progress bar 
@@ -482,29 +503,41 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
     console.log(signName)
   }
   const submitPdf = async () => {
-    const fabricCanvas = fabricCanvasRef.current;
-    if (fabricCanvas) {
-      const json = fabricCanvas.toJSON();
-      const data = {
-        template: template,
-        pageNumber,
-        data: json,
+    setIsModalOpen(false)
+    setLoading(true);
+    try {
+      const location = useLocation();
+      const updatedPath = location.pathname.replace("preparation", "sign");
+      setTemplateUrl(updatedPath)
+      const fabricCanvas = fabricCanvasRef.current;
+      if (fabricCanvas) {
+        const json = fabricCanvas.toJSON();
+        const data = {
+          template: template,
+          pageNumber,
+          data: json,
+        }
+        try {
+          await updateProposalDocument({
+            id: proposalId,
+            data: { work_contract: JSON.stringify(data) }
+          });
+          openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Document saved successfully.");
+        } catch (error) {
+          openNotificationWithIcon(NotificationTypes.ERROR, "Error", "An error occurred while updating the document");
+          console.error("An error occurred while updating the document:", error);
+        }
+        // saveAs(blob, "canvas-state.json");
+      } else {
+        openNotificationWithIcon(NotificationTypes.WARNING, "Warning", "Please add signature or date");
       }
-      try {
-        await updateProposalDocument({
-          id: proposalId,
-          data: { work_contract: JSON.stringify(data) }
-        });
-        openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Document saved successfully.");
-      } catch (error) {
-        openNotificationWithIcon(NotificationTypes.ERROR, "Error", "An error occurred while updating the document");
-        console.error("An error occurred while updating the document:", error);
-      }
-      // saveAs(blob, "canvas-state.json");
-    } else {
-      openNotificationWithIcon(NotificationTypes.WARNING, "Warning", "Please add signature or date");
+      setUploadedSubmit(uploadedSubmit + 1)
+    } catch (error) {
+      console.error("PDF download failed:", error);
+    } finally {
+      setLoading(false); // Stop spinner
+      setIsUrlModalOpen(true)
     }
-    setUploadedSubmit(uploadedSubmit + 1)
   };
   const downloadPDF = async () => {
     try {
@@ -615,7 +648,9 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       return "Error creating PDF";
     }
   };
-
+  const copyUrl = () => {
+    setIsUrlModalOpen(false);
+  }
 
   return (
     <>
@@ -671,28 +706,62 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
             </Button>
             <Button
               className="max-w-[274px] rounded-xl text-lg mx-2"
-              onClick={submitPdf}
+              onClick={() => { setIsModalOpen(true) }}
+              disabled={loading} // Optionally disable the button during loading
             >
-              Save
+              {loading ? (
+                <span className="flex items-center">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                  Saving...
+                </span>
+              ) : (
+                "Save"
+              )}
             </Button>
-            {/* <Button
-              className="max-w-[274px] rounded-xl text-lg mx-2"
-              onClick={downloadPDF}
-            >
-              Download
-            </Button> */}
           </div>
         </div >
       </div>
       <input type="file" accept="application/json" onChange={handleLoadLayout} ref={jsonInputRef} hidden />
       {isModalOpen && (
         <CommonModel
-          mainHeading="Confirm your purchase"
-          subHeading="Your card on file will immediately be charged $299.99 for bidding on this project. Please confirm if you’d like
-to proceed."
+          mainHeading="Warning!"
+          subHeading="Would you like to save the current work template?"
           cancelButtonContent="Cancel"
-          mainButtonContent="Purchase"
+          mainButtonContent="Save"
           setIsModalOpen={setIsModalOpen}
+          onConfirm={submitPdf}
+        />
+      )
+      }
+      {isUrlModalOpen && (
+        <CommonModel
+          mainHeading="Success!"
+          subHeading="Please copy the URL of your signature template."
+          cancelButtonContent="Cancel"
+          mainButtonContent="Copy"
+          setIsModalOpen={setIsUrlModalOpen}
+          inputContent={templateUrl}
+          showURLFields={true}
+          onConfirm={copyUrl}
         />
       )
       }
@@ -708,6 +777,7 @@ to proceed."
           />
         )
       }
+
     </>
   );
 };
