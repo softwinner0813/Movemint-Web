@@ -568,7 +568,7 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
         const pdfImage = await pdfDoc.embedPng(imageBytes);
 
         // Calculate the position and scale for the PDF
-        const { width, height } = pdfImage.scale(1); // Original image dimensions
+        const { width, height } = pdfImage.scale(0.8); // Original image dimensions
         const pdfX = pageWidth - (textObject.left * scaleX + textObject.fontSize) - 380; // Scaling the X position
         const pdfY = pageHeight - (textObject.top * scaleY + textObject.fontSize) - 430; // Scaling the Y position and adjusting for font size
 
