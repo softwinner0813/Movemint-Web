@@ -6,14 +6,14 @@ import { fabric } from "fabric";
 import CommonModel from "../../components/common-model";
 import SignModel from "../../components/sign-model";
 import { pdfjs } from "react-pdf";
-import { saveAs } from "file-saver";
+// import { saveAs } from "file-saver";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { updateProposalDocument } from '@/services/api';
 import { notification } from 'antd';
 import { NotificationTypes } from "@/constants/messages";
 import { FaDownload } from "react-icons/fa";
-import jsPDF from "jspdf";
+// import jsPDF from "jspdf";
 import { PDFDocument, rgb } from 'pdf-lib';
 
 const MainContract = ({ template, pageNum, workData, proposalId }) => {
@@ -57,7 +57,7 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       setNumPages(pdfDoc.numPages);
       // Get the requested page from the PDF
       // Increase the scale factor for better quality rendering
-      const scale = 2; // Increase scale for better resolution
+      const scale = 1; // Increase scale for better resolution
       const viewport = page.getViewport({ scale });
       // Create a temporary canvas to render the PDF page
       const tempCanvas = document.createElement("canvas");
@@ -77,26 +77,19 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       const fabricCanvas = fabricCanvasRef.current;
       if (fabricCanvas) {
         // Convert the temporary canvas to a high-quality image (PNG)
-        const imgDataUrl = tempCanvas.toDataURL("image/png", 3.0); // Set quality to 1.0 for max quality
+        const imgDataUrl = tempCanvas.toDataURL("image/png", 1.0); // Set quality to 1.0 for max quality
 
         // Load the image into fabric.js canvas
-        // fabric.Image.fromURL(imgDataUrl, (fabricImage) => {
-        //   fabricCanvas.setBackgroundImage(
-        //     fabricImage,
-        //     fabricCanvas.renderAll.bind(fabricCanvas),
-        //     {
-        //       scaleX: fabricCanvas.width / fabricImage.width,
-        //       scaleY: fabricCanvas.height / fabricImage.height,
-        //     }
-        //   );
-        // });
-
-        // Restore fabric objects from workData
-        if (workData && workData.objects && pageNumber == pageNum) {
-          fabricCanvas.loadFromJSON(workData, () => {
-            fabricCanvas.renderAll();
-          });
-        }
+        fabric.Image.fromURL(imgDataUrl, (fabricImage) => {
+          fabricCanvas.setBackgroundImage(
+            fabricImage,
+            fabricCanvas.renderAll.bind(fabricCanvas),
+            {
+              scaleX: fabricCanvas.width / fabricImage.width,
+              scaleY: fabricCanvas.height / fabricImage.height,
+            }
+          );
+        });
       }
       setUploadedPdf(true);
       setPdfFile(true);
@@ -335,15 +328,15 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
 
     // Set background color to transparent
     fabricCanvas.setBackgroundColor(null, fabricCanvas.renderAll.bind(fabricCanvas));
-    
+
     fabricCanvas.setDimensions({
       width: pageWidth,
       height: pageWidth / aspectRatio,
     });
 
     fabricCanvasRef.current = fabricCanvas;
-    
-    
+
+
     return () => {
       if (fabricCanvasRef.current) {
         fabricCanvasRef.current.dispose();
@@ -519,54 +512,115 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
 
       // Validate the page number
       if (pageNumber < 1 || pageNumber > pdfDoc.getPageCount()) {
-        throw new Error('Invalid page number');
+        throw new Error("Invalid page number");
       }
 
       // Get the specified page
       const page = pdfDoc.getPage(pageNumber - 1); // PDF-lib uses zero-based indexing
 
-      // Step 3: Render Fabric.js canvas to an image
+      // Step 3: Get text objects from the Fabric.js canvas
       const fabricCanvas = fabricCanvasRef.current;
-      const canvasDataUrl = fabricCanvas.toDataURL(); // Convert canvas to data URL (base64 image)
+      if (!fabricCanvas) {
+        console.error("Canvas not initialized");
+        return;
+      }
 
-      // Embed the image in the PDF
-      const imageBytes = await fetch(canvasDataUrl).then((res) => res.arrayBuffer());
-      const pdfImage = await pdfDoc.embedPng(imageBytes); // Use embedJpg for JPG images
+      // Filter only text objects (fabric.Text or fabric.IText)
+      const textObjects = fabricCanvas.getObjects().filter(
+        (obj) => obj.type === "i-text" || obj.type === "text"
+      );
 
-      // Get image dimensions
-      const { width, height } = pdfImage.scale(1); // Original dimensions
+      if (textObjects.length === 0) {
+        console.error("No text objects found on the canvas.");
+        return;
+      }
 
-      // Step 4: Draw the image on the PDF page
-      page.drawImage(pdfImage, {
-        x: 0, // Adjust X position as needed
-        y: 0, // Adjust Y position as needed
-        width: width, // Scale image if needed
-        height: height,
-      });
+      // Step 4: Get canvas and PDF page dimensions
+      const canvasWidth = fabricCanvas.width;
+      const canvasHeight = fabricCanvas.height;
+      const pageWidth = page.getWidth();
+      const pageHeight = page.getHeight();
 
-      // Step 5: Save the modified PDF
+      // Calculate scale factors for positioning and resizing the text objects
+      const scaleX = pageWidth / canvasWidth;
+      const scaleY = pageHeight / canvasHeight;
+
+      // Step 5: Render text objects onto the PDF page
+      for (const textObject of textObjects) {
+        // Create a temporary canvas to render each text object individually
+        const tempCanvas = document.createElement("canvas");
+        tempCanvas.width = canvasWidth;
+        tempCanvas.height = canvasHeight;
+
+        const tempCtx = tempCanvas.getContext("2d");
+
+        // Clone the text object and render it onto the temporary canvas
+        const clone = fabric.util.object.clone(textObject);
+        const tempFabricCanvas = new fabric.StaticCanvas(tempCanvas);
+        tempFabricCanvas.add(clone);
+        tempFabricCanvas.renderAll();
+
+        // Convert the rendered text object to an image
+        const textDataUrl = tempCanvas.toDataURL("image/png");
+        const imageBytes = await fetch(textDataUrl).then((res) => res.arrayBuffer());
+
+        // Embed the image into the PDF
+        const pdfImage = await pdfDoc.embedPng(imageBytes);
+
+        // Calculate the position and scale for the PDF
+        const { width, height } = pdfImage.scale(1); // Original image dimensions
+        const pdfX = pageWidth - (textObject.left * scaleX + textObject.fontSize) - 380; // Scaling the X position
+        const pdfY = pageHeight - (textObject.top * scaleY + textObject.fontSize) - 430; // Scaling the Y position and adjusting for font size
+
+        // Debugging: Log calculated positions and sizes
+        console.log("Text Object: ", {
+          left: textObject.left,
+          top: textObject.top,
+          pdfX,
+          pdfY,
+          width,
+          height,
+        });
+
+        // Draw the image on the PDF page at the calculated position
+        page.drawImage(pdfImage, {
+          x: pdfX,
+          y: pdfY,
+          width: width,
+          height: height,
+        });
+
+        // Clean up temporary canvas
+        tempFabricCanvas.dispose();
+      }
+
+      // Step 6: Save the modified PDF
       const modifiedPdfBytes = await pdfDoc.save();
 
-      // Step 6: Create a download link
-      const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+      // Step 7: Create a download link
+      const blob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
 
       // Trigger download
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = 'modified.pdf';
+      link.download = "modified.pdf";
       link.click();
 
       // Clean up
       URL.revokeObjectURL(url);
 
       console.log("PDF created and downloaded successfully!");
-      return 'PDF created and downloaded successfully!';
+      return "PDF created and downloaded successfully!";
     } catch (error) {
-      console.error('Error creating PDF:', error);
-      return 'Error creating PDF';
+      console.error("Error creating PDF:", error);
+      return "Error creating PDF";
     }
-  }
+  };
+
+
+
+
   return (
     <>
       {contextHolder}
