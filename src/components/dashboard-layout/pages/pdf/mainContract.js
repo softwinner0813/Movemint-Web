@@ -560,18 +560,18 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
           const imageBytes = await fetch(textDataUrl).then((res) => res.arrayBuffer());
 
           const pdfImage = await pdfDoc.embedPng(imageBytes);
-          const { width, height } = pdfImage.scale(1.0);
-          console.log("width => ", width)
-          console.log("height => ", height)
-          // Apply the scaling factor and scroll offset to calculate the correct position
-          const pdfX = (obj.left - scrollLeft) * scaleX;
-          const pdfY = pageHeight - ((obj.top - scrollTop) * scaleY + height);
+          // const { width, height } = pdfImage.scale(1.0);
+          // console.log("width => ", width)
+          // console.log("height => ", height)
+          // // Apply the scaling factor and scroll offset to calculate the correct position
+          // const pdfX = (obj.left - scrollLeft) * scaleX;
+          // const pdfY = pageHeight - ((obj.top - scrollTop) * scaleY + height);
 
           page.drawImage(pdfImage, {
-            x: pdfX,
-            y: pdfY,
-            width: width,
-            height: height,
+            x: 0,
+            y: 0,
+            width: pageWidth,
+            height: pageHeight,
           });
 
           tempFabricCanvas.dispose();
@@ -582,17 +582,17 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
           const imageBytes = await fetch(imageUrl).then((res) => res.arrayBuffer());
 
           const pdfImage = await pdfDoc.embedPng(imageBytes);
-          const { width, height } = pdfImage.scale(0.5);
+          // const { width, height } = pdfImage.scale(0.5);
 
-          // Apply the scaling factor and scroll offset to calculate the correct position
-          const pdfX = (obj.left - scrollLeft) * scaleX;
-          const pdfY = (obj.top + scrollTop) * scaleY
+          // // Apply the scaling factor and scroll offset to calculate the correct position
+          // const pdfX = (obj.left - scrollLeft) * scaleX;
+          // const pdfY = (obj.top + scrollTop) * scaleY
 
           page.drawImage(pdfImage, {
-            x: pdfX,
-            y: pdfY,
-            width: width,
-            height: height,
+            x: 0,
+            y: 0,
+            width: pageWidth,
+            height: pageHeight,
           });
         }
       }
