@@ -635,7 +635,8 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = "modified.pdf";
+      const timestamp = new Date().getTime();
+      link.download = `Result-Contract-${timestamp}.pdf`;
       link.click();
 
       URL.revokeObjectURL(url);
