@@ -7,38 +7,38 @@ import CommonModel from "../../components/common-model";
 import SignModel from "../../components/sign-model";
 import { pdfjs } from "react-pdf";
 // import { saveAs } from "file-saver";
-import NProgress from "nprogress";
+import NProgress, { set } from "nprogress";
 import "nprogress/nprogress.css";
-import { updateProposalDocument } from '@/services/api';
+import { sendShareLink, updateProposalDocument } from '@/services/api';
 import { notification } from 'antd';
 import { NotificationTypes } from "@/constants/messages";
 import { FaDownload } from "react-icons/fa";
 // import jsPDF from "jspdf";
 import { PDFDocument } from 'pdf-lib';
+import ConfirmModal from "../../components/confim-modal";
+import { useUser } from "@/lib/userContext";
+import ContractShareModal from "../../components/contract-share-modal";
 
 const MainContract = ({ template, pageNum, workData, proposalId }) => {
   // const { resultLink, savedData } = props;
+
+  const { userData, setUserData } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isSignModalOpen, setIsSigModalOpen] = useState(false);
   const [sign, setSign] = useState({});
   const [uploadedPdf, setUploadedPdf] = useState(false)
   const [uploadedSubmit, setUploadedSubmit] = useState(0)
-  const [templateLink, setTemplateLink] = useState("")
-  const childRef = useRef(null);
   const canvasRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const [numPages, setNumPages] = useState(1); // New state for total pages
   const [pageNumber, setPageNumber] = useState(pageNum); // New state for current page
   const [pageWidth, setPageWidth] = useState(600); // Default width
   const [aspectRatio, setAspectRatio] = useState(1);
-  const [canvasReady, setCanvasReady] = useState(false);
   const jsonInputRef = useRef();
   const [pdfFile, setPdfFile] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pdfData, setPdfData] = useState(null);
-  const [isUrlModalOpen, setIsUrlModalOpen] = useState(false);
-  const [templateUrl, setTemplateUrl] = useState("");
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   var initial = true;
 
@@ -506,9 +506,9 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
     setIsModalOpen(false)
     setLoading(true);
     try {
-      const location = useLocation();
-      const updatedPath = location.pathname.replace("preparation", "sign");
-      setTemplateUrl(updatedPath)
+      const { pathname } = window.location;
+      const updatedPath = pathname.replace("preparation", "sign");
+      setTemplateUrl(updatedPath);
       const fabricCanvas = fabricCanvasRef.current;
       if (fabricCanvas) {
         const json = fabricCanvas.toJSON();
@@ -536,7 +536,6 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       console.error("PDF download failed:", error);
     } finally {
       setLoading(false); // Stop spinner
-      setIsUrlModalOpen(true)
     }
   };
   const downloadPDF = async () => {
@@ -648,8 +647,31 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       return "Error creating PDF";
     }
   };
-  const copyUrl = () => {
-    setIsUrlModalOpen(false);
+
+
+  // OPEN SHARE MODAL
+  const openShareModal = () => {
+    setIsModalOpen(false);
+    setIsSigModalOpen(false);
+    setIsShareModalOpen(true);
+  };
+
+  // SEND SHARE EMAIL TO
+  const sendShreLink = async (link) => {
+    try {
+      console.log(link)
+      const res = await sendShareLink(proposalId, link);
+      if (res) {
+        setIsShareModalOpen(false);
+        openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Link sent successfully.");
+      } else {
+        openNotificationWithIcon(NotificationTypes.ERROR, "Error", "Failed to send link.");
+      }
+    } catch (error) {
+      console.log("======== ERROR =========", error);
+    }
+
+
   }
 
   return (
@@ -737,31 +759,32 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
                 "Save"
               )}
             </Button>
+            {(workData && userData.mover) && (
+              <Button className="max-w-[274px] rounded-xl text-lg mx-2" onClick={openShareModal}
+                disabled={workData == null ? true : false}>
+                Share
+              </Button>
+            )}
+
           </div>
         </div >
       </div>
       <input type="file" accept="application/json" onChange={handleLoadLayout} ref={jsonInputRef} hidden />
       {isModalOpen && (
-        <CommonModel
-          mainHeading="Warning!"
-          subHeading="Would you like to save the current work template?"
-          cancelButtonContent="Cancel"
-          mainButtonContent="Save"
-          setIsModalOpen={setIsModalOpen}
+        <ConfirmModal
+          title="Warning!"
+          message="Would you like to save your current work?"
+          okButtonText="Save"
+          onCancel={() => setIsModalOpen(false)}
           onConfirm={submitPdf}
         />
       )
       }
-      {isUrlModalOpen && (
-        <CommonModel
-          mainHeading="Success!"
-          subHeading="Please copy the URL of your signature template."
-          cancelButtonContent="Cancel"
-          mainButtonContent="Copy"
-          setIsModalOpen={setIsUrlModalOpen}
-          inputContent={templateUrl}
-          showURLFields={true}
-          onConfirm={copyUrl}
+      {isShareModalOpen && (
+        <ContractShareModal
+          proposalId={proposalId}
+          onShare={sendShreLink}
+          onCancel={() => setIsShareModalOpen(false)}
         />
       )
       }

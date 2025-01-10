@@ -6,6 +6,7 @@ import { deleteTemplate, getMoverTemplates } from "@/services/api";
 import { NotificationTypes } from "@/constants/messages";
 import { useUser } from "@/lib/userContext";
 import { notification } from "antd";
+import ConfirmModal from "../../components/confim-modal";
 
 const ContractTemplateList = ({ onClickTemplate }) => {
     const [api, contextHolder] = notification.useNotification();
@@ -137,14 +138,13 @@ const ContractTemplateList = ({ onClickTemplate }) => {
                 />
             )}
             {isModalOpen && (
-                <CommonModel
-                    setIsModalOpen={setIsModalOpen}
-                    mainHeading="Warning!"
-                    subHeading="Are you sure you want to delete the selected template?"
-                    mainButtonContent="Delete"
-                    cancelButtonContent="Cancel"
+                <ConfirmModal
+                    title="Warning!"
+                    message={`Are you sure you want to delete the selected template?`}
                     onConfirm={onDeleteTemplate}
+                    onCancel={() => setIsModalOpen(false)}
                 />
+
             )}
         </div>
     );

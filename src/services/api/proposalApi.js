@@ -29,3 +29,8 @@ export const getProposalByID = async (proposal_id) => {
     const response = await axiosInstance.post("/proposal/getProposalByID", { proposal_id });
     return response.data;
 }
+
+export const sendShareLink = async (proposal_id, link) => {
+    const response = await axiosInstance.post("/proposal/sendShareLink", { proposal_id, link });
+    return response.data;
+}

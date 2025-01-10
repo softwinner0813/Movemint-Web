@@ -6,11 +6,16 @@ import MainContract from "./mainContract";
 import { getProposalByID } from "@/services/api";
 import { resolve } from "styled-jsx/css";
 import { set } from "nprogress";
+import { useUser } from "@/lib/userContext";
 
 const UploadPdfPage = ({ proposalId }) => {
+  const { userData, setUserData } = useUser();
+  
   const [template, setTemplate] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [workData, setWorkData] = useState(null);
+
+
   useEffect(() => {
     // Fetch proposal data using proposalId
     const fetchProposalData = async () => {
@@ -20,6 +25,14 @@ const UploadPdfPage = ({ proposalId }) => {
         // console.log("------- 👌👌👌 Proposal Data: 👌👌👌 -------", response);
         if (response.result) {
           const data = response.data;
+
+          if(data.mover_id != userData.mover.id){
+            console.log("No access permission");
+            alert("No access permission");
+            window.location.href = "/dashboard";
+            return;
+          }
+
           const workspace = data.work_contract;
           if (workspace) {
             const workData = JSON.parse(workspace);
@@ -31,6 +44,8 @@ const UploadPdfPage = ({ proposalId }) => {
             setWorkData(fabricData);
             setTemplate(template);
           }
+
+          
         }
       } catch (error) {
         console.error(error);

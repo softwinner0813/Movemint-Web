@@ -36,7 +36,9 @@ const SignPdfPage = ({proposalId}) => {
       }
     };
 
-    fetchProposalData();
+    if(proposalId) {
+      fetchProposalData();
+    }
   }, [proposalId]);
 
   return (
