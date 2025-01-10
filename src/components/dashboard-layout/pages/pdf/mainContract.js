@@ -490,13 +490,11 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
     }
   };
   const type_date = () => {
-    setIsUploadModalOpen(false);
     setIsSigModalOpen(false);
     setIsModalOpen(false);
     handleSignDate(); // Call the child function
   }
   const type_name = (signName) => {
-    setIsUploadModalOpen(false);
     setIsSigModalOpen(false);
     setIsModalOpen(false);
     setSign(signName)
