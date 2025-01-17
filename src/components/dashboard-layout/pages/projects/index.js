@@ -100,12 +100,12 @@ const Project = () => {
           item.name = getName(item.first_name, item.last_name);
           item.date = chatDate(item.updated_at);
         });
-        const types = [
-          ...new Set(projectData.map((item) => item.residence_type ?? "Home")) // Get unique move types
-        ].map((moveType) => ({
-          label: moveType,
-          value: moveType,
-        }));
+        // const types = [
+        //   ...new Set(projectData.map((item) => item.residence_type ?? "Home")) // Get unique move types
+        // ].map((moveType) => ({
+        //   label: moveType,
+        //   value: moveType,
+        // }));
 
         const status = [
           ...new Set(projectData.map((item) => item.status)) // Get unique statuses
@@ -113,7 +113,7 @@ const Project = () => {
           label: status,
           value: status,
         }));
-        setMoveTypes(types);
+        // setMoveTypes(types);
         setProposalStatus(status);
         projectData.map((item) => {
           item.from = JSON.parse(item.from).description
@@ -144,7 +144,7 @@ const Project = () => {
       <CommonDataTable
         columns={columns}
         data={data}
-        moveTypeValue={moveTypes}
+        // moveTypeValue={moveTypes}
         proposalStatusValue={proposalStatus}
         rowClickHandler={rowClickHandler}
       />

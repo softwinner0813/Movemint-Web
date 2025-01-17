@@ -46,6 +46,7 @@ const OnboardingPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated } = useUser();
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged((user) => {
@@ -67,7 +68,13 @@ const OnboardingPage = () => {
 
   const handleNext = () => {
     if (api) {
-      api.scrollNext();
+      setPage(page + 1);
+      if (page === 2) {
+        router.push("/dashboard");
+      }
+      else {
+        api.scrollNext();
+      }
     }
   };
 

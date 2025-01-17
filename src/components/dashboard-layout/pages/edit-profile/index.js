@@ -360,26 +360,26 @@ const EditProfileForm = () => {
                   type="radio"
                   className="form-radio text-blue-600 h-5 w-5"
                   name="shipping"
-                  value="International"
-                  checked={isInternationalShipping === "International"}
-                  onChange={() => setIsInternationalShipping("International")}
+                  value="Local"
+                  checked={isInternationalShipping === "Local"}
+                  onChange={() => setIsInternationalShipping("Local")}
                 />
-                <span className="ml-2">International</span>
+                <span className="ml-2">Local</span>
               </label>
               <label className="inline-flex items-center">
                 <input
                   type="radio"
                   className="form-radio text-blue-600 h-5 w-5"
                   name="shipping"
-                  value="Both"
-                  checked={isInternationalShipping === "Both"}
-                  onChange={() => setIsInternationalShipping("Both")}
+                  value="International"
+                  checked={isInternationalShipping === "International"}
+                  onChange={() => setIsInternationalShipping("International")}
                 />
-                <span className="ml-2">Both</span>
+                <span className="ml-2">International</span>
               </label>
             </div>
           </div>
-          <div className="flex flex-col space-y-2">
+          {/* <div className="flex flex-col space-y-2">
             <Label className="font-bold">Move Type</Label>
             <div className="flex items-center space-x-4">
               <label className="inline-flex items-center">
@@ -413,13 +413,13 @@ const EditProfileForm = () => {
                 <span className="ml-2">Home + Auto</span>
               </label>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Locations Section */}
         <div className="w-full flex flex-col gap-4">
           <h4 className="text-2xl font-bold text-start w-full">Locations</h4>
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-10">
             {locations.map((location, index) => (
               <div
                 key={index}

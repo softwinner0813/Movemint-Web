@@ -10,7 +10,7 @@ const { RangePicker } = DatePicker;
 const CommonDataTable = ({
   columns,
   data,
-  moveTypeValue,
+  // moveTypeValue,
   proposalStatusValue,
   rowClickHandler,
 }) => {
@@ -93,7 +93,7 @@ const CommonDataTable = ({
             </div>
           </Dropdown>
         </div>
-        <div className="p-2 lg:p-6 border-b md:border-b-0 justify-center h-full items-center flex md:border-r border-gray-300">
+        {/* <div className="p-2 lg:p-6 border-b md:border-b-0 justify-center h-full items-center flex md:border-r border-gray-300">
           <Dropdown
             menu={{
               items: [
@@ -117,7 +117,7 @@ const CommonDataTable = ({
               <ChevronDownIcon className="w-4 h-4 text-black" />
             </div>
           </Dropdown>
-        </div>
+        </div> */}
 
         <div className="p-2 lg:p-6 border-b md:border-b-0 justify-center h-full items-center flex md:border-r border-gray-300">
           <Dropdown

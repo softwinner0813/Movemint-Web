@@ -18,14 +18,14 @@ const Stats = ({ data }) => {
   const stats = [
     {
       title: "Total Moves Booked",
-      value: data?.totalBookedProjects + " Moves",
+      value: (data?.totalBookedProjects == undefined ? "0" : data?.totalBookedProjects) + " Moves",
       icon: <MovesBookedIcon />,
       change: "1.3% Up from past week",
       changeType: "up",
     },
     {
       title: "Total Revenue",
-      value: "$" + data?.totalTransactionVolume,
+      value: "$ " + (data?.totalTransactionVolume == undefined ? "0" : data?.totalTransactionVolume),
       icon: <RevenueIcon />,
       change: "4.3% Down from yesterday",
       changeType: "down",
