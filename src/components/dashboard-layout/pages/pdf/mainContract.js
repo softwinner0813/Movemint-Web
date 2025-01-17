@@ -99,6 +99,26 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
         if (workData && workData.objects && pageNumber == pageNum) {
           fabricCanvas.loadFromJSON(workData, () => {
             fabricCanvas.renderAll();
+            const deleteActiveObject = () => {
+              const activeObject = fabricCanvas.getActiveObject();
+              if (activeObject) {
+                fabricCanvas.remove(activeObject);
+                fabricCanvas.renderAll();
+              }
+            };
+
+            // Function to clear the canvas
+            const clearCanvas = () => {
+              fabricCanvas.clear();
+              fabricCanvas.renderAll();
+            };
+
+            // Add event listener for the 'Delete' key
+            window.addEventListener('keydown', (e) => {
+              if (e.key === 'Delete') {
+                deleteActiveObject();
+              }
+            });
           });
         } else {
           // Initialize the fabric canvas when workData is null
@@ -221,6 +241,35 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       fabricCanvas.add(dateText);
       fabricCanvas.setActiveObject(dateText);
       fabricCanvas.renderAll();
+
+      const deleteActiveObject = () => {
+        const activeObject = fabricCanvas.getActiveObject();
+        if (activeObject) {
+          fabricCanvas.remove(activeObject);
+          fabricCanvas.renderAll();
+        }
+      };
+
+      // Function to clear the canvas
+      const clearCanvas = () => {
+        fabricCanvas.clear();
+        fabricCanvas.renderAll();
+      };
+
+      // Add event listener for the 'Delete' key
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Delete') {
+          deleteActiveObject();
+        }
+      });
+      // Example button for deleting the active object
+      const deleteButton = document.getElementById('delete-button');
+      if (deleteButton) {
+        deleteButton.addEventListener('click', deleteActiveObject);
+      }
+
+      // Example button for clearing the canvas
+      const clearButton = document.getElementById('clear-button');
 
     } catch (error) {
       console.error("Error in handleSignDate: ", error);

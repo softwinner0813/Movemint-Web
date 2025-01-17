@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { Button } from "@/components/ui/button";
-import { notification } from "antd";
+import { notification, Typography } from "antd";
 import { NotificationTypes } from "@/constants/messages";
 import { FaCopy } from "react-icons/fa";
 import { encryptLink } from "@/lib/encrypt";
@@ -45,7 +45,7 @@ export default function ContractShareModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center px-5 bg-muted/90" style={{ zIndex: 10 }}>
       <div className="bg-background w-full md:w-[70%] lg:w-[600px] p-10 flex flex-col gap-8 rounded-lg">
-        <div className="flex ">
+        <div className="flex">
           <InputWithLabel
             label="Share Link"
             value={shareLink}
@@ -61,10 +61,11 @@ export default function ContractShareModal({
             <FaCopy />
           </Button>
         </div>
+        <Typography style={{ color: "white" }}>You can share this contract link with client via Email by clicking Share button</Typography>
         <div className="flex items-center justify-end">
           <Button
             variant="primary"
-            className="rounded-lg w-[150px] sm:w-[274px] bg-blue-500 mx-2"
+            className="rounded-lg w-[150px] sm:w-[274px] bg-blue-500 mr-2"
             onClick={onConfirm}
           >
             Share
