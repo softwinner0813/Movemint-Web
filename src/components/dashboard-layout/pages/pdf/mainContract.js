@@ -553,9 +553,9 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
     setIsModalOpen(false)
     setLoading(true);
     try {
-      const { pathname } = window.location;
-      const updatedPath = pathname.replace("preparation", "sign");
-      setTemplateUrl(updatedPath);
+      // const { pathname } = window.location;
+      // const updatedPath = pathname.replace("preparation", "sign");
+      // setTemplateUrl(updatedPath);
       const fabricCanvas = fabricCanvasRef.current;
       if (fabricCanvas) {
         const json = fabricCanvas.toJSON();
