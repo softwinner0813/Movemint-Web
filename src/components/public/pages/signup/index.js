@@ -387,7 +387,7 @@ const Signup = () => {
 
           {/* Legal Information */}
           <div className="mb-4">
-            <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
+            {/* <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
               Legal Information:
             </h2>
             <div className="mb-6 py-4 px-5 border border-foreground rounded-md">
@@ -414,7 +414,7 @@ const Signup = () => {
                   augue non nulla.
                 </p>
               </div>
-            </div>
+            </div> */}
 
             <div className="lg:flex space-y-4 lg:space-y-0 lg:space-x-4 mb-6">
               <div className="flex items-center space-x-2">
@@ -423,10 +423,18 @@ const Signup = () => {
                   htmlFor="terms"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  I agree to the terms and conditions listed above.
+                  I Accept &nbsp;
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    Terms & Conditions
+                  </a>
+                  &nbsp; and  &nbsp;
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    Privacy Policy
+                  </a>
+                  &nbsp; by SignUp.
                 </label>
               </div>
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Checkbox id="privacy" required />
                 <label
                   htmlFor="privacy"
@@ -434,7 +442,7 @@ const Signup = () => {
                 >
                   I agree to the privacy policy listed above.
                 </label>
-              </div>
+              </div> */}
             </div>
           </div>
           <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
