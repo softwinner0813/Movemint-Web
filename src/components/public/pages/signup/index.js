@@ -175,6 +175,10 @@ const Signup = () => {
     }
   };
 
+  const handleCompanyNumberChange = (value, data) => {
+    setFormData({ ...formData, companyNumber: value });
+  };
+
   const handlePhoneNumberChange = (value, data) => {
     const phoneNumber = value.slice(data.dialCode.length);
 
@@ -335,13 +339,29 @@ const Signup = () => {
               onChange={handleChange}
               required
             />
-            <InputWithLabel
-              id="companyNumber"
-              type="text"
-              label="Company Number"
+            <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Company Number
+            </Label>
+            <PhoneInput
+              country={'us'}
               value={formData.companyNumber}
-              onChange={handleChange}
-              required
+              onChange={handleCompanyNumberChange}
+              inputClass="!w-full !bg-[#00000000]" // Force full width input
+              containerClass="!w-full mb-3 mt-1" // Force full width container
+              buttonClass="!border-gray-300 !bg-[#00000000]" // Match your form style
+              inputStyle={{
+                width: '100%',
+                height: '42px',
+                fontSize: '16px',
+                borderRadius: '6px',
+                borderColor: '##e5e7eb'
+              }}
+              buttonStyle={{
+                borderRadius: '6px 0 0 6px',
+              }}
+              dropdownStyle={{
+                background: "#1a1a1d",
+                width: '300px',
+              }}
             />
           </div>
 
