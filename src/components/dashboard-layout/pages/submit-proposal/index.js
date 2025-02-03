@@ -373,12 +373,12 @@ const SubmitProposal = ({ data }) => {
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-end gap-4">
-            <Button
+            {/* <Button
               className="md:w-auto text-background bg-foreground rounded-md"
               style={{ backgroundImage: "none" }}
             >
               Attach PDF Proposal
-            </Button>
+            </Button> */}
             <Button className="md:w-auto  rounded-md"
               onClick={handleSubmit}>
               {isEditProposal ? "Edit" : "Submit"} Proposal
