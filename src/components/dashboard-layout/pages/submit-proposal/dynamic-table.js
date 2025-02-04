@@ -4,6 +4,60 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/dataTable";
 import { Plus } from "lucide-react";
 
+// Define default service buckets
+const DEFAULT_SERVICES = [
+  {
+    id: 'transport',
+    service_name: "Transportation",
+    desc: "Moving vehicle and transportation services",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    id: 'packing',
+    service_name: "Packing",
+    desc: "Packing materials and services",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    id: 'insurance',
+    service_name: "Valuation/Insurance",
+    desc: "Moving insurance and valuation coverage",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    id: 'advanced',
+    service_name: "Advanced Charges",
+    desc: "Additional charges and fees",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    id: 'storage',
+    service_name: "Storage",
+    desc: "Storage services (if applicable)",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  }
+];
+
 export const columns = (editRow, refs, handleSave, deleteRow) => [
   {
     header: "SERVICE",
@@ -18,9 +72,12 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
               service: el,
             })
           }
+          disabled={row.original.isDefault}
         />
       ) : (
-        row.original.service_name
+        <span className={row.original.isDefault ? "font-semibold" : ""}>
+          {row.original.service_name}
+        </span>
       ),
   },
   {
@@ -36,6 +93,7 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
               description: el,
             })
           }
+          disabled={row.original.isDefault}
         />
       ) : (
         row.original.desc
@@ -57,7 +115,7 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
           }
         />
       ) : (
-        row.original.price
+        `$${row.original.price.toFixed(2)}`
       ),
   },
   {
@@ -109,24 +167,24 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
               Edit
             </Button>
             <Button
-              className="p-0"
-              variant="icon"
-              onClick={() => deleteRow(row.original.id)}
-            >
-              <svg
-                width="23"
-                height="22"
-                viewBox="0 0 23 22"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                className="p-0"
+                variant="icon"
+                onClick={() => deleteRow(row.original.id)}
               >
-                <rect width="23" height="22" rx="10" fill="#BC0D0D" />
-                <path
-                  d="M16.076 16H14.276L11.984 12.832L9.68 16H7.88L11.108 11.692L8 7.54H9.8L11.984 10.576L14.18 7.54H15.98L12.86 11.704L16.076 16Z"
-                  fill="white"
-                />
-              </svg>
-            </Button>
+                <svg
+                  width="23"
+                  height="22"
+                  viewBox="0 0 23 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="23" height="22" rx="10" fill="#BC0D0D" />
+                  <path
+                    d="M16.076 16H14.276L11.984 12.832L9.68 16H7.88L11.108 11.692L8 7.54H9.8L11.984 10.576L14.18 7.54H15.98L12.86 11.704L16.076 16Z"
+                    fill="white"
+                  />
+                </svg>
+              </Button>
           </>
         )}
       </div>
@@ -135,7 +193,15 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
 ];
 
 export default function DynamicTable({ services, onServicesChange }) {
-  const [data, setData] = useState(services);
+  const [data, setData] = useState(() => {
+    // Combine default services with any existing services
+    const existingIds = services.map(service => service.id);
+    const requiredDefaults = DEFAULT_SERVICES.filter(
+      service => !existingIds.includes(service.id)
+    );
+    return [...requiredDefaults, ...services];
+  });
+  
   const refs = useRef({});
 
   const handleSave = (id) => {
@@ -160,16 +226,18 @@ export default function DynamicTable({ services, onServicesChange }) {
   };
 
   const addNewRow = () => {
+    const newId = `custom-${Date.now()}`;
     setData([
       ...data,
       {
-        id: data.length + 1,
+        id: newId,
         service_name: "",
         desc: "",
         price: 0,
         qty: 1,
         line_total: 0,
         isEditing: true,
+        isDefault: false
       },
     ]);
   };
@@ -183,7 +251,9 @@ export default function DynamicTable({ services, onServicesChange }) {
   };
 
   const deleteRow = (id) => {
-    setData(data.filter((row) => row.id !== id));
+    const filteredData = data.filter((row) => row.id !== id);
+    setData(filteredData);
+    onServicesChange(filteredData);
   };
 
   // Memoize the columns to avoid re-rendering unless necessary
