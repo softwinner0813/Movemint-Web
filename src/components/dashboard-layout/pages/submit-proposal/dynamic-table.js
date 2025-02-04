@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 // Define default service buckets
 const DEFAULT_SERVICES = [
   {
-    id: 'transport',
+    service_id: 'transport',
     service_name: "Transportation",
     desc: "Moving vehicle and transportation services",
     price: 0,
@@ -17,7 +17,7 @@ const DEFAULT_SERVICES = [
     isDefault: true
   },
   {
-    id: 'packing',
+    service_id: 'packing',
     service_name: "Packing",
     desc: "Packing materials and services",
     price: 0,
@@ -27,7 +27,7 @@ const DEFAULT_SERVICES = [
     isDefault: true
   },
   {
-    id: 'insurance',
+    service_id: 'insurance',
     service_name: "Valuation/Insurance",
     desc: "Moving insurance and valuation coverage",
     price: 0,
@@ -37,7 +37,7 @@ const DEFAULT_SERVICES = [
     isDefault: true
   },
   {
-    id: 'advanced',
+    service_id: 'advanced',
     service_name: "Advanced Charges",
     desc: "Additional charges and fees",
     price: 0,
@@ -47,7 +47,7 @@ const DEFAULT_SERVICES = [
     isDefault: true
   },
   {
-    id: 'storage',
+    service_id: 'storage',
     service_name: "Storage",
     desc: "Storage services (if applicable)",
     price: 0,
@@ -67,8 +67,8 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
         <Input
           defaultValue={row.original.service_name}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               service: el,
             })
           }
@@ -88,8 +88,8 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
         <Input
           defaultValue={row.original.desc}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               description: el,
             })
           }
@@ -108,8 +108,8 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
           type="number"
           defaultValue={row.original.price}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               price: el,
             })
           }
@@ -127,8 +127,8 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
           type="number"
           defaultValue={row.original.qty}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               qty: el,
             })
           }
@@ -153,7 +153,7 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
     cell: ({ row }) => (
       <div className="flex space-x-2 items-center">
         {row.original.isEditing ? (
-          <Button size="sm" onClick={() => handleSave(row.original.id)}>
+          <Button size="sm" onClick={() => handleSave(row.original.service_id)}>
             Save
           </Button>
         ) : (
@@ -162,14 +162,14 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
               variant="outline"
               size="sm"
               className="rounded-full"
-              onClick={() => editRow(row.original.id)}
+              onClick={() => editRow(row.original.service_id)}
             >
               Edit
             </Button>
             <Button
                 className="p-0"
                 variant="icon"
-                onClick={() => deleteRow(row.original.id)}
+                onClick={() => deleteRow(row.original.service_id)}
               >
                 <svg
                   width="23"
@@ -195,19 +195,21 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
 export default function DynamicTable({ services, onServicesChange }) {
   const [data, setData] = useState(() => {
     // Combine default services with any existing services
-    const existingIds = services.map(service => service.id);
+    const existingIds = services.map(service => service.service_name);
     const requiredDefaults = DEFAULT_SERVICES.filter(
-      service => !existingIds.includes(service.id)
+      service => !existingIds.includes(service.service_name)
     );
+    console.log(...requiredDefaults);
+    console.log("😍😍😍", services);
     return [...requiredDefaults, ...services];
   });
   
   const refs = useRef({});
 
-  const handleSave = (id) => {
-    const rowRef = refs.current[id];
+  const handleSave = (service_id) => {
+    const rowRef = refs.current[service_id];
     const updatedData = data.map((item) =>
-      item.id === id
+      item.service_id === service_id
         ? {
             ...item,
             service_name: rowRef.service.value,
@@ -230,7 +232,7 @@ export default function DynamicTable({ services, onServicesChange }) {
     setData([
       ...data,
       {
-        id: newId,
+        service_id: newId,
         service_name: "",
         desc: "",
         price: 0,
@@ -242,16 +244,16 @@ export default function DynamicTable({ services, onServicesChange }) {
     ]);
   };
 
-  const editRow = (id) => {
+  const editRow = (service_id) => {
     setData(
       data.map((row) =>
-        row.id === id ? { ...row, isEditing: !row.isEditing } : row
+        row.service_id === service_id ? { ...row, isEditing: !row.isEditing } : row
       )
     );
   };
 
-  const deleteRow = (id) => {
-    const filteredData = data.filter((row) => row.id !== id);
+  const deleteRow = (service_id) => {
+    const filteredData = data.filter((row) => row.service_id !== service_id);
     setData(filteredData);
     onServicesChange(filteredData);
   };
