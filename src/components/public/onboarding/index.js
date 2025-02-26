@@ -49,11 +49,28 @@ const OnboardingPage = () => {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
+    // Function to check if user has seen onboarding
+    const checkOnboardingSeen = () => {
+      if (typeof window !== 'undefined') {
+        const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+        // If user has already seen onboarding, redirect to dashboard
+        if (hasSeenOnboarding === 'true') {
+          router.push('/dashboard');
+          return true;
+        }
+      }
+      return false;
+    };
+
     const unsubscribe = auth.onIdTokenChanged((user) => {
       if (!isAuthenticated || !user) {
         router.push('/login');
       } else {
-        setIsLoading(false);
+        // Check if user has seen onboarding
+        const hasSeenOnboarding = checkOnboardingSeen();
+        if (!hasSeenOnboarding) {
+          setIsLoading(false);
+        }
       }
     });
 
@@ -64,12 +81,16 @@ const OnboardingPage = () => {
     return () => {
       unsubscribe();
     };
-  }, [api, isLoading]);
+  }, [api, isAuthenticated, router]);
 
   const handleNext = () => {
     if (api) {
       setPage(page + 1);
       if (page === 2) {
+        // User has completed onboarding, save to localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('hasSeenOnboarding', 'true');
+        }
         router.push("/dashboard");
       }
       else {
@@ -79,11 +100,15 @@ const OnboardingPage = () => {
   };
 
   const handlePrevious = () => {
+    // Skip onboarding and mark as seen
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('hasSeenOnboarding', 'true');
+    }
     router.push("/dashboard");
   };
 
   return (
-     ! isLoading && <div className="pt-10 login-bg place-content-center">
+     !isLoading && <div className="pt-10 login-bg place-content-center">
       <div
         className="relative z-10 mx-auto text-center w-full max-w-[936px] rounded-[33px]"
         style={{

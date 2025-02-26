@@ -159,6 +159,8 @@ const PrivacyPolicyPage = () => {
       <p>
         By using the All Star Seating Navigation app, you acknowledge that you
         have read, understood, and agreed to this Privacy Policy.
+        All star seating privacy policy
+        terms are as well
       </p>
     </div>
   );

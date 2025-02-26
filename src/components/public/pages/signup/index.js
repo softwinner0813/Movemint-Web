@@ -32,7 +32,7 @@ const Signup = () => {
     companyEmail: "",
     companyName: "",
     companyQuarters: "",
-    taxNumber: "",
+    taxNumber: "111",
     businessYear: "",
     isIntShipping: "interstate",
     // service_type: 2,
@@ -374,19 +374,19 @@ const Signup = () => {
             <InputWithLabel
               id="companyQuarters"
               type="text"
-              label="Company Headquarters"
+              label="Company Main Address"
               value={formData.companyQuarters}
               onChange={handleChange}
               required
             />
-            <InputWithLabel
+            {/* <InputWithLabel
               id="taxNumber"
               type="text"
               label="Tax Identification Number (EIN)"
               value={formData.taxNumber}
               onChange={handleChange}
               required
-            />
+            /> */}
             <InputWithLabel
               id="businessYear"
               type="number"

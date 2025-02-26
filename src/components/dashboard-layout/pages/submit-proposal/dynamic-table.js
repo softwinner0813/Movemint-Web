@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 const DEFAULT_SERVICES = [
   {
     service_id: 'transport',
-    service_name: "Transportation",
+    service_name: "Moving and Transportation Services",
     desc: "Moving vehicle and transportation services",
     price: 0,
     qty: 1,
