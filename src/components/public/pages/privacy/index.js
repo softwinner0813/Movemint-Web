@@ -7,7 +7,7 @@ const PrivacyPolicyPage = () => {
         MOVEMINT APP INC. Privacy Policy
       </h1>
       <p className="mb-4">{`
-        Your privacy is important to us. It is MOVEMINT APP INC.'s policy to respect your privacy and
+        Your privacy is important to us. It is MOVEMINT APP INC.&#39;s policy to respect your privacy and
         comply with any applicable law and regulation regarding any personal information we may
         collect about you, including via our app, movemint, and its associated services.
       `}</p>
@@ -51,7 +51,7 @@ const PrivacyPolicyPage = () => {
         We may collect, hold, use and disclose information for the following purposes, and personal information will not be further processed in a manner that is incompatible with these purposes:
       `}</p>
       <ul className="list-disc list-inside mb-4">
-        <li>to provide you with our app and platform's core features and services</li>
+        <li>to provide you with our app and platform&#39;s core features and services</li>
         <li>to enable you to customize or personalize your experience of our app</li>
         <li>to deliver products and/or services to you</li>
         <li>to contact and communicate with you</li>
@@ -387,7 +387,7 @@ const PrivacyPolicyPage = () => {
         The following section includes provisions that comply with the privacy laws of these states
         (California, Colorado, Delaware, Florida, Virginia, and Utah) and is applicable only to the
         residents of those states. Specific references to a particular state (in a heading or in the text)
-        are only a reference to that state's law and applies only to that state's residents. Non-state
+        are only a reference to that state&#39;s law and applies only to that state&#39;s residents. Non-state
         specific language applies to all of the states listed above.
       `}</p>
       <h3 className="text-xl font-semibold mt-4 mb-2">Do Not Track</h3>
@@ -645,7 +645,7 @@ const PrivacyPolicyPage = () => {
         of our investigation and the steps we will take to deal with your complaint.
       `}</p>
       <p className="mb-4">{`
-        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.'s privacy policy, or to report violations of user privacy,
+        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.&#39;s privacy policy, or to report violations of user privacy,
         you may contact our Data Protection Officer using the details in the Contact us section of this
         privacy policy.
       `}</p>
@@ -654,7 +654,7 @@ const PrivacyPolicyPage = () => {
         Commissioner&#39;s Office (ICO), the UK Data Protection regulator:
       `}</p>
       <address className="mb-4">
-        Information Commissioner's Office<br />
+        Information Commissioner&#39;s Office<br />
         Wycliffe House<br />
         Water Lane<br />
         Wilmslow<br />
@@ -675,7 +675,7 @@ const PrivacyPolicyPage = () => {
         of our investigation and the steps we will take to deal with your complaint.
       `}</p>
       <p className="mb-4">{`
-        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.'s privacy policy, or to report violations of user privacy,
+        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.&#39;s privacy policy, or to report violations of user privacy,
         you may contact our Data Protection Officer using the details in the Contact us section of this
         privacy policy.
       `}</p>
@@ -684,7 +684,7 @@ const PrivacyPolicyPage = () => {
         Commissioner&#39;s Office (ICO), the UK Data Protection regulator:
       `}</p>
       <address className="mb-4">
-        Information Commissioner's Office<br />
+        Information Commissioner&#39;s Office<br />
         Wycliffe House<br />
         Water Lane<br />
         Wilmslow<br />
@@ -719,7 +719,7 @@ const PrivacyPolicyPage = () => {
       `}</p>
       <p className="mb-4">{`
         Under PIPEDA, consent is only valid if it is reasonable to expect that an individual to whom the
-        organization's activities are directed would understand the nature, purpose, and
+        organization&#39;s activities are directed would understand the nature, purpose, and
         consequences of the collection, use, or disclosure of the personal information to which they
         are consenting.
       `}</p>
@@ -833,7 +833,7 @@ const PrivacyPolicyPage = () => {
 
       <h3 className="text-xl font-semibold mt-4 mb-2">Enquiries, Reports and Escalation</h3>
       <p className="mb-4">{`
-        To enquire about MOVEMINT APP INC.'s privacy policy, or to report violations of user privacy,
+        To enquire about MOVEMINT APP INC.&#39;s privacy policy, or to report violations of user privacy,
         you may contact us using the details in the Contact us section of this privacy policy.
       `}</p>
       <p className="mb-4">{`
