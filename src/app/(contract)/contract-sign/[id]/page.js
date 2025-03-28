@@ -7,13 +7,13 @@ const page = ({ params }) => {
   // useEffect(() => {
   //   // Decode it
 
-  const decodedId = decodeURIComponent(id);
-  const proposalId = decryptLink(decodedId);
+  // const decodedId = decodeURIComponent(id);
+  // const proposalId = decryptLink(decodedId);
   //   setProposalID(proposalId);
   // }, [proposalId]);
   return (
     <>
-      <SignPdfPage proposalId={proposalId} />
+      <SignPdfPage proposalId={id} />
     </>
   );
 };

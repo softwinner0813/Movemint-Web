@@ -31,9 +31,9 @@ export default function ContractShareModal({
     if (proposalId && userData) {
       if (userData.mover) {
 
-        const link = encryptLink(proposalId);
-        const encodedId = encodeURIComponent(link);
-        setShareLink(`${window.location.origin}/contract-sign/${encodedId}`);
+        // const link = encryptLink(proposalId);
+        // const encodedId = encodeURIComponent(link);
+        setShareLink(`${window.location.origin}/contract-sign/${proposalId}`);
       }
     }
 
