@@ -5,7 +5,7 @@ import ContractTemplateList from "./templateList";
 import MainContract from "./mainContract";
 import { getProposalByID } from "@/services/api";
 
-const SignPdfPage = ({proposalId}) => {
+const SignPdfPage = ({ proposalId }) => {
   const [template, setTemplate] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [workData, setWorkData] = useState(null);
@@ -36,7 +36,7 @@ const SignPdfPage = ({proposalId}) => {
       }
     };
 
-    if(proposalId) {
+    if (proposalId) {
       fetchProposalData();
     }
   }, [proposalId]);

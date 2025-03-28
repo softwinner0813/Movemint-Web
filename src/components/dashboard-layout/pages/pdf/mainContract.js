@@ -723,157 +723,165 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
   }
 
   return (
-    <>
-      {contextHolder}
-      <div className="flex flex-col h-full bg-black">
-        {/* Header */}
-        <div className="flex justify-between items-center w-full px-4 py-3">
-          <h1 className="text-xl font-semibold text-white">Create Contract</h1>
-          <button
-            onClick={downloadPDF}
-            className="text-blue-500 p-2"
-            aria-label="Download PDF"
-          >
-            <FaDownload size={20} />
-          </button>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="flex-1 overflow-auto px-2">
-          <div className={'flex flex-col items-center ' + (pdfFile ? '' : 'canvas-hide')}>
-            <canvas
-              ref={canvasRef}
-              style={{
-                border: "1px solid #333",
-                width: `${pageWidth}px`,
-                height: `${pageWidth / aspectRatio}px`,
-                backgroundColor: "white"
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Footer Navigation and Controls */}
-        <div className="w-full px-4 pb-8 pt-4 bg-black">
-          {/* Page Navigation */}
-          <div className="flex items-center justify-between mb-4">
+    (workData && template) ? (
+      <>
+        {contextHolder}
+        <div className="flex flex-col h-full bg-black">
+          {/* Header */}
+          <div className="flex justify-between items-center w-full px-4 py-3">
+            <h1 className="text-xl font-semibold text-white">Create Contract</h1>
             <button
-              className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
-              onClick={() => setPageNumber(Math.max(pageNumber - 1, 1))}
-              disabled={pageNumber <= 1}
+              onClick={downloadPDF}
+              className="text-blue-500 p-2"
+              aria-label="Download PDF"
             >
-              Previous
-            </button>
-            <span className="text-white">
-              Page {pageNumber} of {numPages}
-            </span>
-            <button
-              className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
-              onClick={() => setPageNumber(Math.min(pageNumber + 1, numPages))}
-              disabled={pageNumber >= numPages}
-            >
-              Next
+              <FaDownload size={20} />
             </button>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-between gap-2 mt-4">
-            <Button
-              onClick={handleOpenSignModal}
-              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-            >
-              Signature
-            </Button>
-            <Button
-              onClick={type_date}
-              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-            >
-              Date
-            </Button>
-            <Button
-              onClick={() => setIsModalOpen(true)}
-              disabled={loading}
-              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin h-5 w-5 mr-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    />
-                  </svg>
-                  Saving...
-                </span>
-              ) : (
-                "Save"
-              )}
-            </Button>
-            {workData && userData.mover && (
+          {/* Main Content Area */}
+          <div className="flex-1 overflow-auto px-2">
+            <div className={'flex flex-col items-center ' + (pdfFile ? '' : 'canvas-hide')}>
+              <canvas
+                ref={canvasRef}
+                style={{
+                  border: "1px solid #333",
+                  width: `${pageWidth}px`,
+                  height: `${pageWidth / aspectRatio}px`,
+                  backgroundColor: "white"
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Footer Navigation and Controls */}
+          <div className="w-full px-4 pb-8 pt-4 bg-black">
+            {/* Page Navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
+                onClick={() => setPageNumber(Math.max(pageNumber - 1, 1))}
+                disabled={pageNumber <= 1}
+              >
+                Previous
+              </button>
+              <span className="text-white">
+                Page {pageNumber} of {numPages}
+              </span>
+              <button
+                className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
+                onClick={() => setPageNumber(Math.min(pageNumber + 1, numPages))}
+                disabled={pageNumber >= numPages}
+              >
+                Next
+              </button>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-between gap-2 mt-4">
               <Button
-                onClick={openShareModal}
-                disabled={!workData}
+                onClick={handleOpenSignModal}
+                className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+              >
+                Signature
+              </Button>
+              <Button
+                onClick={type_date}
+                className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+              >
+                Date
+              </Button>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                disabled={loading}
                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
               >
-                Share
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin h-5 w-5 mr-2"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      />
+                    </svg>
+                    Saving...
+                  </span>
+                ) : (
+                  "Save"
+                )}
               </Button>
-            )}
+              {workData && userData.mover && (
+                <Button
+                  onClick={openShareModal}
+                  disabled={!workData}
+                  className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
+                >
+                  Share
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Modals */}
-      <input
-        type="file"
-        accept="application/json"
-        onChange={handleLoadLayout}
-        ref={jsonInputRef}
-        hidden
-      />
-
-      {isModalOpen && (
-        <ConfirmModal
-          title="Warning!"
-          message="Would you like to save your current work?"
-          okButtonText="Save"
-          onCancel={() => setIsModalOpen(false)}
-          onConfirm={submitPdf}
+        {/* Modals */}
+        <input
+          type="file"
+          accept="application/json"
+          onChange={handleLoadLayout}
+          ref={jsonInputRef}
+          hidden
         />
-      )}
 
-      {isShareModalOpen && (
-        <ContractShareModal
-          proposalId={proposalId}
-          onShare={sendShreLink}
-          onCancel={() => setIsShareModalOpen(false)}
-        />
-      )}
+        {isModalOpen && (
+          <ConfirmModal
+            title="Warning!"
+            message="Would you like to save your current work?"
+            okButtonText="Save"
+            onCancel={() => setIsModalOpen(false)}
+            onConfirm={submitPdf}
+          />
+        )}
 
-      {isSignModalOpen && (
-        <SignModel
-          mainHeading="Add Your Signature"
-          subHeading="Please sign your name or upload an image of your signature to proceed."
-          cancelButtonContent="Cancel"
-          mainButtonContent="Add Signature"
-          setIsModalClose={setIsSigModalOpen}
-          onConfirm={type_name}
-        />
-      )}
-    </>
+        {isShareModalOpen && (
+          <ContractShareModal
+            proposalId={proposalId}
+            onShare={sendShreLink}
+            onCancel={() => setIsShareModalOpen(false)}
+          />
+        )}
+
+        {isSignModalOpen && (
+          <SignModel
+            mainHeading="Add Your Signature"
+            subHeading="Please sign your name or upload an image of your signature to proceed."
+            cancelButtonContent="Cancel"
+            mainButtonContent="Add Signature"
+            setIsModalClose={setIsSigModalOpen}
+            onConfirm={type_name}
+          />
+        )}
+      </>
+    ) : (
+      <>
+        <div className="flex justify-center items-center h-full">
+          <p className="text-white">There is no contract document yet that mover uploaded.</p>
+        </div>
+      </>
+    )
   );
 };
 
