@@ -15,15 +15,15 @@ const TermsAndConditions = () => {
       <h2 className="text-2xl font-semibold mt-6 mb-2">Limitations of Use</h2>
       <p className="mb-4">{`By using movemint and our website, you warrant on behalf of yourself, any entity who you represent who has entered into these Terms of Service, and your users that you will not:`}</p>
       <ul>
-        <li>Modify, copy, prepare derivative works of, decompile, or reverse engineer movemint or any materials and software contained within movemint or on our website;</li>
-        <li>Remove any copyright or other proprietary notations from movemint or any materials and software contained within movemint or on our website;</li>
-        <li>Transfer movemint or any of its associated materials to another person or "mirror" the materials on any other server;</li>
-        <li>Knowingly or negligently use movemint or any of its associated services in a way that abuses or disrupts our networks or any other service MOVEMINT APP INC. provides;</li>
-        <li>Use movemint or its associated services to transmit or publish any harassing, indecent, obscene, fraudulent, or unlawful material;</li>
-        <li>Use movemint or its associated services in violation of any applicable laws or regulations;</li>
-        <li>Use movemint to send unauthorized advertising or spam;</li>
-        <li>Harvest, collect, or gather user data without the user's consent;</li>
-        <li>Use movemint or its associated services in such a way that may infringe the privacy, intellectual property rights, or other rights of third parties.</li>
+        <li>{`Modify, copy, prepare derivative works of, decompile, or reverse engineer movemint or any materials and software contained within movemint or on our website;`}</li>
+        <li>{`Remove any copyright or other proprietary notations from movemint or any materials and software contained within movemint or on our website;`}</li>
+        <li>{`Transfer movemint or any of its associated materials to another person or "mirror" the materials on any other server;`}</li>
+        <li>{`Knowingly or negligently use movemint or any of its associated services in a way that abuses or disrupts our networks or any other service MOVEMINT APP INC. provides;`}</li>
+        <li>{`Use movemint or its associated services to transmit or publish any harassing, indecent, obscene, fraudulent, or unlawful material;`}</li>
+        <li>{`Use movemint or its associated services in violation of any applicable laws or regulations;`}</li>
+        <li>{`Use movemint to send unauthorized advertising or spam;`}</li>
+        <li>{`Harvest, collect, or gather user data without the user's consent;`}</li>
+        <li>{`Use movemint or its associated services in such a way that may infringe the privacy, intellectual property rights, or other rights of third parties.`}</li>
       </ul>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">Intellectual Property</h2>
