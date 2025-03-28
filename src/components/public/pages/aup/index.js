@@ -171,9 +171,9 @@ const AcceptUsePolicy = () => {
                 <li>Using our facilities to interfere with the use of our facilities and network by other customers
                     or authorized individuals;</li>
                 <li>Publishing or transmitting any content or links that incite violence, depict a violent act,
-                    depict child pornography or threaten anyone's health and safety;</li>
+                    depict child pornography or threaten anyone`&apos;`s health and safety;</li>
                 <li>Any act or omission in violation of consumer protection laws and regulations;</li>
-                <li>Any violation of a person's privacy.</li>
+                <li>Any violation of a person&apos;s privacy.</li>
             </ol>
 
             <p className="mb-4">{`

@@ -51,7 +51,7 @@ const PrivacyPolicyPage = () => {
         We may collect, hold, use and disclose information for the following purposes, and personal information will not be further processed in a manner that is incompatible with these purposes:
       `}</p>
       <ul className="list-disc list-inside mb-4">
-        <li>to provide you with our app and platform's core features and services</li>
+        <li>to provide you with our app and platform&apos;s core features and services</li>
         <li>to enable you to customize or personalize your experience of our app</li>
         <li>to deliver products and/or services to you</li>
         <li>to contact and communicate with you</li>
@@ -100,7 +100,7 @@ const PrivacyPolicyPage = () => {
       `}</p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">
-        Children's Privacy
+        Children&apos;s Privacy
       </h2>
       <p className="mb-4">{`
         We do not aim any of our products or services directly at children under the age of 13 and we
@@ -602,7 +602,7 @@ const PrivacyPolicyPage = () => {
         <li>When the personal data is no longer necessary for the purpose for which it was originally collected or processed for.</li>
         <li>If consent was the lawful basis for processing personal data and that consent has been withdrawn.</li>
         <li>The Company is relying on legitimate interests as a legal basis for processing personal data and an individual has exercised the right to object and it has been determined that the Company has no overriding legitimate grounds to refuse that request.</li>
-        <li>Personal data are being processed for direct marketing purposes e.g. a person's name and email address, and the individual objects to that processing.</li>
+        <li>Personal data are being processed for direct marketing purposes e.g. a person&apos;s name and email address, and the individual objects to that processing.</li>
         <li>There is legislation that requires that personal data are to be destroyed.</li>
       </ul>
       <p className="mb-4">{`
@@ -654,7 +654,7 @@ const PrivacyPolicyPage = () => {
         Commissioner's Office (ICO), the UK Data Protection regulator:
       `}</p>
       <address className="mb-4">
-        Information Commissioner's Office<br />
+        Information Commissioner&apos;s Office<br />
         Wycliffe House<br />
         Water Lane<br />
         Wilmslow<br />
@@ -684,7 +684,7 @@ const PrivacyPolicyPage = () => {
         Commissioner's Office (ICO), the UK Data Protection regulator:
       `}</p>
       <address className="mb-4">
-        Information Commissioner's Office<br />
+        Information Commissioner&apos;s Office<br />
         Wycliffe House<br />
         Water Lane<br />
         Wilmslow<br />
