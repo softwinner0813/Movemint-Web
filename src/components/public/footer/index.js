@@ -52,7 +52,7 @@ const contactLinks = [
 const moreLinks = [
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy Policy" },
-  { href: "#", label: "Refund Policy" },
+  { href: "/aup", label: "Acceptable Policy" },
 ];
 
 const PublicFooter = () => {
