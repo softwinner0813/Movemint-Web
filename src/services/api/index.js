@@ -1,6 +1,6 @@
 import { signinMover, signupMover, updateMover, signinMoverWithGoogle, signupMember, updateUser } from './authApi';
 import { getProjects, getProjectById } from './projectApi';
-import { submitProposal, getSubmittedProposal, updateProposal, getOrderHistoryByMoverId, updateProposalDocument, getProposalByID, sendShareLink } from './proposalApi';
+import { submitProposal, getSubmittedProposal, updateProposal, getOrderHistoryByMoverId, updateProposalDocument, getProposalByID, sendShareLink, uploadProposalPDF } from './proposalApi';
 import { getReviewsByMoverId } from './reviewApi';
 import { getTeamMember, createTeamMember, updateTeamMember, deleteTeamMember } from './teamApi';
 import { getBillingsByUserId, createPaymentIntent, updateBilling } from './billingApi';
@@ -43,6 +43,6 @@ export {
     getMoverTemplates,
     deleteTemplate,
     uploadTemplate,
-    updateProposalDocument
-    
+    updateProposalDocument,
+    uploadProposalPDF
 }

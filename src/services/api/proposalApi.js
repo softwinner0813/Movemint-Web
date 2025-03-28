@@ -34,3 +34,12 @@ export const sendShareLink = async (proposal_id, link) => {
     const response = await axiosInstance.post("/proposal/sendShareLink", { proposal_id, link });
     return response.data;
 }
+
+export const uploadProposalPDF = async (formData) => {
+    const response = await axiosInstance.post("/proposal/upload-pdf", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response.data;
+};

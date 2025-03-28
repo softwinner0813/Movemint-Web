@@ -212,7 +212,7 @@ const OrderHistory = () => {
       <CommonDataTable
         columns={columns}
         data={data}
-        moveTypeValue={moveTypeValue}
+        // moveTypeValue={moveTypeValue}
         proposalStatusValue={proposalStatusValue}
         rowClickHandler={rowClickHandler}
       />

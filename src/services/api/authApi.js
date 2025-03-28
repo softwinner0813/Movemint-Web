@@ -1,25 +1,35 @@
 import axiosInstance from "./axiosInstance";
 // Export API methods
 export const signupMover = async (data) => {
-  const response = (await axiosInstance.post("/auth/signup/mover", data)).data;
-  const token = response.data.token;
+  try {
+    const response = (await axiosInstance.post("/auth/signup/mover", data)).data;
+    const token = response.data.token;
 
-  // Store the token in localStorage (or sessionStorage)
-  if (token) {
-    localStorage.setItem("x-auth-token", token);
+    // Store the token in localStorage (or sessionStorage)
+    if (token) {
+      localStorage.setItem("x-auth-token", token);
+    }
+    return response;
+  } catch (error) {
+    console.error("Error Signup mover:", error);
+    throw error;
   }
-  return response;
 };
 
 export const signupMember = async (data) => {
-  const response = (await axiosInstance.post("/auth/signup/member", data)).data;
-  const token = response.data.token;
+  try {
+    const response = (await axiosInstance.post("/auth/signup/member", data)).data;
+    const token = response.data.token;
 
-  // Store the token in localStorage (or sessionStorage)
-  if (token) {
-    localStorage.setItem("x-auth-token", token);
+    // Store the token in localStorage (or sessionStorage)
+    if (token) {
+      localStorage.setItem("x-auth-token", token);
+    }
+    return response;
+  } catch (error) {
+    console.error("Error updating mover:", error);
+    throw error;
   }
-  return response;
 };
 
 export const updateMover = async (id, formData) => {

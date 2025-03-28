@@ -4,6 +4,60 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/dataTable";
 import { Plus } from "lucide-react";
 
+// Define default service buckets
+const DEFAULT_SERVICES = [
+  {
+    service_id: 'transport',
+    service_name: "Moving and Transportation Services",
+    desc: "Moving vehicle and transportation services",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    service_id: 'packing',
+    service_name: "Packing",
+    desc: "Packing materials and services",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    service_id: 'insurance',
+    service_name: "Valuation/Insurance",
+    desc: "Moving insurance and valuation coverage",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    service_id: 'advanced',
+    service_name: "Advanced Charges",
+    desc: "Additional charges and fees",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  },
+  {
+    service_id: 'storage',
+    service_name: "Storage",
+    desc: "Storage services (if applicable)",
+    price: 0,
+    qty: 1,
+    line_total: 0,
+    isEditing: false,
+    isDefault: true
+  }
+];
+
 export const columns = (editRow, refs, handleSave, deleteRow) => [
   {
     header: "SERVICE",
@@ -13,14 +67,17 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
         <Input
           defaultValue={row.original.service_name}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               service: el,
             })
           }
+          disabled={row.original.isDefault}
         />
       ) : (
-        row.original.service_name
+        <span className={row.original.isDefault ? "font-semibold" : ""}>
+          {row.original.service_name}
+        </span>
       ),
   },
   {
@@ -31,11 +88,12 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
         <Input
           defaultValue={row.original.desc}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               description: el,
             })
           }
+          disabled={row.original.isDefault}
         />
       ) : (
         row.original.desc
@@ -50,14 +108,14 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
           type="number"
           defaultValue={row.original.price}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               price: el,
             })
           }
         />
       ) : (
-        row.original.price
+        `$${row.original.price.toFixed(2)}`
       ),
   },
   {
@@ -69,8 +127,8 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
           type="number"
           defaultValue={row.original.qty}
           ref={(el) =>
-            (refs.current[row.original.id] = {
-              ...refs.current[row.original.id],
+            (refs.current[row.original.service_id] = {
+              ...refs.current[row.original.service_id],
               qty: el,
             })
           }
@@ -95,7 +153,7 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
     cell: ({ row }) => (
       <div className="flex space-x-2 items-center">
         {row.original.isEditing ? (
-          <Button size="sm" onClick={() => handleSave(row.original.id)}>
+          <Button size="sm" onClick={() => handleSave(row.original.service_id)}>
             Save
           </Button>
         ) : (
@@ -104,29 +162,29 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
               variant="outline"
               size="sm"
               className="rounded-full"
-              onClick={() => editRow(row.original.id)}
+              onClick={() => editRow(row.original.service_id)}
             >
               Edit
             </Button>
             <Button
-              className="p-0"
-              variant="icon"
-              onClick={() => deleteRow(row.original.id)}
-            >
-              <svg
-                width="23"
-                height="22"
-                viewBox="0 0 23 22"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                className="p-0"
+                variant="icon"
+                onClick={() => deleteRow(row.original.service_id)}
               >
-                <rect width="23" height="22" rx="10" fill="#BC0D0D" />
-                <path
-                  d="M16.076 16H14.276L11.984 12.832L9.68 16H7.88L11.108 11.692L8 7.54H9.8L11.984 10.576L14.18 7.54H15.98L12.86 11.704L16.076 16Z"
-                  fill="white"
-                />
-              </svg>
-            </Button>
+                <svg
+                  width="23"
+                  height="22"
+                  viewBox="0 0 23 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="23" height="22" rx="10" fill="#BC0D0D" />
+                  <path
+                    d="M16.076 16H14.276L11.984 12.832L9.68 16H7.88L11.108 11.692L8 7.54H9.8L11.984 10.576L14.18 7.54H15.98L12.86 11.704L16.076 16Z"
+                    fill="white"
+                  />
+                </svg>
+              </Button>
           </>
         )}
       </div>
@@ -135,13 +193,23 @@ export const columns = (editRow, refs, handleSave, deleteRow) => [
 ];
 
 export default function DynamicTable({ services, onServicesChange }) {
-  const [data, setData] = useState(services);
+  const [data, setData] = useState(() => {
+    // Combine default services with any existing services
+    const existingIds = services.map(service => service.service_name);
+    const requiredDefaults = DEFAULT_SERVICES.filter(
+      service => !existingIds.includes(service.service_name)
+    );
+    console.log(...requiredDefaults);
+    console.log("😍😍😍", services);
+    return [...requiredDefaults, ...services];
+  });
+  
   const refs = useRef({});
 
-  const handleSave = (id) => {
-    const rowRef = refs.current[id];
+  const handleSave = (service_id) => {
+    const rowRef = refs.current[service_id];
     const updatedData = data.map((item) =>
-      item.id === id
+      item.service_id === service_id
         ? {
             ...item,
             service_name: rowRef.service.value,
@@ -160,30 +228,34 @@ export default function DynamicTable({ services, onServicesChange }) {
   };
 
   const addNewRow = () => {
+    const newId = `custom-${Date.now()}`;
     setData([
       ...data,
       {
-        id: data.length + 1,
+        service_id: newId,
         service_name: "",
         desc: "",
         price: 0,
         qty: 1,
         line_total: 0,
         isEditing: true,
+        isDefault: false
       },
     ]);
   };
 
-  const editRow = (id) => {
+  const editRow = (service_id) => {
     setData(
       data.map((row) =>
-        row.id === id ? { ...row, isEditing: !row.isEditing } : row
+        row.service_id === service_id ? { ...row, isEditing: !row.isEditing } : row
       )
     );
   };
 
-  const deleteRow = (id) => {
-    setData(data.filter((row) => row.id !== id));
+  const deleteRow = (service_id) => {
+    const filteredData = data.filter((row) => row.service_id !== service_id);
+    setData(filteredData);
+    onServicesChange(filteredData);
   };
 
   // Memoize the columns to avoid re-rendering unless necessary

@@ -103,13 +103,13 @@ const EditProjectDetails = ({ data, submittedProposal }) => {
                 Location: {(JSON.parse(data.from)).city + ", " + (JSON.parse(data.from)).country}
               </span>
             </div>
-            <Button
+            {data.isContacted && <Button
               variant="outline"
               className="w-fit p-2 rounded-md border-none bg-[#222] hover:bg-[#333]"
               onClick={handleMessage}
             >
               <MessageSquareMore className="translate-y-px" />
-            </Button>
+            </Button>}
           </div>
           <div className="flex flex-col mt-4 md:mt-0">
             <span className="text-lg md:text-2xl font-bold">

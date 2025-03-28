@@ -10,7 +10,7 @@ import { useUser } from "@/lib/userContext";
 
 const UploadPdfPage = ({ proposalId }) => {
   const { userData, setUserData } = useUser();
-  
+
   const [template, setTemplate] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [workData, setWorkData] = useState(null);
@@ -26,7 +26,7 @@ const UploadPdfPage = ({ proposalId }) => {
         if (response.result) {
           const data = response.data;
 
-          if(data.mover_id != userData.mover.id){
+          if (data.mover_id != userData.mover.id) {
             console.log("No access permission");
             alert("No access permission");
             window.location.href = "/dashboard";
@@ -45,7 +45,7 @@ const UploadPdfPage = ({ proposalId }) => {
             setTemplate(template);
           }
 
-          
+
         }
       } catch (error) {
         console.error(error);

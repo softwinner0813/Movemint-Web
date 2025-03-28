@@ -14,6 +14,8 @@ import { notification } from 'antd';
 import Recaptcha from "./recaptcha";
 import { createFirebaseUser } from "@/services/firebaseUser";
 import { deleteUser } from "firebase/auth";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 import { NotificationTypes } from "@/constants/messages";
 
@@ -25,14 +27,15 @@ const Signup = () => {
     email: "",
     countryCode: "",
     phoneNumber: "",
+    fullNumber: "",
     companyNumber: "",
     companyEmail: "",
     companyName: "",
     companyQuarters: "",
-    taxNumber: "",
+    taxNumber: "111",
     businessYear: "",
-    isIntShipping: "both",
-    service_type: 2,
+    isIntShipping: "interstate",
+    // service_type: 2,
     bio: "",
     password: "",
     recaptchaToken: "",
@@ -123,7 +126,7 @@ const Signup = () => {
       isIntShipping,
       bio,
       recaptchaToken,
-      service_type,
+      // service_type,
     } = formData;
 
     const dataToSend = {
@@ -142,7 +145,7 @@ const Signup = () => {
       bio,
       recaptchaToken,
       firebase_uid: user.uid,
-      service_type
+      // service_type
     };
 
     try {
@@ -170,6 +173,16 @@ const Signup = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCompanyNumberChange = (value, data) => {
+    setFormData({ ...formData, companyNumber: value });
+  };
+
+  const handlePhoneNumberChange = (value, data) => {
+    const phoneNumber = value.slice(data.dialCode.length);
+
+    setFormData({ ...formData, countryCode: data.dialCode, phoneNumber: phoneNumber, fullNumber: value });
   };
 
   return (
@@ -213,7 +226,7 @@ const Signup = () => {
               onChange={handleChange}
               required
             />
-            <InputWithLabel
+            {/* <InputWithLabel
               id="countryCode"
               type="text"
               label="Country Code"
@@ -228,6 +241,30 @@ const Signup = () => {
               value={formData.phoneNumber}
               onChange={handleChange}
               required
+            /> */}
+            <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Phone Number
+            </Label>
+            <PhoneInput
+              country={'us'}
+              value={formData.fullNumber}
+              onChange={handlePhoneNumberChange}
+              inputClass="!w-full !bg-[#00000000]" // Force full width input
+              containerClass="!w-full mb-3 mt-1" // Force full width container
+              buttonClass="!border-gray-300 !bg-[#00000000]" // Match your form style
+              inputStyle={{
+                width: '100%',
+                height: '42px',
+                fontSize: '16px',
+                borderRadius: '6px',
+                borderColor: '##e5e7eb'
+              }}
+              buttonStyle={{
+                borderRadius: '6px 0 0 6px',
+              }}
+              dropdownStyle={{
+                background: "#1a1a1d",
+                width: '300px',
+              }}
             />
             <InputWithLabel
               id="password"
@@ -247,7 +284,7 @@ const Signup = () => {
             <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Service Region
             </Label>
             <RadioGroup
-              defaultValue="Both"
+              defaultValue="Interstate"
               onValueChange={(value) => setFormData({ ...formData, isIntShipping: value })}
               className="flex items-center mb-5 mt-3"
             >
@@ -256,16 +293,16 @@ const Signup = () => {
                 <Label htmlFor="interstate">Interstate</Label>
               </div>
               <div className="flex items-center space-x-2">
+                <RadioGroupItem value="Local" id="local" />
+                <Label htmlFor="local">Local</Label>
+              </div>
+              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="International" id="international" />
                 <Label htmlFor="international">International</Label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Both" id="both" />
-                <Label htmlFor="both">Both</Label>
-              </div>
             </RadioGroup>
 
-            <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Move Type
+            {/* <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Move Type
             </Label>
             <RadioGroup
               defaultValue="0"
@@ -284,7 +321,7 @@ const Signup = () => {
                 <RadioGroupItem value="2" id="HA" />
                 <Label htmlFor="HA">Home + Auto</Label>
               </div>
-            </RadioGroup>
+            </RadioGroup> */}
 
             <InputWithLabel
               id="companyName"
@@ -302,13 +339,29 @@ const Signup = () => {
               onChange={handleChange}
               required
             />
-            <InputWithLabel
-              id="companyNumber"
-              type="text"
-              label="Company Number"
+            <Label className="font-sm font-boldtext-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-bold"> Company Number
+            </Label>
+            <PhoneInput
+              country={'us'}
               value={formData.companyNumber}
-              onChange={handleChange}
-              required
+              onChange={handleCompanyNumberChange}
+              inputClass="!w-full !bg-[#00000000]" // Force full width input
+              containerClass="!w-full mb-3 mt-1" // Force full width container
+              buttonClass="!border-gray-300 !bg-[#00000000]" // Match your form style
+              inputStyle={{
+                width: '100%',
+                height: '42px',
+                fontSize: '16px',
+                borderRadius: '6px',
+                borderColor: '##e5e7eb'
+              }}
+              buttonStyle={{
+                borderRadius: '6px 0 0 6px',
+              }}
+              dropdownStyle={{
+                background: "#1a1a1d",
+                width: '300px',
+              }}
             />
           </div>
 
@@ -321,19 +374,19 @@ const Signup = () => {
             <InputWithLabel
               id="companyQuarters"
               type="text"
-              label="Company Quarters"
+              label="Company Main Address"
               value={formData.companyQuarters}
               onChange={handleChange}
               required
             />
-            <InputWithLabel
+            {/* <InputWithLabel
               id="taxNumber"
               type="text"
               label="Tax Identification Number (EIN)"
               value={formData.taxNumber}
               onChange={handleChange}
               required
-            />
+            /> */}
             <InputWithLabel
               id="businessYear"
               type="number"
@@ -354,7 +407,7 @@ const Signup = () => {
 
           {/* Legal Information */}
           <div className="mb-4">
-            <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
+            {/* <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">
               Legal Information:
             </h2>
             <div className="mb-6 py-4 px-5 border border-foreground rounded-md">
@@ -381,7 +434,7 @@ const Signup = () => {
                   augue non nulla.
                 </p>
               </div>
-            </div>
+            </div> */}
 
             <div className="lg:flex space-y-4 lg:space-y-0 lg:space-x-4 mb-6">
               <div className="flex items-center space-x-2">
@@ -390,10 +443,18 @@ const Signup = () => {
                   htmlFor="terms"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  I agree to the terms and conditions listed above.
+                  I Accept &nbsp;
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    Terms & Conditions
+                  </a>
+                  &nbsp; and  &nbsp;
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                    Privacy Policy
+                  </a>
+                  &nbsp; by SignUp.
                 </label>
               </div>
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Checkbox id="privacy" required />
                 <label
                   htmlFor="privacy"
@@ -401,7 +462,7 @@ const Signup = () => {
                 >
                   I agree to the privacy policy listed above.
                 </label>
-              </div>
+              </div> */}
             </div>
           </div>
           <h2 className="text-lg md:text-2xl lg:text-3xl xl:text-4xl text-foreground font-bold mb-6">

@@ -99,6 +99,26 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
         if (workData && workData.objects && pageNumber == pageNum) {
           fabricCanvas.loadFromJSON(workData, () => {
             fabricCanvas.renderAll();
+            const deleteActiveObject = () => {
+              const activeObject = fabricCanvas.getActiveObject();
+              if (activeObject) {
+                fabricCanvas.remove(activeObject);
+                fabricCanvas.renderAll();
+              }
+            };
+
+            // Function to clear the canvas
+            const clearCanvas = () => {
+              fabricCanvas.clear();
+              fabricCanvas.renderAll();
+            };
+
+            // Add event listener for the 'Delete' key
+            window.addEventListener('keydown', (e) => {
+              if (e.key === 'Delete') {
+                deleteActiveObject();
+              }
+            });
           });
         } else {
           // Initialize the fabric canvas when workData is null
@@ -221,6 +241,35 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
       fabricCanvas.add(dateText);
       fabricCanvas.setActiveObject(dateText);
       fabricCanvas.renderAll();
+
+      const deleteActiveObject = () => {
+        const activeObject = fabricCanvas.getActiveObject();
+        if (activeObject) {
+          fabricCanvas.remove(activeObject);
+          fabricCanvas.renderAll();
+        }
+      };
+
+      // Function to clear the canvas
+      const clearCanvas = () => {
+        fabricCanvas.clear();
+        fabricCanvas.renderAll();
+      };
+
+      // Add event listener for the 'Delete' key
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Delete') {
+          deleteActiveObject();
+        }
+      });
+      // Example button for deleting the active object
+      const deleteButton = document.getElementById('delete-button');
+      if (deleteButton) {
+        deleteButton.addEventListener('click', deleteActiveObject);
+      }
+
+      // Example button for clearing the canvas
+      const clearButton = document.getElementById('clear-button');
 
     } catch (error) {
       console.error("Error in handleSignDate: ", error);
@@ -504,9 +553,9 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
     setIsModalOpen(false)
     setLoading(true);
     try {
-      const { pathname } = window.location;
-      const updatedPath = pathname.replace("preparation", "sign");
-      setTemplateUrl(updatedPath);
+      // const { pathname } = window.location;
+      // const updatedPath = pathname.replace("preparation", "sign");
+      // setTemplateUrl(updatedPath);
       const fabricCanvas = fabricCanvasRef.current;
       if (fabricCanvas) {
         const json = fabricCanvas.toJSON();
@@ -676,32 +725,50 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
   return (
     <>
       {contextHolder}
-      <div className="w-full bg-background rounded-lg px-[34px] pt-9 pb-[52px]">
-        <div className="flex flex-col items-center gap-4 space-y-8" style={{ maxHeight: 700 }}>
-          <div className={'flex flex-col items-center overflow-auto ' + (pdfFile ? '' : 'canvas-hide')} >
+      <div className="flex flex-col h-full bg-black">
+        {/* Header */}
+        <div className="flex justify-between items-center w-full px-4 py-3">
+          <h1 className="text-xl font-semibold text-white">Create Contract</h1>
+          <button
+            onClick={downloadPDF}
+            className="text-blue-500 p-2"
+            aria-label="Download PDF"
+          >
+            <FaDownload size={20} />
+          </button>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-auto px-2">
+          <div className={'flex flex-col items-center ' + (pdfFile ? '' : 'canvas-hide')}>
             <canvas
               ref={canvasRef}
               style={{
-                border: "1px solid #000",
+                border: "1px solid #333",
                 width: `${pageWidth}px`,
                 height: `${pageWidth / aspectRatio}px`,
+                backgroundColor: "white"
               }}
-            ></canvas>
+            />
           </div>
-          <div className="flex justify-evenly mt-4 w-full max-w-[600px] gap-5">
+        </div>
+
+        {/* Footer Navigation and Controls */}
+        <div className="w-full px-4 pb-8 pt-4 bg-black">
+          {/* Page Navigation */}
+          <div className="flex items-center justify-between mb-4">
             <button
-              className="h-[25px] max-w-max rounded-[10px] bg-gray-500 px-3 text-white"
+              className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
               onClick={() => setPageNumber(Math.max(pageNumber - 1, 1))}
               disabled={pageNumber <= 1}
             >
               Previous
             </button>
-            <p>
+            <span className="text-white">
               Page {pageNumber} of {numPages}
-              {/* Page 1 of 1 */}
-            </p>
+            </span>
             <button
-              className="h-[25px] max-w-max rounded-[10px] bg-gray-500 px-3 text-white"
+              className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
               onClick={() => setPageNumber(Math.min(pageNumber + 1, numPages))}
               disabled={pageNumber >= numPages}
             >
@@ -709,31 +776,29 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
             </button>
           </div>
 
-          <button
-            className="absolute top-4 right-12 rounded-full bg-primary px-3 py-3 text-white"
-            onClick={downloadPDF}
-          >
-            <FaDownload />
-          </button>
-        </div>
-
-        <div className="space-y-8">          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4"> */}
-          <div className="flex justify-center mt-5">
-            <Button className="max-w-[274px] rounded-xl text-lg mx-2" onClick={handleOpenSignModal}>
+          {/* Action Buttons */}
+          <div className="flex justify-between gap-2 mt-4">
+            <Button
+              onClick={handleOpenSignModal}
+              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+            >
               Signature
             </Button>
-            <Button className="max-w-[274px] rounded-xl text-lg mx-2" onClick={type_date}>
+            <Button
+              onClick={type_date}
+              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+            >
               Date
             </Button>
             <Button
-              className="max-w-[274px] rounded-xl text-lg mx-2"
-              onClick={() => { setIsModalOpen(true) }}
-              disabled={loading} // Optionally disable the button during loading
+              onClick={() => setIsModalOpen(true)}
+              disabled={loading}
+              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
             >
               {loading ? (
-                <span className="flex items-center">
+                <span className="flex items-center justify-center">
                   <svg
-                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    className="animate-spin h-5 w-5 mr-2"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -745,12 +810,12 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8v8H4z"
-                    ></path>
+                    />
                   </svg>
                   Saving...
                 </span>
@@ -758,17 +823,28 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
                 "Save"
               )}
             </Button>
-            {(workData && userData.mover) && (
-              <Button className="max-w-[274px] rounded-xl text-lg mx-2" onClick={openShareModal}
-                disabled={workData == null ? true : false}>
+            {workData && userData.mover && (
+              <Button
+                onClick={openShareModal}
+                disabled={!workData}
+                className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
+              >
                 Share
               </Button>
             )}
-
           </div>
-        </div >
+        </div>
       </div>
-      <input type="file" accept="application/json" onChange={handleLoadLayout} ref={jsonInputRef} hidden />
+
+      {/* Modals */}
+      <input
+        type="file"
+        accept="application/json"
+        onChange={handleLoadLayout}
+        ref={jsonInputRef}
+        hidden
+      />
+
       {isModalOpen && (
         <ConfirmModal
           title="Warning!"
@@ -777,29 +853,26 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
           onCancel={() => setIsModalOpen(false)}
           onConfirm={submitPdf}
         />
-      )
-      }
+      )}
+
       {isShareModalOpen && (
         <ContractShareModal
           proposalId={proposalId}
           onShare={sendShreLink}
           onCancel={() => setIsShareModalOpen(false)}
         />
-      )
-      }
-      {
-        isSignModalOpen && (
-          <SignModel
-            mainHeading="Add Your Signature"
-            subHeading="Please sign your name or upload an image of your signature to proceed."
-            cancelButtonContent="Cancel"
-            mainButtonContent="Add Signature"
-            setIsModalClose={setIsSigModalOpen}
-            onConfirm={type_name}
-          />
-        )
-      }
+      )}
 
+      {isSignModalOpen && (
+        <SignModel
+          mainHeading="Add Your Signature"
+          subHeading="Please sign your name or upload an image of your signature to proceed."
+          cancelButtonContent="Cancel"
+          mainButtonContent="Add Signature"
+          setIsModalClose={setIsSigModalOpen}
+          onConfirm={type_name}
+        />
+      )}
     </>
   );
 };

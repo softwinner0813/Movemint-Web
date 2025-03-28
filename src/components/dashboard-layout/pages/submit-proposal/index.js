@@ -4,11 +4,11 @@ import DatePicker from "@/components/ui/date-picker";
 import { InputWithLabel } from "@/components/ui/inputWithLabel";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DynamicTable from "./dynamic-table";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { submitProposal, updateProposal } from "@/services/api";
+import { submitProposal, updateProposal, uploadProposalPDF } from "@/services/api";
 import { getName } from "@/lib/utils";
 import { useUser } from "@/lib/userContext";
 import { notification } from 'antd';
@@ -23,7 +23,9 @@ const SubmitProposal = ({ data }) => {
   const { userData } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [api, contextHolder] = notification.useNotification();
-  const router  = useRouter();
+  const router = useRouter();
+  const [pdfFile, setPdfFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   const openNotificationWithIcon = (type, title, content) => {
     api[type]({
@@ -50,6 +52,7 @@ const SubmitProposal = ({ data }) => {
     company_address: "",
     company_email: "",
     company_phone: "",
+    pdf_proposal_link: "",
     tax: 0,
     message: "",
     payment_options: {
@@ -65,6 +68,7 @@ const SubmitProposal = ({ data }) => {
   const isEditProposal = pathName.includes("edit-proposal");
   useEffect(() => {
     if (isEditProposal) {
+      console.log(data);
       setFormData(data);
       setIsLoading(false);
     } else {
@@ -89,6 +93,26 @@ const SubmitProposal = ({ data }) => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      setPdfFile(file);
+    } else {
+      openNotificationWithIcon(
+        NotificationTypes.ERROR,
+        "Error",
+        "Please select a PDF file"
+      );
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setPdfFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleNotExpire = () => {
@@ -128,21 +152,111 @@ const SubmitProposal = ({ data }) => {
   // Handle form submission
   const handleSubmit = async () => {
     try {
-      const response = isEditProposal ? await updateProposal(formData) : await submitProposal(formData);
-      openNotificationWithIcon(NotificationTypes.SUCCESS, "Success", "Proposal submitted successfully");
-      router.push(`/dashboard/projects/${data.project_id}`)
-      // Handle success, show a notification or redirect
-    } catch (error) {
-      let errorMessage = "An error occurred"; // Default message
+      let updatedFormData = { ...formData };
 
-      if (error.response && error.response.data && error.response.data.message) {
-        errorMessage = error.response.data.message; // Extract the custom message
+      // If there's a PDF file, upload it first
+      if (pdfFile) {
+        const fileFormData = new FormData();
+        fileFormData.append('pdf_file', pdfFile);
+
+        const uploadResponse = await uploadProposalPDF(fileFormData);
+        if (uploadResponse.result) {
+          updatedFormData.pdf_proposal_link = uploadResponse.data.file_url;
+        }
+      }
+
+      // Submit the proposal with the PDF link (if any)
+      const response = isEditProposal
+        ? await updateProposal(updatedFormData)
+        : await submitProposal(updatedFormData);
+
+      openNotificationWithIcon(
+        NotificationTypes.SUCCESS,
+        "Success",
+        "Proposal submitted successfully"
+      );
+      router.push(`/dashboard/projects/${data.project_id}`);
+    } catch (error) {
+      let errorMessage = "An error occurred";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       } else if (error.message) {
-        errorMessage = error.message; // Fallback to general error message
+        errorMessage = error.message;
       }
       openNotificationWithIcon(NotificationTypes.ERROR, "Error", errorMessage);
     }
   };
+
+  const renderPDFSection = () => (
+    <div className="flex items-center gap-4">
+      <input
+        type="file"
+        accept=".pdf"
+        onChange={handleFileSelect}
+        className="hidden"
+        ref={fileInputRef}
+      />
+      {!pdfFile && !formData.pdf_proposal_link && (
+        <Button
+          className="md:w-auto text-background bg-foreground rounded-md"
+          style={{ backgroundImage: "none" }}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          Attach PDF Proposal
+        </Button>
+      )}
+      {/* Display existing PDF */}
+      {formData.pdf_proposal_link && !pdfFile && (
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Current PDF: {formData.pdf_proposal_link.split('/').pop()}</span>
+            <a
+              href={process.env.NEXT_PUBLIC_BASE_URL + formData.pdf_proposal_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-700 text-sm"
+            >
+              View
+            </a>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-red-500 hover:text-red-700"
+              onClick={() => {
+                setFormData(prev => ({
+                  ...prev,
+                  pdf_proposal_link: ""
+                }));
+              }}
+            >
+              Remove
+            </Button>
+          </div>
+          {/* <Button
+            className="md:w-auto text-background bg-foreground rounded-md"
+            style={{ backgroundImage: "none" }}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Replace PDF
+          </Button> */}
+        </div>
+      )}
+      {/* Display newly selected PDF */}
+      {pdfFile && (
+        <div className="flex items-center gap-2">
+          <span className="text-sm">{pdfFile.name}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-red-500 hover:text-red-700"
+            onClick={handleRemoveFile}
+          >
+            Remove
+          </Button>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <>
@@ -373,14 +487,11 @@ const SubmitProposal = ({ data }) => {
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-end gap-4">
+            {renderPDFSection()}
             <Button
-              className="md:w-auto text-background bg-foreground rounded-md"
-              style={{ backgroundImage: "none" }}
+              className="md:w-auto rounded-md"
+              onClick={handleSubmit}
             >
-              Attach PDF Proposal
-            </Button>
-            <Button className="md:w-auto  rounded-md"
-              onClick={handleSubmit}>
               {isEditProposal ? "Edit" : "Submit"} Proposal
             </Button>
           </div>
