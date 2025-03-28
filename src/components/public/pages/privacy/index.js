@@ -100,7 +100,7 @@ const PrivacyPolicyPage = () => {
       </p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">
-        Children’s Privacy
+        Children&#39;s Privacy
       </h2>
       <p className="mb-4">
         We do not aim any of our products or services directly at children under the age of 13 and we
@@ -172,7 +172,7 @@ const PrivacyPolicyPage = () => {
       <p className="mb-4">
         <b>Information from third parties: </b >If we receive personal information about you from a third party, we will protect it as set
         out in this privacy policy. If you are a third party providing personal information about
-        somebody else, you represent and warrant that you have such person’s consent to provide
+        somebody else, you represent and warrant that you have such person&#39;s consent to provide
         the personal information to us.
       </p>
 
@@ -285,7 +285,7 @@ const PrivacyPolicyPage = () => {
         We will only collect and use your personal information when we have a legal right to do so. In
         which case, we will collect and use your personal information lawfully, fairly, and in a
         transparent manner. If we seek your consent to process your personal information, and you
-        are under 16 years of age, we will seek your parent or legal guardian’s consent to process
+        are under 16 years of age, we will seek your parent or legal guardian&#39;s consent to process
         your personal information for that specific purpose.
       </p>
 
@@ -405,7 +405,7 @@ const PrivacyPolicyPage = () => {
       <p className="mb-4">
         At all times, you may decline cookies from our site if your browser permits. Most browsers
         allow you to activate settings on your browser to refuse the setting of all or some cookies.
-        Accordingly, your ability to limit cookies is based only on your browser’s capabilities. Please
+        Accordingly, your ability to limit cookies is based only on your browser&#39;s capabilities. Please
         refer to the Cookies section of this privacy policy for more information.
       </p>
       <h3 className="text-xl font-semibold mt-4 mb-2">California Privacy Laws - CPPA</h3>
@@ -426,7 +426,7 @@ const PrivacyPolicyPage = () => {
         relationship with us is mainly for personal, family, or household purposes, you may ask us
         about the information we release to other organizations for their marketing purposes. To
         make such a request, please contact us using the details provided in this privacy policy with
-        “Request for California privacy information” in the subject line. You may make this type of
+        &#34;Request for California privacy information&#34; in the subject line. You may make this type of
         request once every calendar year. We will email you a list of categories of personal
         information we revealed to other organisations for their marketing purposes in the last
         calendar year, along with their names and addresses. Not all personal information shared in
@@ -450,9 +450,9 @@ const PrivacyPolicyPage = () => {
       </ul>
       <p className="mb-4">
         For more information on information we collect, including the sources we receive information
-        from, review the “Information We Collect” section. We collect and use these categories of
-        personal information for the business purposes described in the “Collection and Use of
-        Information” section, including to provide and manage our Service.
+        from, review the &#34;Information We Collect&#34; section. We collect and use these categories of
+        personal information for the business purposes described in the &#34;Collection and Use of
+        Information&#34; section, including to provide and manage our Service.
       </p>
       <h3 className="text-xl font-semibold mt-4 mb-2">Right to Know and Delete</h3>
       <p className="mb-4">
@@ -480,7 +480,7 @@ const PrivacyPolicyPage = () => {
       </p>
       <p className="mb-4">
         To receive this information, send us a request using the contact details provided in this
-        privacy policy. Requests must include “Privacy Rights Request” in the first line of the
+        privacy policy. Requests must include &#34;Privacy Rights Request&#34; in the first line of the
         description and include your name, street address, city, state, and ZIP code.
       </p>
 
@@ -488,8 +488,8 @@ const PrivacyPolicyPage = () => {
       <h4 className="text-lg font-semibold mt-4 mb-2">Data Controller / Data Processor</h4>
       <p className="mb-4">
         The GDPR distinguishes between organisations that process personal information for their
-        own purposes (known as “data controllers”) and organizations that process personal
-        information on behalf of other organizations (known as “data processors”). For the purposes
+        own purposes (known as &#34;data controllers&#34;) and organizations that process personal
+        information on behalf of other organizations (known as &#34;data processors&#34;). For the purposes
         covered by this Privacy Policy, we are a Data Controller with respect to the personal
         information you provide to us and remain compliant with our data controller obligations under
         GDPR.
@@ -516,7 +516,7 @@ const PrivacyPolicyPage = () => {
       <p className="mb-4">
         If your personal information is no longer required for our stated purposes, or if you instruct us
         under your Data Subject Rights, we will delete it or make it anonymous by removing all
-        details that identify you (“Anonymisation”). However, if necessary, we may retain your
+        details that identify you (&#34;Anonymisation&#34;). However, if necessary, we may retain your
         personal information for our compliance with a legal, accounting, or reporting obligation or for
         archiving purposes in the public interest, scientific, or historical research purposes or
         statistical purposes.
@@ -557,7 +557,7 @@ const PrivacyPolicyPage = () => {
       </p>
       <p className="mb-4">
         On some occasions, where we share your data with third parties, they may be based outside
-        of the UK, or the European Economic Area (“EEA”). These countries to which we store,
+        of the UK, or the European Economic Area (&#34;EEA&#34;). These countries to which we store,
         process, or transfer your personal information may not have the same data protection laws as
         the country in which you initially provided the information.
       </p>
@@ -565,7 +565,7 @@ const PrivacyPolicyPage = () => {
         If we transfer your personal information to third parties in other countries:
         <ul>
           <li>we will perform those transfers in accordance with the requirements of the UK GDPR (Article 45) and Data Protection Act 2018;</li>
-          <li>we will adopt appropriate safeguards for protecting the transferred data, including in transit, such as standard contractual clauses (“SCCs”) or binding corporate rules.</li>
+          <li>we will adopt appropriate safeguards for protecting the transferred data, including in transit, such as standard contractual clauses (&#34;SCCs&#34;) or binding corporate rules.</li>
         </ul>
       </p>
 
@@ -602,7 +602,7 @@ const PrivacyPolicyPage = () => {
         <li>When the personal data is no longer necessary for the purpose for which it was originally collected or processed for.</li>
         <li>If consent was the lawful basis for processing personal data and that consent has been withdrawn.</li>
         <li>The Company is relying on legitimate interests as a legal basis for processing personal data and an individual has exercised the right to object and it has been determined that the Company has no overriding legitimate grounds to refuse that request.</li>
-        <li>Personal data are being processed for direct marketing purposes e.g. a person’s name and email address, and the individual objects to that processing.</li>
+        <li>Personal data are being processed for direct marketing purposes e.g. a person&#39;s name and email address, and the individual objects to that processing.</li>
         <li>There is legislation that requires that personal data are to be destroyed.</li>
       </ul>
       <p className="mb-4">
@@ -614,7 +614,7 @@ const PrivacyPolicyPage = () => {
       </p>
       <ul className="list-disc list-inside mb-4">
         <li>Only applies to personal data which a person has directly given to MOVEMINT APP INC. in electronic form; and</li>
-        <li>Onward transfer will only be available where this is “technically feasible”.</li>
+        <li>Onward transfer will only be available where this is &#34;technically feasible&#34;.</li>
       </ul>
       <p className="mb-4">
         <strong>Right to Rectification:</strong> If personal data is inaccurate, out of date, or incomplete, individuals
@@ -625,17 +625,17 @@ const PrivacyPolicyPage = () => {
         inaccuracy or claim thereof.
       </p>
       <p className="mb-4">
-        This right only applies to an individual’s own personal data; a person cannot seek the
-        rectification of another person’s information.
+        This right only applies to an individual&#39;s own personal data; a person cannot seek the
+        rectification of another person&#39;s information.
       </p>
       <p className="mb-4">
         <strong>Notification of data breaches:</strong> Upon discovery of a data breach, we will investigate the
-        incident and report it to the UK’s data protection regulator and yourself, if we deem it
+        incident and report it to the UK&#39;s data protection regulator and yourself, if we deem it
         appropriate to do so.
       </p>
       <p className="mb-4">
         <strong>Complaints:</strong> You have the right, at any time, to lodge a complaint with the Information
-        Commissioner’s Office (ICO), the UK supervisory authority for data protection issues
+        Commissioner&#39;s Office (ICO), the UK supervisory authority for data protection issues
         (<a href="https://www.ico.org.uk" target="_blank" rel="noopener noreferrer">www.ico.org.uk</a>). We would, however, appreciate the chance to deal with your concerns
         before you approach the ICO so please contact us in the first instance using the details below.
       </p>
@@ -651,7 +651,7 @@ const PrivacyPolicyPage = () => {
       </p>
       <p className="mb-4">
         If we fail to resolve your concern to your satisfaction, you may also contact the Information
-        Commissioner’s Office (ICO), the UK Data Protection regulator:
+        Commissioner&#39;s Office (ICO), the UK Data Protection regulator:
       </p>
       <address className="mb-4">
         Information Commissioner's Office<br />
@@ -665,7 +665,7 @@ const PrivacyPolicyPage = () => {
       </address>
       <p className="mb-4">
         <strong>Complaints:</strong> You have the right, at any time, to lodge a complaint with the Information
-        Commissioner’s Office (ICO), the UK supervisory authority for data protection issues
+        Commissioner&#39;s Office (ICO), the UK supervisory authority for data protection issues
         (<a href="https://www.ico.org.uk" target="_blank" rel="noopener noreferrer">www.ico.org.uk</a>). We would, however, appreciate the chance to deal with your concerns
         before you approach the ICO so please contact us in the first instance using the details below.
       </p>
@@ -681,7 +681,7 @@ const PrivacyPolicyPage = () => {
       </p>
       <p className="mb-4">
         If we fail to resolve your concern to your satisfaction, you may also contact the Information
-        Commissioner’s Office (ICO), the UK Data Protection regulator:
+        Commissioner&#39;s Office (ICO), the UK Data Protection regulator:
       </p>
       <address className="mb-4">
         Information Commissioner's Office<br />
@@ -753,7 +753,7 @@ const PrivacyPolicyPage = () => {
         <strong>Right to Withdraw Consent:</strong> Where you give us consent to collect and use your personal information for a specific
         purpose. Subject to some restrictions, you can, at any time, refuse to consent, or continue to
         consent to the collection, use or disclosure of their personal information by notifying us using
-        the email address below in the ‘Contact Us’ section. Withdrawal of consent may impact our
+        the email address below in the ‘Contact Us&#39; section. Withdrawal of consent may impact our
         ability to provide or continue to provide services.
       </p>
       <p className="mb-4">
@@ -784,7 +784,7 @@ const PrivacyPolicyPage = () => {
       <p className="mb-4">
         <strong>Right of Rectification under PIPEDA:</strong> You may request a correction to any factual errors or omissions within your PII. We would ask
         you to provide some evidence to back up your claim. Under PIPEDA, an organization must
-        amend the information, as required, if you successfully demonstrate that it’s incomplete or
+        amend the information, as required, if you successfully demonstrate that it&#39;s incomplete or
         inaccurate.
       </p>
       <p className="mb-4">
@@ -796,7 +796,7 @@ const PrivacyPolicyPage = () => {
         recorded with the Office of the Privacy Commission of Canada.
       </p>
       <p className="mb-4">
-        <strong>Compliance with PIPEDA’s Ten Principles of Privacy:</strong> This privacy policy complies with the PIPEDA’s requirements and ten principles of privacy,
+        <strong>Compliance with PIPEDA&#39;s Ten Principles of Privacy:</strong> This privacy policy complies with the PIPEDA&#39;s requirements and ten principles of privacy,
         which are as follows:
         <ol>
           <li>Accountability</li>
