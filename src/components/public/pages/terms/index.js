@@ -22,7 +22,7 @@ const TermsAndConditions = () => {
         <li>Use movemint or its associated services to transmit or publish any harassing, indecent, obscene, fraudulent, or unlawful material;</li>
         <li>Use movemint or its associated services in violation of any applicable laws or regulations;</li>
         <li>Use movemint to send unauthorized advertising or spam;</li>
-        <li>Harvest, collect, or gather user data without the user’s consent;</li>
+        <li>Harvest, collect, or gather user data without the user&#39;s consent;</li>
         <li>Use movemint or its associated services in such a way that may infringe the privacy, intellectual property rights, or other rights of third parties.</li>
       </ul>
 
@@ -38,7 +38,7 @@ const TermsAndConditions = () => {
       <p className="mb-4">You give us permission to download and install updates to movemint on your device in accordance with your privacy preferences. This permission can be revoked at any time by deleting movemint from your device.</p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">Liability</h2>
-      <p className="mb-4">movemint and the materials in movemint and on our website are provided on an 'as is' basis. To the extent permitted by law, MOVEMINT APP INC. makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or noninfringement of intellectual property, or other violation of rights.</p>
+      <p className="mb-4">movemint and the materials in movemint and on our website are provided on an &#39;as is&#39; basis. To the extent permitted by law, MOVEMINT APP INC. makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or noninfringement of intellectual property, or other violation of rights.</p>
 
       <p className="mb-4">In no event shall MOVEMINT APP INC. or its suppliers be liable for any consequential loss suffered or incurred by you or any third party arising from the use or inability to use movemint, our website, or any other services provided by MOVEMINT APP INC. or the materials in movemint, even if MOVEMINT APP INC. or an authorized representative has been notified, orally or in writing, of the possibility of such damage.</p>
 
@@ -50,10 +50,10 @@ const TermsAndConditions = () => {
       <p className="mb-4">Apple has no obligation to furnish you with any maintenance and support services with respect to movemint.</p>
       <p className="mb-4">If movemint fails to conform to any applicable warranty, you may notify Apple and Apple will refund the purchase price of the mobile application to you. To the maximum extent permitted by applicable law, Apple will have no other warranty obligation whatsoever with respect to movemint and any other claims, losses, liabilities, damages, costs or expenses attributable to any failure to conform to any warranty will be our responsibility.</p>
       <p className="mb-4">Apple is not responsible for addressing any claims by you or any third party relating to movemint or your use of movemint, including but not limited to (1) product liability claims; (2) any claim that our mobile application fails to conform to any applicable legal or regulatory requirement; and (3) claims arising under consumer protection or similar legislation.</p>
-      <p className="mb-4">Apple is not responsible for the investigation, defense, settlement and discharge of any third-party claim that our mobile application infringes that third party’s intellectual property rights.</p>
+      <p className="mb-4">Apple is not responsible for the investigation, defense, settlement and discharge of any third-party claim that our mobile application infringes that third party&#39;s intellectual property rights.</p>
       <p className="mb-4">You agree to comply with any applicable third-party terms when using movemint, including any Usage Rules set forth in the Apple App Store Agreement of Service.</p>
-      <p className="mb-4">Apple and Apple’s subsidiaries are third-party beneficiaries of these Terms of Service and, upon your acceptance of these Terms of Service, Apple will have the right (and will be deemed to have accepted the right) to enforce these Terms of Service against you as a third-party beneficiary of these Terms of Service.</p>
-      <p className="mb-4">You hereby represent and warrant that (1) you are not located in a country that is subject to a U.S. Government embargo, or that has been designated by the U.S. Government as a 'terrorist supporting' country; and (2) you are not listed on any U.S. Government list of prohibited or restricted parties.</p>
+      <p className="mb-4">Apple and Apple&#39;s subsidiaries are third-party beneficiaries of these Terms of Service and, upon your acceptance of these Terms of Service, Apple will have the right (and will be deemed to have accepted the right) to enforce these Terms of Service against you as a third-party beneficiary of these Terms of Service.</p>
+      <p className="mb-4">You hereby represent and warrant that (1) you are not located in a country that is subject to a U.S. Government embargo, or that has been designated by the U.S. Government as a &#39;terrorist supporting&#39; country; and (2) you are not listed on any U.S. Government list of prohibited or restricted parties.</p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">Right to Terminate</h2>
       <p className="mb-4">We may suspend or terminate your movemint account and right to use movemint and these Terms of Service immediately upon written notice to you for any breach of these Terms of Service.</p>
