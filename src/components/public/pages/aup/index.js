@@ -10,7 +10,7 @@ const AcceptUsePolicy = () => {
             <p className="mb-4">{`
                 This acceptable use policy covers the products, services, and technologies (collectively
                 referred to as the "Products") provided by MOVEMINT APP INC. under any ongoing agreement.
-                It&#39;s designed to protect us, our customers and the general Internet community from unethical,
+                It's designed to protect us, our customers and the general Internet community from unethical,
                 irresponsible and illegal activity.
             `}</p>
 
@@ -46,8 +46,8 @@ const AcceptUsePolicy = () => {
 
             <p className="mb-4">{`
                 We regard our customers as being responsible for their own actions as well as for the actions
-                of anyone using our Products with the customer&#39;s permission. This responsibility also applies
-                to anyone using our Products on an unauthorized basis as a result of the customer&#39;s failure to
+                of anyone using our Products with the customer's permission. This responsibility also applies
+                to anyone using our Products on an unauthorized basis as a result of the customer's failure to
                 put in place reasonable security measures.
             `}</p>
 
@@ -76,7 +76,7 @@ const AcceptUsePolicy = () => {
 
             <p className="mb-4">{`
                 Our Products must not be used to transmit, distribute or store any material in violation of any
-                applicable law. This includes but isn&#39;t limited to:
+                applicable law. This includes but isn't limited to:
             `}</p>
 
             <ul className="list-disc list-inside mb-4">
@@ -103,17 +103,17 @@ const AcceptUsePolicy = () => {
             <p className="mb-4">{`
                 Our Products must not be used for the purpose of sending unsolicited bulk or commercial
                 messages in violation of the laws and regulations applicable to your jurisdiction (&#34;spam&#34;). This
-                includes but isn&#39;t limited to sending spam, soliciting customers from spam sent from other
+                includes but isn't limited to sending spam, soliciting customers from spam sent from other
                 service providers, and collecting replies to spam sent from other service providers.
             `}</p>
 
             <p className="mb-4">{`
                 Our Products must not be used for the purpose of running unconfirmed mailing lists or
-                telephone number lists ("messaging lists"). This includes but isn&#39;t limited to subscribing email
+                telephone number lists ("messaging lists"). This includes but isn't limited to subscribing email
                 addresses or telephone numbers to any messaging list without the permission of the email
                 address or telephone number owner, and storing any email addresses or telephone numbers
                 subscribed in this way. All messaging lists run on or hosted by our Products must be
-                "confirmed opt-in". Verification of the address or telephone number owner&#39;s express
+                "confirmed opt-in". Verification of the address or telephone number owner's express
                 permission must be available for the lifespan of the messaging list.
             `}</p>
 
@@ -125,7 +125,7 @@ const AcceptUsePolicy = () => {
             <p className="mb-4">{`
                 This spam and unauthorized message activity policy applies to messages sent using our
                 Products, or to messages sent from any network by the customer or any person on the
-                customer&#39;s behalf, that directly or indirectly refer the recipient to a site hosted via our
+                customer's behalf, that directly or indirectly refer the recipient to a site hosted via our
                 Products.
             `}</p>
 
@@ -137,7 +137,7 @@ const AcceptUsePolicy = () => {
                 Our Products must not be used for the purpose of advertising, transmitting or otherwise
                 making available any software, program, product or service designed to violate this
                 acceptable use policy, or the acceptable use policy of other service providers. This includes
-                but isn&#39;t limited to facilitating the means to send spam and the initiation of network sniffing,
+                but isn't limited to facilitating the means to send spam and the initiation of network sniffing,
                 pinging, packet spoofing, flooding, mail-bombing and denial-of-service attacks.
             `}</p>
 
@@ -171,9 +171,9 @@ const AcceptUsePolicy = () => {
                 <li>Using our facilities to interfere with the use of our facilities and network by other customers
                     or authorized individuals;</li>
                 <li>Publishing or transmitting any content or links that incite violence, depict a violent act,
-                    depict child pornography or threaten anyone&#39;s health and safety;</li>
+                    depict child pornography or threaten anyone's health and safety;</li>
                 <li>Any act or omission in violation of consumer protection laws and regulations;</li>
-                <li>Any violation of a person&#39;s privacy.</li>
+                <li>Any violation of a person's privacy.</li>
             </ol>
 
             <p className="mb-4">{`

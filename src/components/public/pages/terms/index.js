@@ -6,7 +6,7 @@ const TermsAndConditions = () => {
       <h1 className="text-3xl font-bold mb-4"
       >MOVEMINT APP INC. Terms of Service
       </h1>
-      <p className="mb-4">{`These Terms of Service govern your use of movemint, our website located at <a href="https://movemint.io" target="_blank" rel="noopener noreferrer" style={{ color: "blue" }}>https://movemint.io</a>, and any related services provided by MOVEMINT APP INC.`}</p>
+      <p className="mb-4">These Terms of Service govern your use of &#34;movemint&#34; our website located at <a href="https://movemint.io" target="_blank" rel="noopener noreferrer">https://movemint.io</a> and any related services provided by MOVEMINT APP INC.</p>
       <p className="mb-4">{`When you create a movemint account or use movemint, you agree to abide by these Terms of Service and to comply with all applicable laws and regulations. If you do not agree with these Terms of Service, you are prohibited from further using the app, accessing our website, or using any other services provided by MOVEMINT APP INC.`}</p>
       <p className="mb-4">{`If you access or download movemint from (1) the Apple App Store, you agree to any Usage Rules set forth in the App Store Terms of Service; and/or (2) the Google Play Store, you agree to the Android, Google Inc. Terms and Conditions including the Google Apps Terms of Service.`}</p>
       <p className="mb-4">{`We, MOVEMINT APP INC., reserve the right to review and amend any of these Terms of Service at our sole discretion. Upon doing so, we will update this page and notify you through the app and/or the email address you provided when you created your account. Any changes to these Terms of Service will take effect immediately from the date of publication.`}</p>

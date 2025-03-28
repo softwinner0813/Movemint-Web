@@ -7,7 +7,7 @@ const PrivacyPolicyPage = () => {
         MOVEMINT APP INC. Privacy Policy
       </h1>
       <p className="mb-4">{`
-        Your privacy is important to us. It is MOVEMINT APP INC.&#39;s policy to respect your privacy and
+        Your privacy is important to us. It is MOVEMINT APP INC.'s policy to respect your privacy and
         comply with any applicable law and regulation regarding any personal information we may
         collect about you, including via our app, movemint, and its associated services.
       `}</p>
@@ -51,7 +51,7 @@ const PrivacyPolicyPage = () => {
         We may collect, hold, use and disclose information for the following purposes, and personal information will not be further processed in a manner that is incompatible with these purposes:
       `}</p>
       <ul className="list-disc list-inside mb-4">
-        <li>to provide you with our app and platform&#39;s core features and services</li>
+        <li>to provide you with our app and platform's core features and services</li>
         <li>to enable you to customize or personalize your experience of our app</li>
         <li>to deliver products and/or services to you</li>
         <li>to contact and communicate with you</li>
@@ -100,7 +100,7 @@ const PrivacyPolicyPage = () => {
       `}</p>
 
       <h2 className="text-2xl font-semibold mt-6 mb-2">
-        Children&#39;s Privacy
+        Children's Privacy
       </h2>
       <p className="mb-4">{`
         We do not aim any of our products or services directly at children under the age of 13 and we
@@ -172,7 +172,7 @@ const PrivacyPolicyPage = () => {
       <p className="mb-4">{`
         <b>Information from third parties: </b >If we receive personal information about you from a third party, we will protect it as set
         out in this privacy policy. If you are a third party providing personal information about
-        somebody else, you represent and warrant that you have such person&#39;s consent to provide
+        somebody else, you represent and warrant that you have such person's consent to provide
         the personal information to us.
       `}</p>
 
@@ -285,7 +285,7 @@ const PrivacyPolicyPage = () => {
         We will only collect and use your personal information when we have a legal right to do so. In
         which case, we will collect and use your personal information lawfully, fairly, and in a
         transparent manner. If we seek your consent to process your personal information, and you
-        are under 16 years of age, we will seek your parent or legal guardian&#39;s consent to process
+        are under 16 years of age, we will seek your parent or legal guardian's consent to process
         your personal information for that specific purpose.
       `}</p>
 
@@ -387,7 +387,7 @@ const PrivacyPolicyPage = () => {
         The following section includes provisions that comply with the privacy laws of these states
         (California, Colorado, Delaware, Florida, Virginia, and Utah) and is applicable only to the
         residents of those states. Specific references to a particular state (in a heading or in the text)
-        are only a reference to that state&#39;s law and applies only to that state&#39;s residents. Non-state
+        are only a reference to that state's law and applies only to that state's residents. Non-state
         specific language applies to all of the states listed above.
       `}</p>
       <h3 className="text-xl font-semibold mt-4 mb-2">Do Not Track</h3>
@@ -405,7 +405,7 @@ const PrivacyPolicyPage = () => {
       <p className="mb-4">{`
         At all times, you may decline cookies from our site if your browser permits. Most browsers
         allow you to activate settings on your browser to refuse the setting of all or some cookies.
-        Accordingly, your ability to limit cookies is based only on your browser&#39;s capabilities. Please
+        Accordingly, your ability to limit cookies is based only on your browser's capabilities. Please
         refer to the Cookies section of this privacy policy for more information.
       `}</p>
       <h3 className="text-xl font-semibold mt-4 mb-2">California Privacy Laws - CPPA</h3>
@@ -602,7 +602,7 @@ const PrivacyPolicyPage = () => {
         <li>When the personal data is no longer necessary for the purpose for which it was originally collected or processed for.</li>
         <li>If consent was the lawful basis for processing personal data and that consent has been withdrawn.</li>
         <li>The Company is relying on legitimate interests as a legal basis for processing personal data and an individual has exercised the right to object and it has been determined that the Company has no overriding legitimate grounds to refuse that request.</li>
-        <li>Personal data are being processed for direct marketing purposes e.g. a person&#39;s name and email address, and the individual objects to that processing.</li>
+        <li>Personal data are being processed for direct marketing purposes e.g. a person's name and email address, and the individual objects to that processing.</li>
         <li>There is legislation that requires that personal data are to be destroyed.</li>
       </ul>
       <p className="mb-4">{`
@@ -625,17 +625,17 @@ const PrivacyPolicyPage = () => {
         inaccuracy or claim thereof.
       `}</p>
       <p className="mb-4">{`
-        This right only applies to an individual&#39;s own personal data; a person cannot seek the
-        rectification of another person&#39;s information.
+        This right only applies to an individual's own personal data; a person cannot seek the
+        rectification of another person's information.
       `}</p>
       <p className="mb-4">{`
         <strong>Notification of data breaches:</strong> Upon discovery of a data breach, we will investigate the
-        incident and report it to the UK&#39;s data protection regulator and yourself, if we deem it
+        incident and report it to the UK's data protection regulator and yourself, if we deem it
         appropriate to do so.
       `}</p>
       <p className="mb-4">{`
         <strong>Complaints:</strong> You have the right, at any time, to lodge a complaint with the Information
-        Commissioner&#39;s Office (ICO), the UK supervisory authority for data protection issues
+        Commissioner's Office (ICO), the UK supervisory authority for data protection issues
         (<a href="https://www.ico.org.uk" target="_blank" rel="noopener noreferrer">www.ico.org.uk</a>). We would, however, appreciate the chance to deal with your concerns
         before you approach the ICO so please contact us in the first instance using the details below.
       `}</p>
@@ -645,16 +645,16 @@ const PrivacyPolicyPage = () => {
         of our investigation and the steps we will take to deal with your complaint.
       `}</p>
       <p className="mb-4">{`
-        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.&#39;s privacy policy, or to report violations of user privacy,
+        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.'s privacy policy, or to report violations of user privacy,
         you may contact our Data Protection Officer using the details in the Contact us section of this
         privacy policy.
       `}</p>
       <p className="mb-4">{`
         If we fail to resolve your concern to your satisfaction, you may also contact the Information
-        Commissioner&#39;s Office (ICO), the UK Data Protection regulator:
+        Commissioner's Office (ICO), the UK Data Protection regulator:
       `}</p>
       <address className="mb-4">
-        Information Commissioner&#39;s Office<br />
+        Information Commissioner's Office<br />
         Wycliffe House<br />
         Water Lane<br />
         Wilmslow<br />
@@ -665,7 +665,7 @@ const PrivacyPolicyPage = () => {
       </address>
       <p className="mb-4">{`
         <strong>Complaints:</strong> You have the right, at any time, to lodge a complaint with the Information
-        Commissioner&#39;s Office (ICO), the UK supervisory authority for data protection issues
+        Commissioner's Office (ICO), the UK supervisory authority for data protection issues
         (<a href="https://www.ico.org.uk" target="_blank" rel="noopener noreferrer">www.ico.org.uk</a>). We would, however, appreciate the chance to deal with your concerns
         before you approach the ICO so please contact us in the first instance using the details below.
       `}</p>
@@ -675,16 +675,16 @@ const PrivacyPolicyPage = () => {
         of our investigation and the steps we will take to deal with your complaint.
       `}</p>
       <p className="mb-4">{`
-        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.&#39;s privacy policy, or to report violations of user privacy,
+        <strong>Enquiries, Reports and Escalation:</strong> To enquire about MOVEMINT APP INC.'s privacy policy, or to report violations of user privacy,
         you may contact our Data Protection Officer using the details in the Contact us section of this
         privacy policy.
       `}</p>
       <p className="mb-4">{`
         If we fail to resolve your concern to your satisfaction, you may also contact the Information
-        Commissioner&#39;s Office (ICO), the UK Data Protection regulator:
+        Commissioner's Office (ICO), the UK Data Protection regulator:
       `}</p>
       <address className="mb-4">
-        Information Commissioner&#39;s Office<br />
+        Information Commissioner's Office<br />
         Wycliffe House<br />
         Water Lane<br />
         Wilmslow<br />
@@ -719,7 +719,7 @@ const PrivacyPolicyPage = () => {
       `}</p>
       <p className="mb-4">{`
         Under PIPEDA, consent is only valid if it is reasonable to expect that an individual to whom the
-        organization&#39;s activities are directed would understand the nature, purpose, and
+        organization's activities are directed would understand the nature, purpose, and
         consequences of the collection, use, or disclosure of the personal information to which they
         are consenting.
       `}</p>
@@ -753,7 +753,7 @@ const PrivacyPolicyPage = () => {
         <strong>Right to Withdraw Consent:</strong> Where you give us consent to collect and use your personal information for a specific
         purpose. Subject to some restrictions, you can, at any time, refuse to consent, or continue to
         consent to the collection, use or disclosure of their personal information by notifying us using
-        the email address below in the ‘Contact Us&#39; section. Withdrawal of consent may impact our
+        the email address below in the ‘Contact Us' section. Withdrawal of consent may impact our
         ability to provide or continue to provide services.
       `}</p>
       <p className="mb-4">{`
@@ -784,7 +784,7 @@ const PrivacyPolicyPage = () => {
       <p className="mb-4">{`
         <strong>Right of Rectification under PIPEDA:</strong> You may request a correction to any factual errors or omissions within your PII. We would ask
         you to provide some evidence to back up your claim. Under PIPEDA, an organization must
-        amend the information, as required, if you successfully demonstrate that it&#39;s incomplete or
+        amend the information, as required, if you successfully demonstrate that it's incomplete or
         inaccurate.
       `}</p>
       <p className="mb-4">{`
@@ -796,7 +796,7 @@ const PrivacyPolicyPage = () => {
         recorded with the Office of the Privacy Commission of Canada.
       `}</p>
       <p className="mb-4">{`
-        <strong>Compliance with PIPEDA&#39;s Ten Principles of Privacy:</strong> This privacy policy complies with the PIPEDA&#39;s requirements and ten principles of privacy,
+        <strong>Compliance with PIPEDA's Ten Principles of Privacy:</strong> This privacy policy complies with the PIPEDA's requirements and ten principles of privacy,
         which are as follows:
         <ol>
           <li>Accountability</li>
@@ -833,7 +833,7 @@ const PrivacyPolicyPage = () => {
 
       <h3 className="text-xl font-semibold mt-4 mb-2">Enquiries, Reports and Escalation</h3>
       <p className="mb-4">{`
-        To enquire about MOVEMINT APP INC.&#39;s privacy policy, or to report violations of user privacy,
+        To enquire about MOVEMINT APP INC.'s privacy policy, or to report violations of user privacy,
         you may contact us using the details in the Contact us section of this privacy policy.
       `}</p>
       <p className="mb-4">{`
