@@ -754,91 +754,92 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
         </div>
 
         {!workData && (
-          <div className="flex justify-center items-center h-full">
+          <div className="flex justify-center items-center h-full my-20">
             <p className="text-white">There is no contract document yet that mover uploaded.</p>
           </div>
         )}
 
         {/* Footer Navigation and Controls */}
-        <div className="w-full px-4 pb-8 pt-4 bg-black">
-          {/* Page Navigation */}
-          <div className="flex items-center justify-between mb-4">
-            <button
-              className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
-              onClick={() => setPageNumber(Math.max(pageNumber - 1, 1))}
-              disabled={pageNumber <= 1}
-            >
-              Previous
-            </button>
-            <span className="text-white">
-              Page {pageNumber} of {numPages}
-            </span>
-            <button
-              className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
-              onClick={() => setPageNumber(Math.min(pageNumber + 1, numPages))}
-              disabled={pageNumber >= numPages}
-            >
-              Next
-            </button>
-          </div>
-          {/* Action Buttons */}
-          <div className="flex justify-between gap-2 mt-4">
-            <Button
-              onClick={handleOpenSignModal}
-              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-            >
-              Signature
-            </Button>
-            <Button
-              onClick={type_date}
-              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-            >
-              Date
-            </Button>
-            <Button
-              onClick={() => setIsModalOpen(true)}
-              disabled={loading}
-              className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin h-5 w-5 mr-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    />
-                  </svg>
-                  Saving...
-                </span>
-              ) : (
-                "Save"
-              )}
-            </Button>
-            {workData && userData.mover && (
+        {workData && (
+          <div className="w-full px-4 pb-8 pt-4 bg-black">
+            {/* Page Navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
+                onClick={() => setPageNumber(Math.max(pageNumber - 1, 1))}
+                disabled={pageNumber <= 1}
+              >
+                Previous
+              </button>
+              <span className="text-white">
+                Page {pageNumber} of {numPages}
+              </span>
+              <button
+                className="px-4 py-2 bg-gray-600 rounded-md text-white disabled:opacity-50"
+                onClick={() => setPageNumber(Math.min(pageNumber + 1, numPages))}
+                disabled={pageNumber >= numPages}
+              >
+                Next
+              </button>
+            </div>
+            {/* Action Buttons */}
+            <div className="flex justify-between gap-2 mt-4">
               <Button
-                onClick={openShareModal}
-                disabled={!workData}
+                onClick={handleOpenSignModal}
+                className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+              >
+                Signature
+              </Button>
+              <Button
+                onClick={type_date}
+                className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+              >
+                Date
+              </Button>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                disabled={loading}
                 className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
               >
-                Share
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin h-5 w-5 mr-2"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      />
+                    </svg>
+                    Saving...
+                  </span>
+                ) : (
+                  "Save"
+                )}
               </Button>
-            )}
-          </div>
-        </div>
+              {workData && userData.mover && (
+                <Button
+                  onClick={openShareModal}
+                  disabled={!workData}
+                  className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-md disabled:opacity-50"
+                >
+                  Share
+                </Button>
+              )}
+            </div>
+          </div>)}
       </div>
 
       {/* Modals */}
