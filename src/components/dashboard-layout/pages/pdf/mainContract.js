@@ -729,13 +729,13 @@ const MainContract = ({ template, pageNum, workData, proposalId }) => {
         {/* Header */}
         <div className="flex justify-between items-center w-full px-4 py-3">
           <h1 className="text-xl font-semibold text-white">Create Contract</h1>
-          <button
+          {workData &&<button
             onClick={downloadPDF}
             className="text-blue-500 p-2"
             aria-label="Download PDF"
           >
             <FaDownload size={20} />
-          </button>
+          </button> }
         </div>
 
         {/* Main Content Area */}
